@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const [longitude, latitude] = proj4('EPSG:26331', 'EPSG:4326', [xCoord, yCoord]);
 
         // Create a point for Turf.js using transformed coordinates
-        const point = turf.point([longitude, latitude]);
+        const point = turf.point([xCoord,yCoord]);
         const dataFolder = '../data/'; // Path to the folder containing GeoJSON files
         const fileNames = ['PRIME_AREA.geojson', 'SPECIAL_PRIME_AREA.geojson']; // Updated file names
         let pointFoundInFile = null;
