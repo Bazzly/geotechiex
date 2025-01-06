@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,54 +8,58 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
+
 <body class="bg-gray-900 text-gray-100 font-sans">
 
     <!-- Header with Navigation -->
     <header class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-6">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">GeoTechieX</h1>
-            <button id="mobile-menu-button" class="block md:hidden">
-              <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            <nav id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:space-x-4">
-              <a href="index.html" class="hover:underline block">Home</a>
-              <a href="#services" class="hover:underline block">Services</a>
-              <a href="#contact" class="hover:underline block">Contact Us</a>
-              <a href="/alli-bazeet-damola-profile.html" class="hover:underline block">Profile</a>
-            </nav>
-          </div>
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold">GeoTechieX</h1>
+                <button id="mobile-menu-button" class="block md:hidden">
+                    <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <nav id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:space-x-4">
+                    <a href="index.html" class="hover:underline block">Home</a>
+                    <a href="#services" class="hover:underline block">Services</a>
+                    <a href="#contact" class="hover:underline block">Contact Us</a>
+                    <a href="/alli-bazeet-damola-profile.html" class="hover:underline block">Profile</a>
+                </nav>
+            </div>
         </div>
-      </header>
+    </header>
 
-    <!-- Profile Section -->
-    <div class="max-w-4xl mx-auto mt-10 bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-        <!-- Profile Picture and Header -->
-        <div class="relative bg-gradient-to-r from-white to-blue-500 h-48 flex items-center justify-center">
-            <img src="images/Alli_bazeet.png" alt="Profile Picture" 
-                class="w-36 h-36 rounded-full border-4 border-gray-800 object-cover absolute bottom-0 transform translate-y-1/2 shadow-lg">
-        </div>
-        <div class="p-2 mt-8 text-center">
-            <h1 class="text-4xl font-extrabold text-white mb-2">Alli Bazeet Damola (MNIS)</h1>
-            <p class="text-lg text-gray-300 font-medium mb-6">
-                Professional Surveyor, Full-Stack web Developer & Tech Innovator
-            </p>
-        </div>
-<div class="flex justify-center gap-4">
-    <a href="/ALLI_BAZEET_CV.pdf" class="bg-gray-600 hover:bg-pink-400 text-white py-2 px-4 rounded shadow-lg" target="_blank">getMyCv</a>
-    <a href="https://github.com/Bazzly" class="bg-white hover:bg-pink-400 text-gray-700 py-2 px-4 rounded shadow-lg" target="_blank">[GitHub Profile]</a>
-    <a href="https://www.linkedin.com/in/alli-bazeet-4027ab138/" class="bg-gray-600 hover:bg-pink-400 text-white py-2 px-4 rounded shadow-lg" target="_blank">[LinkdIn Profile]</a>
 
-</div>
+  <!-- Profile Section -->
+  <div class="max-w-4xl mx-auto mt-6 bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+    <div class="relative bg-gradient-to-r from-white to-blue-500 h-32 sm:h-48 flex items-center justify-center">
+        <img src="images/Alli_bazeet.png" alt="Profile Picture" 
+            class="w-24 h-24 sm:w-36 sm:h-36 rounded-full border-4 border-gray-800 object-cover absolute bottom-0 transform translate-y-1/2 shadow-lg">
+    </div>
+    <div class="p-4 mt-16 text-center">
+        <h1 class="text-2xl sm:text-4xl font-extrabold text-white mb-2">Alli Bazeet Damola (MNIS)</h1>
+        <p class="text-sm sm:text-lg text-gray-300 font-medium mb-4">
+            Professional Surveyor, Full-Stack Web Developer & Tech Innovator
+        </p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4 px-4 pb-4">
+        <a href="/ALLI_BAZEET_CV.pdf" class="bg-gray-600 hover:bg-pink-400 text-white py-2 px-4 rounded shadow-lg" target="_blank">Get My CV</a>
+        <a href="https://github.com/Bazzly" class="bg-white hover:bg-pink-400 text-gray-700 py-2 px-4 rounded shadow-lg" target="_blank">GitHub Profile</a>
+        <a href="https://www.linkedin.com/in/alli-bazeet-4027ab138/" class="bg-gray-600 hover:bg-pink-400 text-white py-2 px-4 rounded shadow-lg" target="_blank">LinkedIn Profile</a>
+    </div>
         <!-- Profile Details -->
         <div class="px-8 py-4">
             <section id="career" class="mb-8">
                 <h2 class="text-2xl font-semibold text-blue-400 mb-4">Career Highlights</h2>
                 <ul class="list-disc list-inside text-white">
                     <li>Founder and Lead Developer at BazzlyLinks, leading 10+ website projects.</li>
-                    <li>Founder of GeoTechieX, promoting tech and advocating for tech-savvy advancements in surveying.</li>
+                    <li>Founder of GeoTechieX, promoting tech and advocating for tech-savvy advancements in surveying.
+                    </li>
                     <li>Vice Chairman, Young Surveyors Network (YSN), Ogun State Chapter, Nigeria.</li>
                     <li>Member of multiple committees in the Ogun State Chapter, including:
                         <ul class="list-inside pl-6">
@@ -63,7 +68,8 @@
                             <li>Website Development Committee, Association of Private Practicing Surveyors</li>
                         </ul>
                     </li>
-                    <li>Mentored over 25 students in digital skills, fostering the next generation of tech-savvy professionals.</li>
+                    <li>Mentored over 25 students in digital skills, fostering the next generation of tech-savvy
+                        professionals.</li>
                 </ul>
             </section>
 
@@ -91,31 +97,35 @@
                 <ul class="list-disc list-inside text-gray-300">
                     <li>Primary - First Baptist Primary School, Okejigbo, Abeokuta, Ogun State, Nigeria.</li>
                     <li>Junio secondary - Abeokuta Grammar School, Idi Aba, Abeokuta, Ogun State, Nigeria.
-                        </li>
+                    </li>
                     <li>Senior secondary - Asegun Comprehensive High School, Ibadan, Oyo State, Nigeria.</li>
                 </ul>
             </section>
-            
+
 
             <section id="vision" class="mb-8">
                 <h2 class="text-2xl font-semibold text-blue-400 mb-4">Professional Vision</h2>
                 <p class="text-gray-300">
-                    Alli Bazeet Damola is committed to revolutionizing the surveying and geoinformatics industry by merging traditional practices with cutting-edge technologies. As the founder of geotechieX and Social Media Chancellor, he leads initiatives that drive innovation and foster a community passionate about tech and surveying advancements. His leadership and mentoring reflect his dedication to empowering the next generation of professionals and developing innovative solutions.
+                    Alli Bazeet Damola is committed to revolutionizing the surveying and geoinformatics industry by
+                    merging traditional practices with cutting-edge technologies. As the founder of geotechieX and
+                    Social Media Chancellor, he leads initiatives that drive innovation and foster a community
+                    passionate about tech and surveying advancements. His leadership and mentoring reflect his
+                    dedication to empowering the next generation of professionals and developing innovative solutions.
                 </p>
             </section>
 
             <section id="contact" class="mb-8">
                 <h2 class="text-2xl font-semibold text-blue-400 mb-4">Connect with GeoTechieX</h2>
                 <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                    <a href="https://www.youtube.com/@GeotechieX" target="_blank" 
+                    <a href="https://www.youtube.com/@GeotechieX" target="_blank"
                         class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow-lg">
                         YouTube
                     </a>
-                    <a href="https://www.tiktok.com/@GeotechieX" target="_blank" 
+                    <a href="https://www.tiktok.com/@GeotechieX" target="_blank"
                         class="bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded shadow-lg">
                         TikTok
                     </a>
-                    <a href="https://www.instagram.com/geotechiex" target="_blank" 
+                    <a href="https://www.instagram.com/geotechiex" target="_blank"
                         class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded shadow-lg">
                         Instagram
                     </a>
@@ -133,4 +143,5 @@
     </footer>
     <script src="index.js"></script>
 </body>
+
 </html>
