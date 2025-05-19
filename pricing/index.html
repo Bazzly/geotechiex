@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Update Classifier & Pricer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .typing-indicator {
+            display: inline-block;
+        }
+        .typing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            margin-right: 4px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .error-border {
+            border-color: #ef4444 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-10">
+    <div class="max-w-4xl w-full bg-white rounded-xl shadow-2xl p-8">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-semibold text-blue-600"><i class="fas fa-brain mr-2"></i> AI Website Update Analyzer</h1>
+            <p class="text-gray-500 mt-2">Describe your website update, and get a classification & price estimate.</p>
+        </div>
+
+        <div class="mb-6">
+            <label for="request" class="block text-lg font-medium text-gray-700 mb-3"><i class="fas fa-edit mr-2"></i> Your Request:</label>
+            <textarea id="request" rows="4" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+            placeholder="e.g., 'Add a new page for services, update contact form, and improve mobile responsiveness (max 50 words)'"
+            maxlength="500"></textarea>
+  <div class="flex justify-between items-center mt-1">
+      <div id="request-error" class="error-message hidden"></div>
+      <div id="word-count" class="text-sm text-gray-500">0/50 words</div>
+  </div>
+            <div id="request-error" class="error-message hidden"></div>
+        </div>
+
+        <div class="flex justify-center mb-4">
+            <button id="analyzeBtn" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out flex items-center">
+                <i class="fas fa-magic mr-2"></i> Analyze & Estimate
+            </button>
+        </div>
+
+        <div id="loading" class="hidden mt-6 text-center">
+             <div class="flex justify-center items-center">
+                <div class="animate-pulse h-10 w-10 bg-blue-500 rounded-full mr-3"></div>
+                <div class="animate-pulse h-10 w-10 bg-blue-500 rounded-full mr-3" style="animation-delay: 0.2s"></div>
+                <div class="animate-pulse h-10 w-10 bg-blue-500 rounded-full" style="animation-delay: 0.4s"></div>
+            </div>
+            <p class="mt-4 text-gray-600">Analyzing your request with AI...</p>
+        </div>
+
+        <div id="result" class="mt-8 bg-gray-50 rounded-lg p-6 border border-gray-200 shadow-inner hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4"><i class="fas fa-chart-bar mr-2"></i> AI Analysis Result:</h2>
+            <div id="classification" class="mb-4 p-4 rounded-lg bg-white border border-gray-200">
+                <p class="text-lg"><span class="font-semibold text-blue-600">Classification:</span> <span id="classification-text" class="font-medium text-gray-700"></span></p>
+                <p class="text-sm text-gray-500 mt-1">Based on your request, we estimate this update to be:</p>
+            </div>
+            <div id="pricing" class="mb-4 p-4 rounded-lg bg-white border border-gray-200">
+                <p class="text-lg"><span class="font-semibold text-green-600">Estimated Price:</span> <span id="pricing-text" class="font-medium text-gray-700"></span></p>
+                <p class="text-sm text-gray-500 mt-1">This is an estimated range. Actual cost may vary.</p>
+            </div>
+            <div id="breakdown" class="mb-4 p-4 rounded-lg bg-white border border-gray-200">
+                <h3 class="text-lg font-semibold text-purple-600 mb-2"><i class="fas fa-list-ul mr-2"></i> Estimated Breakdown:</h3>
+                <ul id="breakdown-list" class="list-disc list-inside text-gray-700">
+                </ul>
+            </div>
+             <div id="detailedReport" class="mb-4 p-4 rounded-lg bg-white border border-gray-200">
+                <h3 class="text-lg font-semibold text-orange-600 mb-2"><i class="fas fa-file-alt mr-2"></i> Detailed Report:</h3>
+                <div id="detailedReportContent" class="text-gray-700">
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end">
+                <button id="printBtn" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-5 rounded-full shadow-md transition duration-300 ease-in-out flex items-center">
+                    <i class="fas fa-print mr-2"></i> Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        document.getElementById('analyzeBtn').addEventListener('click', analyzeRequest);
+        document.getElementById('printBtn').addEventListener('click', generatePDF);
+
+        // List of unrelated words that might indicate gibberish or off-topic content
+        const unrelatedWords = [
+            'food', 'recipe', 'sports', 'movie', 'music', 'game', 'weather', 
+            'health', 'fitness', 'politics', 'celebrity', 'gossip', 'travel',
+            'shopping', 'fashion', 'car', 'vehicle', 'pet', 'animal', 'love',
+            'relationship', 'school', 'education', 'science', 'history', 'art',
+            'random', 'joke', 'funny', 'meme', 'hello', 'hi', 'test', 'testing'
+        ];
+
+        // List of expected website-related terms
+        const websiteTerms = [
+            'website', 'page', 'design', 'update', 'feature', 'form', 'contact',
+            'responsive', 'mobile', 'desktop', 'layout', 'menu', 'navigation',
+            'button', 'link', 'image', 'gallery', 'video', 'content', 'text',
+            'header', 'footer', 'section', 'blog', 'news', 'ecommerce', 'shop',
+            'product', 'cart', 'checkout', 'payment', 'login', 'register', 'user',
+            'account', 'profile', 'search', 'filter', 'database', 'api', 'integrate',
+            'plugin', 'widget', 'analytics', 'seo', 'performance', 'speed', 'security',
+            'ssl', 'domain', 'hosting', 'server', 'backend', 'frontend', 'code',
+            'html', 'css', 'javascript', 'php', 'python', 'wordpress', 'shopify',
+            'cms', 'admin', 'dashboard', 'color', 'font', 'style', 'theme', 'template'
+        ];
+
+        function validateRequest(input) {
+        const errorElement = document.getElementById('request-error');
+        const textarea = document.getElementById('request');
+        
+        // Reset error state
+        errorElement.classList.add('hidden');
+        textarea.classList.remove('error-border');
+        
+        // Check for empty input
+        if (!input.trim()) {
+            errorElement.textContent = 'Please describe your website update request.';
+            errorElement.classList.remove('hidden');
+            textarea.classList.add('error-border');
+            return false;
+        }
+        
+        // Check word count (1-50 words)
+        const words = input.trim().split(/\s+/);
+        if (words.length > 50) {
+            errorElement.textContent = 'Please limit your request to 50 words maximum.';
+            errorElement.classList.remove('hidden');
+            textarea.classList.add('error-border');
+            return false;
+        }
+        
+        // Check for minimum meaningful length (at least 5 meaningful characters)
+        const meaningfulChars = input.replace(/\s+/g, '').length;
+        if (meaningfulChars < 5) {
+            errorElement.textContent = 'Please provide more details about your request (at least 5 meaningful characters).';
+            errorElement.classList.remove('hidden');
+            textarea.classList.add('error-border');
+            return false;
+        }
+        
+        // Enhanced gibberish detection
+        if (isGibberish(input)) {
+            errorElement.textContent = 'Your request appears to contain random characters. Please describe your website update needs.';
+            errorElement.classList.remove('hidden');
+            textarea.classList.add('error-border');
+            return false;
+        }
+        
+        // Check for unrelated words
+        const lowerInput = input.toLowerCase();
+        const foundUnrelated = unrelatedWords.some(word => 
+            new RegExp(`\\b${word}\\b`, 'i').test(lowerInput)
+        );
+        
+        // Check for at least one website-related term
+        const foundRelated = websiteTerms.some(word => 
+            new RegExp(`\\b${word}\\b`, 'i').test(lowerInput)
+        );
+        
+        if (foundUnrelated && !foundRelated) {
+            errorElement.textContent = 'Your request seems unrelated to website updates. Please describe changes you want to make to your website.';
+            errorElement.classList.remove('hidden');
+            textarea.classList.add('error-border');
+            return false;
+        }
+        
+        return true;
+    }
+
+
+    // Enhanced gibberish detection function
+    function isGibberish(text) {
+        // Remove all whitespace and special characters
+        const cleanText = text.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        
+        // Too short to evaluate
+        if (cleanText.length < 5) return false;
+        
+        // Check for repeating character patterns (like "kjkjkjkj")
+        const repeatingPattern = /(.)\1{3,}/; // 4 or more repeating characters
+        if (repeatingPattern.test(cleanText)) {
+            return true;
+        }
+        
+        // Check consonant-to-vowel ratio (gibberish often has too many consonants)
+        const vowels = cleanText.match(/[aeiou]/g);
+        const vowelCount = vowels ? vowels.length : 0;
+        const consonantCount = cleanText.length - vowelCount;
+        
+        // If more than 80% consonants, likely gibberish
+        if (consonantCount / cleanText.length > 0.8) {
+            return true;
+        }
+        
+        // Check for non-dictionary words
+        const words = text.split(/\s+/);
+        const dictionaryWords = words.filter(word => 
+            word.length > 2 && 
+            /[aeiou]/i.test(word) && // Contains at least one vowel
+            !/[^a-zA-Z]/.test(word) // No numbers or special chars
+        );
+        
+        // If less than 20% of words look like real words
+        if (dictionaryWords.length / words.length < 0.2) {
+            return true;
+        }
+        
+        return false;
+    }
+
+
+        // AI Integration Functions
+        async function callAI(prompt) {
+            // In a real implementation, you would call your AI API here
+            // For demonstration, we'll simulate an API call with a timeout
+            
+            // Simulate different responses based on the prompt
+            const isMajorUpdate = prompt.toLowerCase().includes('e-commerce') || 
+                                prompt.toLowerCase().includes('new website') || 
+                                prompt.toLowerCase().includes('redesign') ||
+                                prompt.toLowerCase().includes('database') ||
+                                prompt.toLowerCase().includes('complex');
+            
+            const isMinorUpdate = prompt.toLowerCase().includes('bug') || 
+                                prompt.toLowerCase().includes('fix') || 
+                                prompt.toLowerCase().includes('typo') ||
+                                prompt.split(/\s+/).length <= 10;
+            
+            let type, minPrice, maxPrice, breakdown, rationale;
+            
+            if (isMajorUpdate) {
+                type = "major";
+                minPrice = 500000 + Math.floor(Math.random() * 500000);
+                maxPrice = minPrice + 1000000 + Math.floor(Math.random() * 1000000);
+                breakdown = [
+                    "Initial consultation and planning (4-6 hours)",
+                    "Design and development (20-40 hours)",
+                    "Complex feature implementation (15-25 hours)",
+                    "Testing and quality assurance (8-12 hours)",
+                    "Deployment and post-launch support (4-8 hours)"
+                ];
+                rationale = "This is classified as a MAJOR update due to the complexity and scope of work required. The price reflects the significant development effort, potential integration needs, and extensive testing required for such updates.";
+            } 
+            else if (isMinorUpdate) {
+                type = "minor";
+                minPrice = 200000 + Math.floor(Math.random() * 200000);
+                maxPrice = minPrice + 400000 + Math.floor(Math.random() * 400000);
+                breakdown = [
+                    "Quick consultation (0.5-1 hour)",
+                    "Implementation of changes (1-3 hours)",
+                    "Basic testing (0.5-1 hour)"
+                ];
+                rationale = "This is classified as a MINOR update as it involves small changes with limited impact on the overall website. The price reflects the minimal development time required.";
+            } 
+            else {
+                type = "mini";
+                minPrice = 50000 + Math.floor(Math.random() * 50000);
+                maxPrice = minPrice + 150000 + Math.floor(Math.random() * 150000);
+                breakdown = [
+                    "Initial consultation (1-2 hours)",
+                    "Design and development (6-12 hours)",
+                    "Testing and adjustments (2-4 hours)",
+                    "Deployment (1-2 hours)"
+                ];
+                rationale = "This is classified as a MINI update as it involves adding new features or sections without major architectural changes. The price reflects moderate development effort with standard testing requirements.";
+            }
+            
+            // Simulate AI thinking time
+            await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1500));
+            
+            return {
+                type,
+                price: { min: minPrice, max: maxPrice },
+                breakdown,
+                rationale,
+                detailedAnalysis: `The AI analyzed your request and determined it to be a ${type} update. ${rationale} The estimated breakdown includes ${breakdown.length} main tasks with an estimated total of ${getEstimatedHours(breakdown)} hours of work.`
+            };
+        }
+
+        async function analyzeRequest() {
+            const requestText = document.getElementById('request').value.trim();
+            
+            // Validate input before proceeding
+            if (!validateRequest(requestText)) {
+                return;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+
+            try {
+                // Call the AI function (simulated or real)
+                const aiResponse = await callAI(requestText);
+                
+                displayAIResult(aiResponse, requestText);
+            } catch (error) {
+                console.error("AI analysis failed:", error);
+                // Fallback to basic analysis if AI fails
+                const analysis = analyzeAndUpdateRequest(requestText);
+                displayResult(analysis, requestText);
+                alert("AI analysis unavailable. Showing basic estimate.");
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('result').classList.remove('hidden');
+            }
+        }
+
+        function displayAIResult(aiResponse, requestText) {
+            document.getElementById('classification-text').textContent = aiResponse.type;
+            document.getElementById('pricing-text').textContent = `₦${formatMoney(aiResponse.price.min)} - ₦${formatMoney(aiResponse.price.max)}`;
+
+            const breakdownList = document.getElementById('breakdown-list');
+            breakdownList.innerHTML = aiResponse.breakdown.map(item => `<li>${item}</li>`).join('');
+
+            const reportContent = document.getElementById('detailedReportContent');
+            reportContent.innerHTML = generateAIReport(aiResponse, requestText);
+        }
+
+        function generateAIReport(aiResponse, requestText) {
+            return `
+                <h4 class="font-semibold text-md mb-2">Client Request:</h4>
+                <p class="mb-4">"${requestText}"</p>
+
+                <h4 class="font-semibold text-md mb-2">AI Classification:</h4>
+                <p class="mb-4">${aiResponse.type.toUpperCase()} update</p>
+
+                <h4 class="font-semibold text-md mb-2">AI Price Estimate:</h4>
+                <p class="mb-4">₦${formatMoney(aiResponse.price.min)} - ₦${formatMoney(aiResponse.price.max)}</p>
+
+                <h4 class="font-semibold text-md mb-2">AI Rationale:</h4>
+                <p class="mb-4">${aiResponse.rationale}</p>
+
+                <h4 class="font-semibold text-md mb-2">AI Task Breakdown:</h4>
+                <ul class="list-disc list-inside mb-4">
+                    ${aiResponse.breakdown.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+
+                <h4 class="font-semibold text-md mb-2">Total Estimated Hours:</h4>
+                <p class="mb-4">${getEstimatedHours(aiResponse.breakdown)} hours</p>
+
+                <h4 class="font-semibold text-md mb-2">Next Steps:</h4>
+                <p>For a more accurate quote, we recommend scheduling a consultation to discuss your requirements in detail.</p>
+            `;
+        }
+
+        // Original analysis functions (as fallback)
+        function analyzeAndUpdateRequest(request) {
+            const keywords = {
+                minor: ["bug fix", "typo", "content update", "small change", "minor tweak"],
+                mini: ["new section", "form update", "design change", "feature update", "page update"],
+                major: ["new website", "e-commerce", "cms", "database", "complex", "integration", "full redesign", "large scale", "full website redesign"]
+            };
+
+            const wordCount = request.split(/\s+/).length;
+            const lowerCaseRequest = request.toLowerCase();
+
+            let type = "mini";
+            if (wordCount <= 10) {
+                type = "minor";
+            } else if (keywords.major.some(keyword => lowerCaseRequest.includes(keyword))) {
+                type = "major";
+            } else if (keywords.mini.some(keyword => lowerCaseRequest.includes(keyword))){
+                type = "mini";
+            } else {
+                type = "mini"
+            }
+
+            // Fallback project data
+            const projectData = [
+                {
+                    description: "Add a new page for services, update contact form, and improve mobile responsiveness",
+                    type: "major",
+                    price: { min: 1500000, max: 3000000 },
+                    breakdown: [
+                        "Design and develop new services page (6-8 hours)",
+                        "Update contact form functionality (4-6 hours)",
+                        "Implement responsive design improvements (8-12 hours)",
+                        "Testing and deployment (2-4 hours)"
+                    ]
+                },
+                // ... (rest of your project data)
+            ];
+
+            const similarProjects = projectData.filter(project => {
+                const requestWords = request.toLowerCase().split(/\s+/);
+                const descriptionWords = project.description.toLowerCase().split(/\s+/);
+                const commonWords = requestWords.filter(word => descriptionWords.includes(word));
+                return commonWords.length / requestWords.length > 0.2;
+            });
+
+            let estimatedPrice;
+            if (similarProjects.length > 0) {
+                const minPrices = similarProjects.map(p => p.price.min);
+                const maxPrices = similarProjects.map(p => p.price.max);
+                const avgMin = minPrices.reduce((a, b) => a + b, 0) / minPrices.length;
+                const avgMax = maxPrices.reduce((a, b) => a + b, 0) / maxPrices.length;
+                estimatedPrice = { min: avgMin * 0.8, max: avgMax * 1.2 };
+            } else {
+                // Fallback pricing if no similar projects are found
+                if (type === "minor") {
+                    estimatedPrice = { min: 100000, max: 500000 };
+                } else if (type === "mini") {
+                    estimatedPrice = { min: 500000, max: 1500000 };
+                } else {
+                    estimatedPrice = { min: 1500000, max: 5000000 };
+                }
+            }
+
+            const breakdown = similarProjects.length > 0
+                ? similarProjects[0].breakdown
+                : [
+                    "Initial consultation and planning (2-4 hours)",
+                    "Development and implementation (4-16 hours)",
+                    "Testing and deployment (2-4 hours)",
+                    "Communication and updates (1-2 hours)"
+                ];
+
+            return {
+                type,
+                price: estimatedPrice,
+                breakdown,
+                request
+            };
+        }
+
+        function displayResult(analysis, requestText) {
+            document.getElementById('classification-text').textContent = analysis.type;
+            document.getElementById('pricing-text').textContent = `₦${formatMoney(analysis.price.min)} - ₦${formatMoney(analysis.price.max)}`;
+
+            const breakdownList = document.getElementById('breakdown-list');
+            breakdownList.innerHTML = analysis.breakdown.map(item => `<li>${item}</li>`).join('');
+
+            const reportContent = document.getElementById('detailedReportContent');
+            reportContent.innerHTML = generateDetailedReport(analysis, requestText);
+        }
+
+        function generateDetailedReport(analysis, requestText) {
+            return `
+                <h4 class="font-semibold text-md mb-2">Client Request:</h4>
+                <p class="mb-2">${analysis.request}</p>
+
+                <h4 class="font-semibold text-md mb-2">Classification:</h4>
+                <p class="mb-2">${analysis.type}</p>
+
+                <h4 class="font-semibold text-md mb-2">Estimated Price Range:</h4>
+                <p class="mb-2">₦${formatMoney(analysis.price.min)} - ₦${formatMoney(analysis.price.max)}</p>
+
+                <h4 class="font-semibold text-md mb-2">Price Rationale:</h4>
+                <p class="mb-2">
+                    The price estimate is based on an analysis of similar projects, considering the complexity of your request.
+                </p>
+
+                <h4 class="font-semibold text-md mb-2">Estimated Breakdown:</h4>
+                <ul class="list-disc list-inside mb-2">
+                    ${analysis.breakdown.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+
+                <h4 class="font-semibold text-md mb-2">Recommendations:</h4>
+                <p class="mb-2">
+                    We recommend a detailed consultation to refine the project scope and provide a more accurate quote.
+                </p>
+            `;
+        }
+
+        function getEstimatedHours(breakdown) {
+            let totalHours = 0;
+            breakdown.forEach(item => {
+                const hoursMatch = item.match(/(\d+)-(\d+) hours/);
+                if (hoursMatch) {
+                    const minHours = parseInt(hoursMatch[1]);
+                    const maxHours = parseInt(hoursMatch[2]);
+                    totalHours += (minHours + maxHours) / 2;
+                } else {
+                    const singleHourMatch = item.match(/(\d+) hour/);
+                    if(singleHourMatch){
+                        totalHours += parseInt(singleHourMatch[1]);
+                    }
+                }
+            });
+            return Math.round(totalHours * 10) / 10; // Round to 1 decimal place
+        }
+
+        function formatMoney(amount) {
+            return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+
+        async function generatePDF() {
+            const button = document.getElementById('printBtn');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
+            button.disabled = true;
+
+            try {
+                const requestText = document.getElementById('request').value.trim();
+                const element = document.getElementById('result');
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                // Add header with logo and copyright
+                const headerText = "Bazzlylinks Information Technology Services";
+                const footerText = "Copyright © 2025 Bazzlylinks. All rights reserved.";
+                const pageWidth = pdf.internal.pageSize.getWidth();
+
+                pdf.setFontSize(10);
+                pdf.setTextColor(40);
+                pdf.text(headerText, pageWidth / 2, 10, { align: "center" });
+
+                // Add title
+                pdf.setFontSize(18);
+                pdf.setTextColor(0, 0, 0);
+                const title = `Report on ${requestText}`;
+                pdf.text(title, pageWidth / 2, 25, { align: "center" });
+
+                pdf.addImage(imgData, 'PNG', 0, 30, pdfWidth, pdfHeight);
+
+                // Add footer
+                pdf.setFontSize(10);
+                pdf.setTextColor(40);
+                pdf.text(footerText, pageWidth / 2, pdf.internal.pageSize.getHeight() - 10, { align: "center" });
+                pdf.save('Website_Update_Analysis.pdf');
+
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+            } finally {
+                button.innerHTML = '<i class="fas fa-print mr-2"></i> Print Report';
+                button.disabled = false;
+            }
+        }
+    </script>
+    <SCript src="script.js"></SCript>
+</body>
+</html>
