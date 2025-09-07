@@ -77,6 +77,45 @@
         .tab-button.active {
             background: #4B5563;
         }
+        .geolocate-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .geolocate-btn:hover {
+            background: linear-gradient(to right, #43A047, #1B5E20);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .geolocate-btn:active {
+            transform: translateY(0);
+        }
+        .location-status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .location-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .location-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
@@ -141,6 +180,13 @@
                             <label class="block mb-2">Latitude</label>
                             <input id="wgsLat" type="number" step="0.000001" class="w-full px-4 py-2 rounded bg-gray-600 text-gray-100 border border-gray-500 focus:ring focus:ring-blue-500">
                         </div>
+                        <button id="geolocateBtn" class="geolocate-btn w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                            Use My Current Location
+                        </button>
+                        <div id="locationStatus" class="location-status"></div>
                         <button id="transformToMinna" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow-lg font-medium">
                             Transform to Minna
                         </button>
@@ -253,6 +299,72 @@
             });
         });
 
+        // Geolocation functionality
+        document.getElementById('geolocateBtn').addEventListener('click', () => {
+            const statusElement = document.getElementById('locationStatus');
+            
+            // Check if geolocation is supported
+            if (!navigator.geolocation) {
+                statusElement.textContent = 'Geolocation is not supported by your browser';
+                statusElement.className = 'location-status location-error';
+                statusElement.style.display = 'block';
+                return;
+            }
+            
+            statusElement.textContent = 'Locating...';
+            statusElement.className = 'location-status';
+            statusElement.style.display = 'block';
+            
+            // Get current position
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+                    
+                    // Update WGS84 fields
+                    document.getElementById('wgsLat').value = latitude;
+                    document.getElementById('wgsLon').value = longitude;
+                    
+                    // Show success message
+                    statusElement.textContent = `Location found (accuracy: ${Math.round(accuracy)} meters)`;
+                    statusElement.className = 'location-status location-success';
+                    
+                    // Update map view and marker
+                    updateMapMarker(latitude, longitude, `Your Location: ${longitude.toFixed(6)}, ${latitude.toFixed(6)}`);
+                    
+                    // Auto-transform to Minna
+                    setTimeout(() => {
+                        document.getElementById('transformToMinna').click();
+                    }, 1000);
+                },
+                (error) => {
+                    let errorMessage;
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'User denied the request for geolocation';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information is unavailable';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'The request to get location timed out';
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            errorMessage = 'An unknown error occurred';
+                            break;
+                    }
+                    statusElement.textContent = errorMessage;
+                    statusElement.className = 'location-status location-error';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        });
+
         // Coordinate transformation functions
         document.getElementById('transformToWGS').addEventListener('click', () => {
             const minnaX = parseFloat(document.getElementById('minnaX').value);
@@ -348,38 +460,6 @@
                 const response = await fetch('data/ngn_wards_fix_js.geojson');
                 const geojsonData = await response.json();
                 
-                // const geojsonData = {
-                //     "type": "FeatureCollection",
-                //     "name": "ngn_wards_fix_js",
-                //     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::26331" } },
-                //     "features": [
-                //         { 
-                //             "type": "Feature", 
-                //             "properties": { 
-                //                 "globalid": "564c8211-f688-4091-b45e-a2862ddcfb54", 
-                //                 "uniq_id": 499246, 
-                //                 "timestamp": "2020-08-31", 
-                //                 "editor": "najib.adam", 
-                //                 "wardname": "Ikuru", 
-                //                 "wardcode": "RVSNDN06", 
-                //                 "lganame": "Andoni", 
-                //                 "lgacode": "33005", 
-                //                 "statename": "Rivers", 
-                //                 "statecode": "RI", 
-                //                 "amapcode": "NIE RVS NDN", 
-                //                 "status": "Operational Placeholder", 
-                //                 "source": "INEC", 
-                //                 "urban": "No", 
-                //                 "ward_code": 6 
-                //             }, 
-                //             "geometry": { 
-                //                 "type": "MultiPolygon", 
-                //                 "coordinates": [ [ [ [ 987680.36220596649, 491700.55272458075 ], [ 987026.45804415643, 496422.06799482589 ], [ 987108.21314055193, 496454.25967888831 ], [ 987230.14322915836, 496541.13671183051 ], [ 987290.97807973041, 496562.41817886336 ], [ 987448.65795570484, 496600.4521668278 ], [ 987532.66142002097, 496631.78928523778 ], [ 987607.74299605493, 496669.89671974152 ], [ 987618.25910694711, 496783.2448608398 ], [ 987675.41552740918, 496853.7548044367 ], [ 987778.81431899685, 496869.13425912685 ], [ 987900.24266946828, 496852.83029260841 ], [ 988059.29980936949, 496905.6946128289 ], [ 988140.68569708627, 496951.58110213384 ], [ 988209.24905154237, 496963.37126111117 ], [ 988231.01208146126, 496991.36109017459 ], [ 988294.98675779346, 496977.55272213486 ], [ 988328.45602860721, 496983.30101679161 ], [ 988341.36429048632, 496936.19867723901 ], [ 988615.05704314972, 497033.3433015942 ], [ 988814.89452087146, 497065.31057367421 ], [ 989300.61246331059, 497194.69056450127 ], [ 989286.54276896478, 497363.4328273409 ], [ 989212.06077259628, 497512.08070758282 ], [ 989209.480202212, 497568.71637102321 ], [ 989667.16434382997, 497376.40452867473 ], [ 989669.17797596473, 496383.19099268521 ], [ 989707.85893647908, 496132.54536028911 ], [ 989710.25800495164, 495733.68667824054 ], [ 989691.76668011025, 495638.60573216021 ], [ 989661.89826551429, 495321.86049804412 ], [ 989663.11496600823, 495119.26575672289 ], [ 989689.44379871804, 494967.47217164334 ], [ 989700.84830302489, 494125.47571896832 ], [ 989670.63225490414, 493865.71076234872 ], [ 989657.89010521676, 493083.71769095765 ], [ 989620.42248302896, 492707.57235542889 ], [ 989622.78559242585, 492311.87986267294 ], [ 989585.86467349704, 491843.40687947883 ], [ 989539.49669169239, 491686.37742760155 ], [ 989464.67830157373, 491394.89932449523 ], [ 987680.36220596649, 491700.55272458075 ] ] ] ] 
-                //             } 
-                //         }
-                //     ]
-                // };
-
                 // Process the GeoJSON data
                 processGeoJSON(geojsonData);
                 
@@ -506,7 +586,7 @@
                              <p><strong>Code:</strong>  ${props.ward_code}</p>
                             <p><strong>LGA Name:</strong> ${props.lganame}</p>
                             <p><strong>State Name:</strong> ${props.statename} </p>
-                              <p><strong>UPIN:</strong>  ${props.statename} / ${props.lganame} / ${props.ward_code} / "Parcle NO" </p>
+                            <p><strong>UPIN:</strong> ${props.wardcode.slice(0, 2)} / ${props.wardcode.slice(3, 6)} / ${props.wardcode.slice(6, 8)} / "Parcel NO" </p>
                             <p><strong>Status:</strong> ${props.status}</p>
                             <p><strong>Urban:</strong> ${props.urban}</p>
                             <p><strong>Source:</strong> ${props.source}</p>
