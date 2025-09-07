@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigeria Coordinate Transformation & Ward Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
+    <style>
+        #map { 
+            height: 500px; 
+            margin-top: 20px;
+            border-radius: 0.5rem;
+            z-index: 1;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .legend {
+            padding: 10px;
+            background: white;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            line-height: 1.5;
+        }
+        .legend h4 {
+            margin: 0 0 10px;
+            text-align: center;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        .info-panel {
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button {
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #374151;
+            color: white;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-button.active {
+            background: #4B5563;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-6">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4">
+            <h1 class="text-2xl font-bold mb-4 sm:mb-0">GeoTechieX - Nigeria</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="hover:text-blue-300 font-medium">Area Del. Checker</a></li>
+                    <li><a href="#" class="hover:text-blue-300 font-medium">Coords Transform</a></li>
+                    <li><a href="#" class="hover:text-blue-300 font-medium">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <div class="max-w-4xl mx-auto mt-10 bg-gray-800 rounded-lg shadow-xl overflow-hidden px-4 sm:px-0">
+        <div class="p-6 sm:p-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Nigeria Coordinate Transformation & Ward Checker</h1>
+            <p class="text-lg text-gray-300 font-medium mb-6">
+                Transform coordinates between systems and check which ward they fall within.
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-700 px-4 sm:px-8">
+            <button class="tab-button active" data-tab="transform">Coordinate Transformation</button>
+            <button class="tab-button" data-tab="checker">Ward Checker</button>
+        </div>
+
+        <!-- Coordinate Transformation Tab -->
+        <div id="transformTab" class="tab-content active px-4 sm:px-8 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">Minna Datum (EPSG:26331)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Eastings (X)</label>
+                            <input id="minnaX" type="number" step="0.000001" class="w-full px-4 py-2 rounded bg-gray-600 text-gray-100 border border-gray-500 focus:ring focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Northings (Y)</label>
+                            <input id="minnaY" type="number" step="0.000001" class="w-full px-4 py-2 rounded bg-gray-600 text-gray-100 border border-gray-500 focus:ring focus:ring-blue-500">
+                        </div>
+                        <button id="transformToWGS" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow-lg font-medium">
+                            Transform to WGS84
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">WGS84 (EPSG:4326)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Longitude</label>
+                            <input id="wgsLon" type="number" step="0.000001" class="w-full px-4 py-2 rounded bg-gray-600 text-gray-100 border border-gray-500 focus:ring focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Latitude</label>
+                            <input id="wgsLat" type="number" step="0.000001" class="w-full px-4 py-2 rounded bg-gray-600 text-gray-100 border border-gray-500 focus:ring focus:ring-blue-500">
+                        </div>
+                        <button id="transformToMinna" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow-lg font-medium">
+                            Transform to Minna
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold mb-4">Transformation Results</h3>
+                <div id="transformResult" class="text-center p-4 bg-gray-600 rounded">
+                    Results will appear here after transformation
+                </div>
+            </div>
+        </div>
+
+        <!-- Ward Checker Tab -->
+        <div id="checkerTab" class="tab-content px-4 sm:px-8 py-6">
+            <div class="mb-6">
+                <p class="text-gray-300 font-medium mb-6">
+                    Enter a coordinate (Minna datum) and check which ward it falls within.
+                </p>
+                <p class="text-rose-500 text-sm italic mb-6">
+                    NB: Output might not be accurate because project is still at the testing stage
+                </p>
+            </div>
+            
+            <div class="flex flex-col space-y-4 mb-8">
+                <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+                    <input id="xCoord" type="number" step="0.000001" placeholder="Enter X Coordinate (Minna)" 
+                           class="flex-1 px-4 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600 focus:ring focus:ring-blue-500">
+                    <input id="yCoord" type="number" step="0.000001" placeholder="Enter Y Coordinate (Minna)" 
+                           class="flex-1 px-4 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600 focus:ring focus:ring-blue-500">
+                </div>
+                <button id="checkButton" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow-lg font-medium">
+                    Check Point
+                </button>
+            </div>
+            <div class="loading" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p class="mt-2">Loading data, please wait...</p>
+            </div>
+            <div id="output" class="text-lg font-bold text-blue-400 text-center mb-6">
+                Enter coordinates and click "Check Point"
+            </div>
+        </div>
+
+        <div class="px-4 sm:px-8 pb-8">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="max-w-4xl mx-auto mt-10 bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+        <div class="p-8 text-center">
+            <h2 class="text-2xl font-bold text-blue-400">About GeoTechieX</h2>
+            <p class="text-gray-300 mt-4">
+                GeoTechieX blends geospatial innovation with modern technology, making mapping simple and intuitive.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-10">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <p>© 2024 GeoTechieX. All Rights Reserved.</p>
+            <p class="text-sm mt-2">Explore. Innovate. Elevate with GeoTechieX.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Proj4 with EPSG definitions
+        proj4.defs([
+            [
+                'EPSG:26331',
+                '+proj=utm +zone=31 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs'
+            ],
+            [
+                'EPSG:4326',
+                '+proj=longlat +datum=WGS84 +no_defs'
+            ]
+        ]);
+
+        // Initialize the map
+        const map = L.map('map').setView([9.0820, 8.6753], 6); // Center on Nigeria
+        
+        // Add base map layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add a scale control
+        L.control.scale({metric: true, imperial: false}).addTo(map);
+        
+        // Variables to store map layers
+        let geoJsonLayer = null;
+        let pointMarker = null;
+        let infoPanel = null;
+        
+        // Tab functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and content
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+
+        // Coordinate transformation functions
+        document.getElementById('transformToWGS').addEventListener('click', () => {
+            const minnaX = parseFloat(document.getElementById('minnaX').value);
+            const minnaY = parseFloat(document.getElementById('minnaY').value);
+            
+            if (isNaN(minnaX) || isNaN(minnaY)) {
+                document.getElementById('transformResult').innerHTML = '<span class="text-red-500">Please enter valid coordinates</span>';
+                return;
+            }
+            
+            try {
+                // Transform from Minna to WGS84
+                const [longitude, latitude] = proj4('EPSG:26331', 'EPSG:4326', [minnaX, minnaY]);
+                
+                // Update WGS84 fields
+                document.getElementById('wgsLon').value = longitude.toFixed(6);
+                document.getElementById('wgsLat').value = latitude.toFixed(6);
+                
+                // Show result
+                document.getElementById('transformResult').innerHTML = `
+                    <div class="text-left">
+                        <p><strong>Transformation Successful</strong></p>
+                        <p>Minna (${minnaX.toFixed(3)}, ${minnaY.toFixed(3)}) → WGS84 (${longitude.toFixed(6)}, ${latitude.toFixed(6)})</p>
+                    </div>
+                `;
+                
+                // Update map view and marker
+                updateMapMarker(latitude, longitude, `Transformed Point: ${longitude.toFixed(6)}, ${latitude.toFixed(6)}`);
+                
+            } catch (error) {
+                document.getElementById('transformResult').innerHTML = '<span class="text-red-500">Transformation error: ' + error.message + '</span>';
+            }
+        });
+
+        document.getElementById('transformToMinna').addEventListener('click', () => {
+            const wgsLon = parseFloat(document.getElementById('wgsLon').value);
+            const wgsLat = parseFloat(document.getElementById('wgsLat').value);
+            
+            if (isNaN(wgsLon) || isNaN(wgsLat)) {
+                document.getElementById('transformResult').innerHTML = '<span class="text-red-500">Please enter valid coordinates</span>';
+                return;
+            }
+            
+            try {
+                // Transform from WGS84 to Minna
+                const [minnaX, minnaY] = proj4('EPSG:4326', 'EPSG:26331', [wgsLon, wgsLat]);
+                
+                // Update Minna fields
+                document.getElementById('minnaX').value = minnaX.toFixed(3);
+                document.getElementById('minnaY').value = minnaY.toFixed(3);
+                
+                // Show result
+                document.getElementById('transformResult').innerHTML = `
+                    <div class="text-left">
+                        <p><strong>Transformation Successful</strong></p>
+                        <p>WGS84 (${wgsLon.toFixed(6)}, ${wgsLat.toFixed(6)}) → Minna (${minnaX.toFixed(3)}, ${minnaY.toFixed(3)})</p>
+                    </div>
+                `;
+                
+                // Update map view and marker
+                updateMapMarker(wgsLat, wgsLon, `Transformed Point: ${wgsLon.toFixed(6)}, ${wgsLat.toFixed(6)}`);
+                
+            } catch (error) {
+                document.getElementById('transformResult').innerHTML = '<span class="text-red-500">Transformation error: ' + error.message + '</span>';
+            }
+        });
+
+        // Function to update map marker
+        function updateMapMarker(lat, lng, popupText) {
+            if (pointMarker) {
+                map.removeLayer(pointMarker);
+            }
+            
+            pointMarker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(popupText)
+                .openPopup();
+            
+            // Pan map to the point
+            map.panTo([lat, lng]);
+        }
+
+        // Function to load GeoJSON data
+        async function loadGeoJSON() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const outputDiv = document.getElementById('output');
+            
+            try {
+                loadingIndicator.style.display = 'block';
+                outputDiv.innerHTML = 'Loading ward data...';
+                
+                // For demonstration, we'll use a sample feature
+                // In a real implementation, you would fetch from your server:
+                const response = await fetch('data/ngn_wards_fix_js.geojson');
+                const geojsonData = await response.json();
+                
+                // const geojsonData = {
+                //     "type": "FeatureCollection",
+                //     "name": "ngn_wards_fix_js",
+                //     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::26331" } },
+                //     "features": [
+                //         { 
+                //             "type": "Feature", 
+                //             "properties": { 
+                //                 "globalid": "564c8211-f688-4091-b45e-a2862ddcfb54", 
+                //                 "uniq_id": 499246, 
+                //                 "timestamp": "2020-08-31", 
+                //                 "editor": "najib.adam", 
+                //                 "wardname": "Ikuru", 
+                //                 "wardcode": "RVSNDN06", 
+                //                 "lganame": "Andoni", 
+                //                 "lgacode": "33005", 
+                //                 "statename": "Rivers", 
+                //                 "statecode": "RI", 
+                //                 "amapcode": "NIE RVS NDN", 
+                //                 "status": "Operational Placeholder", 
+                //                 "source": "INEC", 
+                //                 "urban": "No", 
+                //                 "ward_code": 6 
+                //             }, 
+                //             "geometry": { 
+                //                 "type": "MultiPolygon", 
+                //                 "coordinates": [ [ [ [ 987680.36220596649, 491700.55272458075 ], [ 987026.45804415643, 496422.06799482589 ], [ 987108.21314055193, 496454.25967888831 ], [ 987230.14322915836, 496541.13671183051 ], [ 987290.97807973041, 496562.41817886336 ], [ 987448.65795570484, 496600.4521668278 ], [ 987532.66142002097, 496631.78928523778 ], [ 987607.74299605493, 496669.89671974152 ], [ 987618.25910694711, 496783.2448608398 ], [ 987675.41552740918, 496853.7548044367 ], [ 987778.81431899685, 496869.13425912685 ], [ 987900.24266946828, 496852.83029260841 ], [ 988059.29980936949, 496905.6946128289 ], [ 988140.68569708627, 496951.58110213384 ], [ 988209.24905154237, 496963.37126111117 ], [ 988231.01208146126, 496991.36109017459 ], [ 988294.98675779346, 496977.55272213486 ], [ 988328.45602860721, 496983.30101679161 ], [ 988341.36429048632, 496936.19867723901 ], [ 988615.05704314972, 497033.3433015942 ], [ 988814.89452087146, 497065.31057367421 ], [ 989300.61246331059, 497194.69056450127 ], [ 989286.54276896478, 497363.4328273409 ], [ 989212.06077259628, 497512.08070758282 ], [ 989209.480202212, 497568.71637102321 ], [ 989667.16434382997, 497376.40452867473 ], [ 989669.17797596473, 496383.19099268521 ], [ 989707.85893647908, 496132.54536028911 ], [ 989710.25800495164, 495733.68667824054 ], [ 989691.76668011025, 495638.60573216021 ], [ 989661.89826551429, 495321.86049804412 ], [ 989663.11496600823, 495119.26575672289 ], [ 989689.44379871804, 494967.47217164334 ], [ 989700.84830302489, 494125.47571896832 ], [ 989670.63225490414, 493865.71076234872 ], [ 989657.89010521676, 493083.71769095765 ], [ 989620.42248302896, 492707.57235542889 ], [ 989622.78559242585, 492311.87986267294 ], [ 989585.86467349704, 491843.40687947883 ], [ 989539.49669169239, 491686.37742760155 ], [ 989464.67830157373, 491394.89932449523 ], [ 987680.36220596649, 491700.55272458075 ] ] ] ] 
+                //             } 
+                //         }
+                //     ]
+                // };
+
+                // Process the GeoJSON data
+                processGeoJSON(geojsonData);
+                
+                loadingIndicator.style.display = 'none';
+                outputDiv.innerHTML = 'Data loaded successfully. Enter coordinates to check.';
+                
+            } catch (error) {
+                console.error('Error loading GeoJSON:', error);
+                loadingIndicator.style.display = 'none';
+                outputDiv.innerHTML = '<span class="text-red-500">Error loading data. Please try again later.</span>';
+            }
+        }
+
+        // Function to process and display GeoJSON data
+        function processGeoJSON(geojsonData) {
+            // Clear existing layer if any
+            if (geoJsonLayer) {
+                map.removeLayer(geoJsonLayer);
+            }
+            
+            // Add GeoJSON to map
+            geoJsonLayer = L.geoJSON(geojsonData, {
+                style: {
+                    color: "#ff7800",
+                    weight: 1,
+                    opacity: 0.7,
+                    fillColor: "#ff7800",
+                    fillOpacity: 0.2
+                },
+                onEachFeature: function(feature, layer) {
+                    if (feature.properties && feature.properties.wardname) {
+                        layer.bindPopup(
+                            "<b>" + feature.properties.wardname + "</b><br>" + 
+                            "LGA: " + feature.properties.lganame + "<br>" +
+                            "State: " + feature.properties.statename + "<br>" +
+                            "Ward Code: " + feature.properties.wardcode + "<br>" +
+                            "Code: " + feature.properties.lganame + "<br>" +
+                            "UPIN: " + feature.properties.state +  "/" + feature.properties.lganame +  "/" + feature.properties.ward_code +  "/" + " Parcel Number "
+
+                        );
+                    }
+                }
+            }).addTo(map);
+
+            // Fit map to show all features
+            map.fitBounds(geoJsonLayer.getBounds());
+            
+            // Add legend
+            const legend = L.control({position: 'bottomright'});
+            legend.onAdd = function(map) {
+                const div = L.DomUtil.create('div', 'legend');
+                div.innerHTML = `
+                    <h4>Nigeria Wards</h4>
+                    <i style="background: #ff7800; opacity: 0.7"></i> Ward Boundaries
+                `;
+                return div;
+            };
+            legend.addTo(map);
+            
+            // Add info panel
+            infoPanel = L.control({position: 'topright'});
+            infoPanel.onAdd = function(map) {
+                this._div = L.DomUtil.create('div', 'info-panel');
+                this.update();
+                return this._div;
+            };
+            infoPanel.update = function(props) {
+                this._div.innerHTML = '<h4>Ward Information</h4>' + 
+                    (props ? 
+                        `<b>${props.wardname}</b><br />
+                        LGA: ${props.lganame}<br />
+                        State: ${props.statename}<br />
+                        Ward Code: ${props.wardcode}<br />
+                        Status: ${props.status}` 
+                        : 'Hover over a ward');
+            };
+            infoPanel.addTo(map);
+            
+            // Add hover functionality
+            geoJsonLayer.on('mouseover', function(e) {
+                e.layer.setStyle({
+                    weight: 2,
+                    color: '#666',
+                    fillOpacity: 0.3
+                });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    e.layer.bringToFront();
+                }
+                infoPanel.update(e.layer.feature.properties);
+            });
+            
+            geoJsonLayer.on('mouseout', function(e) {
+                geoJsonLayer.resetStyle(e.layer);
+                infoPanel.update();
+            });
+        }
+
+        // Function to check if point is inside polygon
+        function checkPoint() {
+            const xCoord = parseFloat(document.getElementById('xCoord').value);
+            const yCoord = parseFloat(document.getElementById('yCoord').value);
+            const outputDiv = document.getElementById('output');
+            
+            if (isNaN(xCoord) || isNaN(yCoord)) {
+                outputDiv.innerHTML = '<span class="text-red-500">Please enter valid coordinates</span>';
+                return;
+            }
+            
+            // Create a point feature
+            const point = turf.point([xCoord, yCoord]);
+            
+            // Check if point is inside any feature
+            let found = false;
+            
+            geoJsonLayer.eachLayer(function(layer) {
+                const polygon = turf.multiPolygon(layer.feature.geometry.coordinates);
+                if (turf.booleanPointInPolygon(point, polygon)) {
+                    found = true;
+                    const props = layer.feature.properties;
+                    outputDiv.innerHTML = `
+                        <div class="text-left p-4 bg-gray-700 rounded-lg">
+                            <h3 class="text-xl text-green-400 mb-2">Point is inside: ${props.wardname}</h3>
+                            <p><strong>Ward Code:</strong> ${props.wardcode}</p>
+                             <p><strong>Code:</strong>  ${props.ward_code}</p>
+                            <p><strong>LGA Name:</strong> ${props.lganame}</p>
+                            <p><strong>State Name:</strong> ${props.statename} </p>
+                              <p><strong>UPIN:</strong>  ${props.statename} / ${props.lganame} / ${props.ward_code} / "Parcle NO" </p>
+                            <p><strong>Status:</strong> ${props.status}</p>
+                            <p><strong>Urban:</strong> ${props.urban}</p>
+                            <p><strong>Source:</strong> ${props.source}</p>
+                        </div>
+                    `;
+                    
+                    // Highlight the ward
+                    layer.setStyle({
+                        weight: 3,
+                        color: '#00ff00',
+                        fillOpacity: 0.5
+                    });
+                    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                        layer.bringToFront();
+                    }
+                    
+                    // Open popup
+                    layer.openPopup();
+                }
+            });
+            
+            if (!found) {
+                outputDiv.innerHTML = '<span class="text-red-500">Point is not inside any defined ward</span>';
+            }
+            
+            // Transform coordinates to WGS84 for mapping
+            try {
+                const [longitude, latitude] = proj4('EPSG:26331', 'EPSG:4326', [xCoord, yCoord]);
+                
+                // Add marker to map
+                if (pointMarker) {
+                    map.removeLayer(pointMarker);
+                }
+                
+                pointMarker = L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup(`Searched Point: ${xCoord}, ${yCoord}<br>WGS84: ${longitude.toFixed(6)}, ${latitude.toFixed(6)}`)
+                    .openPopup();
+                
+                // Pan map to the point
+                map.panTo([latitude, longitude]);
+            } catch (error) {
+                console.error('Coordinate transformation error:', error);
+            }
+        }
+
+        // Add event listeners
+        document.getElementById('checkButton').addEventListener('click', checkPoint);
+        
+        // Load the GeoJSON data when page is ready
+        document.addEventListener('DOMContentLoaded', loadGeoJSON);
+    </script>
+</body>
+</html>
