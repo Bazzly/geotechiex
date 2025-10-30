@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Drafting Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .input-section h2 {
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        
+        .instructions {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .output-section {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .output-section h2 {
+            margin-bottom: 15px;
+            color: #27ae60;
+        }
+        
+        .output-content {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .example-section {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .example-section h3 {
+            margin-bottom: 10px;
+            color: #e67e22;
+        }
+        
+        .example-content {
+            font-family: monospace;
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .id-section {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .id-section h3 {
+            margin-bottom: 10px;
+            color: #e67e22;
+        }
+        
+        .id-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .id-input input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .validation-message {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .validation-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .validation-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .file-upload {
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            background-color: #f8fafc;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .file-input:hover {
+            background-color: #e8f4fc;
+            border-color: #2980b9;
+        }
+
+        .auto-extract-section {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .auto-extract-section p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Survey Drafting Calculator</h1>
+        
+        <div class="input-section">
+            <h2>Input Points Data</h2>
+            
+            <div class="id-section">
+                <h3>Project ID Verification</h3>
+                <div class="id-input">
+                    <input type="text" id="project-id" placeholder="Enter your unique project ID">
+                    <button id="verify-id" class="btn-warning">Verify ID</button>
+                </div>
+                <div id="validation-message" class="validation-message"></div>
+                <div id="auto-extract-message" class="auto-extract-section" style="display: none;">
+                    <p>✓ Project ID automatically extracted from file</p>
+                </div>
+            </div>
+            
+            <div class="file-upload">
+                <div class="file-input" id="file-drop-area">
+                    <p>Drag & drop your points file here or click to browse</p>
+                    <input type="file" id="points-file" accept=".txt,.csv" style="display: none;">
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>Input Format Instructions:</h3>
+                <ul>
+                    <li>Format: <code>point PointNumber-East-North</code></li>
+                    <li>One point per line</li>
+                    <li>Example: <code>point 1-547407.120-742340.095</code> or <code>point 01-547407.120-742340.095</code></li>
+                    <li>The points should form a closed loop (first and last point will be connected)</li>
+                    <li>File must include a valid project ID in the first line (format: PROJECT_ID: your-id)</li>
+                    <li>Project IDs from the main app are automatically accepted (format: PROJ-1001-1m3k5j7-abc123)</li>
+                </ul>
+            </div>
+            <textarea id="points-input" placeholder="PROJECT_ID: PROJ-1001-1m3k5j7-abc123
+point 1-547407.120-742340.095
+point 2-547455.883-742335.678
+point 3-547460.245-742380.112
+point 4-547412.567-742385.429"></textarea>
+            <button id="calculate-btn" class="btn-primary">Calculate Distances & Azimuths</button>
+        </div>
+        
+        <div class="example-section">
+            <h3>Example Input Format:</h3>
+            <div class="example-content">
+PROJECT_ID: PROJ-1001-1m3k5j7-abc123
+point 1-547407.120-742340.095
+point 2-547455.883-742335.678
+point 3-547460.245-742380.112
+point 4-547412.567-742385.429
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <h2>Calculation Results</h2>
+            <div id="output-content" class="output-content">
+                Results will appear here...
+            </div>
+            <div class="action-buttons">
+                <button id="copy-btn" class="btn-success">Copy Results</button>
+                <button id="export-btn" class="btn-primary">Export Results</button>
+                <button id="clear-btn" class="btn-warning">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pointsInput = document.getElementById('points-input');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const outputContent = document.getElementById('output-content');
+            const copyBtn = document.getElementById('copy-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const projectIdInput = document.getElementById('project-id');
+            const verifyIdBtn = document.getElementById('verify-id');
+            const validationMessage = document.getElementById('validation-message');
+            const autoExtractMessage = document.getElementById('auto-extract-message');
+            const fileInput = document.getElementById('points-file');
+            const fileDropArea = document.getElementById('file-drop-area');
+            
+            let isValidProjectId = false;
+            let currentProjectId = '';
+            
+            // Function to verify project ID - now accepts any PROJECT_ID from main app format
+            function verifyProjectId(id) {
+                if (!id || typeof id !== 'string') return false;
+                
+                const trimmedId = id.trim().toUpperCase();
+                
+                // Accept any project ID that starts with PROJ- (from main app)
+                if (trimmedId.startsWith('PROJ-')) {
+                    return true;
+                }
+                
+                // Also accept the old demo IDs for backward compatibility
+                const legacyValidIds = [
+                    'ABC123-2024-SURVEY',
+                    'DEF456-2024-MAPPING',
+                    'GHI789-2024-CONSTRUCTION',
+                    'POLYGON-SURVEY-2024',
+                    'SITE-PLAN-2024'
+                ];
+                
+                return legacyValidIds.includes(trimmedId);
+            }
+            
+            // Function to extract project ID from text
+            function extractProjectId(text) {
+                const lines = text.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('PROJECT_ID:')) {
+                        return line.replace('PROJECT_ID:', '').trim();
+                    }
+                }
+                return null;
+            }
+            
+            // Function to validate input
+            function validateInput(inputText) {
+                if (!inputText.trim()) {
+                    return { isValid: false, message: 'Please enter some points data.' };
+                }
+                
+                // Check for project ID in input
+                const extractedId = extractProjectId(inputText);
+                if (!extractedId) {
+                    return { 
+                        isValid: false, 
+                        message: 'No PROJECT_ID found in input. Please include PROJECT_ID: your-id in the first line.' 
+                    };
+                }
+                
+                // Verify the project ID
+                if (!verifyProjectId(extractedId)) {
+                    return { 
+                        isValid: false, 
+                        message: `Invalid PROJECT_ID: ${extractedId}. Project ID must start with "PROJ-" or be from the approved list.` 
+                    };
+                }
+                
+                // Check for valid points format
+                const points = parsePoints(inputText);
+                if (points.length < 2) {
+                    return { isValid: false, message: 'Please enter at least 2 valid points. Found: ' + points.length };
+                }
+                
+                return { isValid: true, message: 'Input validated successfully!', projectId: extractedId };
+            }
+            
+            // Function to parse input points
+            function parsePoints(input) {
+                const lines = input.split('\n').filter(line => line.trim() !== '');
+                const points = [];
+                
+                for (const line of lines) {
+                    // Skip PROJECT_ID line and other metadata lines
+                    if (line.startsWith('PROJECT_ID:') || line.startsWith('EXPORT_DATE:') || line.startsWith('POINTS_COUNT:') || line.trim() === '') {
+                        continue;
+                    }
+                    
+                    // Handle "point XX-XXX.XXX-XXX.XXX" format
+                    if (line.toLowerCase().startsWith('point')) {
+                        // Remove "point" and trim
+                        const pointData = line.substring(5).trim();
+                        
+                        // Split by dashes
+                        const parts = pointData.split('-');
+                        
+                        if (parts.length >= 3) {
+                            // The first part is the point number (could be "1", "01", "001", etc.)
+                            const pointNumber = parts[0].trim();
+                            const east = parseFloat(parts[1]);
+                            const north = parseFloat(parts[2]);
+                            
+                            if (!isNaN(east) && !isNaN(north)) {
+                                points.push({ 
+                                    name: `point ${pointNumber}`,
+                                    east: east,
+                                    north: north 
+                                });
+                                continue; // Successfully parsed, move to next line
+                            }
+                        }
+                    }
+                    
+                    // Alternative: Try to parse as "XX-XXX.XXX-XXX.XXX" format (without "point" prefix)
+                    const parts = line.split('-');
+                    if (parts.length >= 3) {
+                        const firstPart = parts[0].trim();
+                        const east = parseFloat(parts[1]);
+                        const north = parseFloat(parts[2]);
+                        
+                        // Check if this looks like coordinates (numbers with decimals)
+                        if (!isNaN(east) && !isNaN(north) && 
+                            parts[1].includes('.') && parts[2].includes('.')) {
+                            
+                            points.push({ 
+                                name: `point ${firstPart}`,
+                                east: east,
+                                north: north 
+                            });
+                        }
+                    }
+                }
+                
+                console.log('Parsed points:', points); // Debug logging
+                return points;
+            }
+            
+            // Function to calculate distance between two points
+            function calculateDistance(p1, p2) {
+                const dx = p2.east - p1.east;
+                const dy = p2.north - p1.north;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            // Function to calculate azimuth in radians
+            function calculateAzimuthRadians(p1, p2) {
+                const dx = p2.east - p1.east;
+                const dy = p2.north - p1.north;
+                return Math.atan2(dx, dy);
+            }
+            
+            // Function to convert radians to degrees
+            function radiansToDegrees(rad) {
+                return (rad * 180 / Math.PI + 360) % 360;
+            }
+            
+            // Function to convert decimal degrees to DMS format
+            function degreesToDMS(decimalDegrees) {
+                const degrees = Math.floor(decimalDegrees);
+                const minutesDecimal = (decimalDegrees - degrees) * 60;
+                const minutes = Math.floor(minutesDecimal);
+                const seconds = Math.round((minutesDecimal - minutes) * 60);
+                
+                return {
+                    degrees: degrees,
+                    minutes: minutes,
+                    seconds: seconds
+                };
+            }
+            
+            // Function to format azimuth as DDD°MM'
+            function formatAzimuth(azimuthDegrees) {
+                const dms = degreesToDMS(azimuthDegrees);
+                return `${dms.degrees.toString().padStart(3, '0')}D${dms.minutes.toString().padStart(2, '0')}'`;
+            }
+            
+            // Main calculation function
+            function calculateResults() {
+                const inputText = pointsInput.value.trim();
+                const validation = validateInput(inputText);
+                
+                if (!validation.isValid) {
+                    outputContent.textContent = `ERROR: ${validation.message}`;
+                    return;
+                }
+                
+                const points = parsePoints(inputText);
+                
+                let output = '';
+                
+                // Add project header
+                output += `PROJECT ID: ${validation.projectId}\n`;
+                output += `CALCULATION DATE: ${new Date().toLocaleDateString()}\n`;
+                output += '='.repeat(50) + '\n\n';
+                
+                // Add coordinate list
+                output += 'COORDINATES:\n';
+                points.forEach((point, index) => {
+                    output += `${point.name}: E${point.east.toFixed(3)}, N${point.north.toFixed(3)}\n`;
+                });
+                
+                output += '\n' + '='.repeat(50) + '\n\n';
+                output += 'DISTANCES AND AZIMUTHS:\n';
+                
+                // Calculate for each pair of consecutive points
+                for (let i = 0; i < points.length; i++) {
+                    const currentPoint = points[i];
+                    const nextPoint = points[(i + 1) % points.length];
+                    
+                    const distance = calculateDistance(currentPoint, nextPoint);
+                    const azimuthRad = calculateAzimuthRadians(currentPoint, nextPoint);
+                    const azimuthDeg = radiansToDegrees(azimuthRad);
+                    const azimuthFormatted = formatAzimuth(azimuthDeg);
+                    
+                    output += `${currentPoint.name} to ${nextPoint.name}\n`;
+                    output += `  Distance: ${distance.toFixed(3)}m\n`;
+                    output += `  Azimuth: ${azimuthFormatted} (${azimuthDeg.toFixed(4)}°)\n\n`;
+                }
+                
+                // Add coordinate list for plotting
+                output += 'COORDINATE LIST FOR PLOTTING:\n';
+                output += points.map(p => `${p.east.toFixed(3)},${p.north.toFixed(3)}`).join(' ');
+                
+                outputContent.textContent = output;
+                currentProjectId = validation.projectId;
+            }
+            
+            // Event listeners
+            calculateBtn.addEventListener('click', calculateResults);
+            
+            verifyIdBtn.addEventListener('click', function() {
+                const id = projectIdInput.value.trim();
+                if (verifyProjectId(id)) {
+                    validationMessage.textContent = '✓ Project ID is valid';
+                    validationMessage.className = 'validation-message validation-success';
+                    isValidProjectId = true;
+                    currentProjectId = id;
+                    autoExtractMessage.style.display = 'none';
+                } else {
+                    validationMessage.textContent = '✗ Invalid Project ID. Must start with "PROJ-" or be from approved list.';
+                    validationMessage.className = 'validation-message validation-error';
+                    isValidProjectId = false;
+                    autoExtractMessage.style.display = 'none';
+                }
+            });
+            
+            copyBtn.addEventListener('click', function() {
+                const textArea = document.createElement('textarea');
+                textArea.value = outputContent.textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Results copied to clipboard!');
+            });
+            
+            exportBtn.addEventListener('click', function() {
+                const content = outputContent.textContent;
+                if (content === 'Results will appear here...') {
+                    alert('No results to export. Please calculate first.');
+                    return;
+                }
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `survey-results-${currentProjectId || 'project'}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            clearBtn.addEventListener('click', function() {
+                pointsInput.value = '';
+                outputContent.textContent = 'Results will appear here...';
+                projectIdInput.value = '';
+                validationMessage.textContent = '';
+                validationMessage.className = 'validation-message';
+                autoExtractMessage.style.display = 'none';
+                isValidProjectId = false;
+                currentProjectId = '';
+            });
+            
+            // File upload handling
+            fileDropArea.addEventListener('click', () => fileInput.click());
+            
+            fileDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDropArea.style.backgroundColor = '#e8f4fc';
+                fileDropArea.style.borderColor = '#2980b9';
+            });
+            
+            fileDropArea.addEventListener('dragleave', () => {
+                fileDropArea.style.backgroundColor = '#f8fafc';
+                fileDropArea.style.borderColor = '#3498db';
+            });
+            
+            fileDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropArea.style.backgroundColor = '#f8fafc';
+                fileDropArea.style.borderColor = '#3498db';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+            
+            function handleFileUpload(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pointsInput.value = e.target.result;
+                    
+                    // Auto-extract and verify project ID
+                    const extractedId = extractProjectId(e.target.result);
+                    if (extractedId) {
+                        projectIdInput.value = extractedId;
+                        if (verifyProjectId(extractedId)) {
+                            validationMessage.textContent = '✓ Project ID is valid';
+                            validationMessage.className = 'validation-message validation-success';
+                            autoExtractMessage.style.display = 'block';
+                            isValidProjectId = true;
+                            currentProjectId = extractedId;
+                        } else {
+                            validationMessage.textContent = '✗ Invalid Project ID in file';
+                            validationMessage.className = 'validation-message validation-error';
+                            autoExtractMessage.style.display = 'none';
+                            isValidProjectId = false;
+                        }
+                    } else {
+                        validationMessage.textContent = '✗ No PROJECT_ID found in file';
+                        validationMessage.className = 'validation-message validation-error';
+                        autoExtractMessage.style.display = 'none';
+                        isValidProjectId = false;
+                    }
+                };
+                reader.readAsText(file);
+            }
+            
+            // Load example data
+            pointsInput.value = `PROJECT_ID: PROJ-1001-1m3k5j7-abc123
+point 1-547407.120-742340.095
+point 2-547455.883-742335.678
+point 3-547460.245-742380.112
+point 4-547412.567-742385.429`;
+            
+            // Auto-verify the example project ID
+            const exampleId = extractProjectId(pointsInput.value);
+            if (exampleId && verifyProjectId(exampleId)) {
+                projectIdInput.value = exampleId;
+                validationMessage.textContent = '✓ Example Project ID is valid';
+                validationMessage.className = 'validation-message validation-success';
+                autoExtractMessage.style.display = 'block';
+                isValidProjectId = true;
+                currentProjectId = exampleId;
+            }
+        });
+    </script>
+</body>
+</html>
