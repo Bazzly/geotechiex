@@ -624,36 +624,36 @@
 
         // Calculate fees with all multipliers
         function calculateDetailedFees(area, landsize, surveyType, accuracyLevel, urgency) {
-            // Base fees by area type (per sq.m)
+            // Base fees by area type (per sq.m) - Read from admin settings or use defaults
             const baseFees = {
-                urban: 85,
-                suburban: 55,
-                rural: 35
+                urban: parseFloat(localStorage.getItem("baseFeeUrban")) || 85,
+                suburban: parseFloat(localStorage.getItem("baseFeeSuburban")) || 55,
+                rural: parseFloat(localStorage.getItem("baseFeeRural")) || 35
             };
 
             let baseFee = baseFees[area.type] || 55;
 
-            // Survey type multipliers
+            // Survey type multipliers - Read from admin settings or use defaults
             const surveyMultipliers = {
-                topographic: 1.2,
-                cadastral: 1.0,
-                engineering: 1.3,
-                control: 1.5,
-                subdivision: 0.9
+                topographic: parseFloat(localStorage.getItem("multiplierTopographic")) || 1.2,
+                cadastral: parseFloat(localStorage.getItem("multiplierCadastral")) || 1.0,
+                engineering: parseFloat(localStorage.getItem("multiplierEngineering")) || 1.3,
+                control: parseFloat(localStorage.getItem("multiplierControl")) || 1.5,
+                subdivision: parseFloat(localStorage.getItem("multiplierSubdivision")) || 0.9
             };
 
-            // Accuracy level multipliers
+            // Accuracy level multipliers - Read from admin settings or use defaults
             const accuracyMultipliers = {
-                standard: 1.0,
-                high: 1.3,
-                ultra: 1.6
+                standard: parseFloat(localStorage.getItem("accuracyStandard")) || 1.0,
+                high: parseFloat(localStorage.getItem("accuracyHigh")) || 1.3,
+                ultra: parseFloat(localStorage.getItem("accuracyUltra")) || 1.6
             };
 
-            // Urgency multipliers
+            // Urgency multipliers - Read from admin settings or use defaults
             const urgencyMultipliers = {
-                normal: 1.0,
-                express: 1.4,
-                urgent: 1.8
+                normal: parseFloat(localStorage.getItem("urgencyNormal")) || 1.0,
+                express: parseFloat(localStorage.getItem("urgencyExpress")) || 1.4,
+                urgent: parseFloat(localStorage.getItem("urgencyUrgent")) || 1.8
             };
 
             // Area complexity multiplier (based on built-up percentage)
@@ -668,8 +668,15 @@
 
             const surveyFee = adjustedBaseFee * landsize;
             const statutoryFee = adjustedBaseFee * 0.65 * landsize;
-            const equipmentFee = surveyType === 'control' || surveyType === 'engineering' ? 25000 : 15000;
-            const transportFee = area.type === 'rural' ? 20000 : 10000;
+            
+            // Equipment and transport fees - Read from admin settings or use defaults
+            const equipmentFeeStandard = parseFloat(localStorage.getItem("equipmentStandard")) || 15000;
+            const equipmentFeeAdvanced = parseFloat(localStorage.getItem("equipmentAdvanced")) || 25000;
+            const transportUrban = parseFloat(localStorage.getItem("transportUrban")) || 10000;
+            const transportRural = parseFloat(localStorage.getItem("transportRural")) || 20000;
+            
+            const equipmentFee = (surveyType === 'control' || surveyType === 'engineering') ? equipmentFeeAdvanced : equipmentFeeStandard;
+            const transportFee = area.type === 'rural' ? transportRural : transportUrban;
             
             const totalFee = surveyFee + statutoryFee + equipmentFee + transportFee;
 
