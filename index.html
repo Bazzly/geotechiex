@@ -6,120 +6,246 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Explore the intersection of geospatial technology and web development with GeoTechieX.">
     <meta name="google-site-verification" content="xpH_xpr4t3xGt67BHzKOuXOdwZd0LNTz7wuBeLbBup4" />
-    <title>GeoTechiex | Geospatial Tech & Web Programming</title>
-    <!-- Tailwind CSS CDN -->
+    <title>GeoTechieX | Geospatial Tech & Web Programming</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js CDN -->
-    <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
-
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .hover-lift { transition: transform 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); }
+    </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900">
 
     <!-- Header with Navigation -->
-    <header class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-6">
+    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">GeoTechieX</h1>
-            <button id="mobile-menu-button" class="block md:hidden">
-              <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            <nav id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:space-x-4">
-              <a href="index.html" class="hover:underline block">Home</a>
-              <a href="#services" class="hover:underline block">Services</a>
-              <a href="#contact" class="hover:underline block">Contact Us</a>
-              <a href="/alli-bazeet-damola-profile.html" class="hover:underline block">Profile</a>
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
+                    <span class="text-2xl">🌍</span>
+                    <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX</h1>
+                </a>
+                
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <nav id="desktop-menu" class="hidden md:flex items-center space-x-2">
+                    <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                    <a href="#services" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Services</a>
+                    <a href="#projects" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
+                    <a href="#contact" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
+                    <a href="alli-bazeet-damola-profile.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
+                </nav>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
+                <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                <a href="#services" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Services</a>
+                <a href="#projects" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
+                <a href="#contact" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
+                <a href="alli-bazeet-damola-profile.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
             </nav>
-          </div>
         </div>
-      </header>
-      
+    </header>
+
     <!-- Hero Section -->
-    <section class="bg-gray-200 text-center py-20">
-        <h2 class="text-4xl font-bold mb-4">Welcome to GeoTechiex</h2>
-        <p class="text-lg text-gray-700 mb-6">Exploring the future of geospatial technology and web programming.</p>
-        <a href="#services" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700">Learn More</a>
-    </section>
-
-    <!-- 3 Grid Section -->
-    <section id="services" class="py-12 max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-            <h3 class="text-2xl font-bold mb-4">Geospatial Technology</h3>
-            <p>Explore the cutting-edge geospatial solutions like GIS, mapping, and spatial data analysis.</p>
-        </div>
-        <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-            <h3 class="text-2xl font-bold mb-4">Web Development</h3>
-            <p>Stay updated on the latest trends in web development, including HTML, CSS, JavaScript, and backend programming.</p>
-        </div>
-        <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-            <h3 class="text-2xl font-bold mb-4">Automation & Tools</h3>
-            <p>Learn how to automate workflows, integrate APIs, and create dynamic web apps with geospatial data.</p>
+    <section class="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16 sm:py-24 overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="container mx-auto px-4 text-center relative z-10 fade-in">
+            <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6">Welcome to GeoTechieX</h2>
+            <p class="text-base sm:text-xl lg:text-2xl text-blue-100 mb-6 sm:mb-8 max-w-3xl mx-auto">
+                Exploring the future of geospatial technology and web programming
+            </p>
+            <a href="#services" class="inline-block bg-white text-blue-600 hover:bg-blue-50 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg shadow-xl transition transform hover:scale-105">
+                Discover Our Tools
+            </a>
         </div>
     </section>
-    <h3 class="text-4xl underline text-center uppercase">Project building section</h3>
-  <!-- project section -->
-  <section id="services" class="py-12 max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 bg-blue-700">
-    <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-      <h3 class="text-2xl font-bold mb-4">
-        <a href="checkPoint.html" class="hover:text-blue-300">Area Del. Checker</a>
-        <br>
 
-          <a href="areadelAi.html" class="hover:text-blue-300 text-green-500">AI Area Del. Checker</a>
-      </h3>
-      <p>Check if it falls within a Prime,Special prime and general Area.</p>
-  </div>
+    <!-- Services Section -->
+    <section id="services" class="py-12 sm:py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800">Our Core Services</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-blue-500">
+                    <div class="text-4xl sm:text-5xl mb-4">🗺️</div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Geospatial Technology</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Explore cutting-edge geospatial solutions like GIS, mapping, and spatial data analysis for real-world applications.</p>
+                </div>
+                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-purple-500">
+                    <div class="text-4xl sm:text-5xl mb-4">💻</div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Web Development</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Stay updated on the latest trends in web development, including HTML, CSS, JavaScript, and modern frameworks.</p>
+                </div>
+                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-green-500">
+                    <div class="text-4xl sm:text-5xl mb-4">🔧</div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Automation & Tools</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Learn how to automate workflows, integrate APIs, and create dynamic web applications with geospatial data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-    <h3 class="text-2xl font-bold mb-4"><a href="coordTrans.html" class="hover:text-blue-300">Coordinate Trans</a></h3>
-    <p>Convert coordinate from NNO, and minna datum to wgs lat long and vice versa</p>
-</div>
+    <!-- Projects Section -->
+    <section id="projects" class="py-12 sm:py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 text-gray-800">Interactive Geospatial Tools</h2>
+            <p class="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+                Powerful tools for surveyors, engineers, and GIS professionals
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                
+                <!-- Area Delineation Checker -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-green-500 to-blue-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">🎯</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Area Delineation</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Check if coordinates fall within Prime, Special Prime, or General areas.</p>
+                        <div class="space-y-2">
+                            <a href="checkPoint.html" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Standard Checker
+                            </a>
+                            <a href="areadelAi.html" class="block bg-green-600 hover:bg-green-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                AI Assistant 🤖
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-    <h3 class="text-2xl font-bold mb-4"><a href="/ngn_wards.html" class="hover:text-blue-300">NIGERIA STATE, LGA & Ward Checker</a></h3>
-    <p>Nigeria Coordinate Transformation & Ward Checker</p>
-</div>
+                <!-- Coordinate Transformation -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">🔄</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Coordinate Transform</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Convert coordinates between NNO, Minna Datum, and WGS84 lat/long systems.</p>
+                        <a href="coordTrans.html" class="block bg-purple-600 hover:bg-purple-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                            Transform Now
+                        </a>
+                    </div>
+                </div>
 
-  <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-    <h3 class="text-2xl font-bold mb-4"><a href="compass.html" class="hover:text-blue-300">REALTIME COMPASS AND DISTANCE</a></h3>
-    <p>Use this tool to check ditance and bearing</p>
-</div>
-  <div class="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition">
-    <h3 class="text-2xl font-bold mb-4"><a href="valuemap/index.html" class="hover:text-blue-300">Survey Fee Estimator</a></h3>
-    <p>Survey Fee Estimator</p>
-</div>
+                <!-- Nigeria Ward Checker -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">🇳🇬</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Nigeria Ward Checker</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Identify State, LGA, and Ward from coordinates across Nigeria.</p>
+                        <a href="ngn_wards.html" class="block bg-orange-600 hover:bg-orange-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                            Check Location
+                        </a>
+                    </div>
+                </div>
 
+                <!-- Compass & Distance -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">🧭</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Compass & Distance</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Real-time compass bearing and distance calculator for field work.</p>
+                        <a href="compass.html" class="block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                            Launch Compass
+                        </a>
+                    </div>
+                </div>
 
-</section>
-    <!-- Contact Us Section -->
-    <section id="contact" class="mb-8">
-        <h2 class="text-2xl font-semibold text-blue-400 mb-4">Connect with GeoTechieX</h2>
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <a href="https://www.youtube.com/@GeotechieX" target="_blank" 
-                class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow-lg">
-                YouTube
-            </a>
-            <a href="https://www.tiktok.com/@GeotechieX" target="_blank" 
-                class="bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded shadow-lg">
-                TikTok
-            </a>
-            <a href="https://www.instagram.com/geotechiex" target="_blank" 
-                class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded shadow-lg">
-                Instagram
-            </a>
+                <!-- Survey Fee Estimator -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">💰</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
+                        <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                            Estimate Fees
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Polygon Tools -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-4 sm:p-6">
+                        <div class="text-3xl sm:text-4xl mb-2">📐</div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Survey Drafting</h3>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Create and analyze polygon surveys with professional tools.</p>
+                        <a href="Polygon/index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                            Start Drafting
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-12 sm:py-20 bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">Connect with GeoTechieX</h2>
+            <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
+                <a href="https://www.youtube.com/@GeotechieX" target="_blank" 
+                    class="flex items-center space-x-2 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
+                    <span class="text-xl sm:text-2xl">📺</span>
+                    <span class="font-semibold text-sm sm:text-base">YouTube</span>
+                </a>
+                <a href="https://www.tiktok.com/@GeotechieX" target="_blank" 
+                    class="flex items-center space-x-2 bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
+                    <span class="text-xl sm:text-2xl">🎵</span>
+                    <span class="font-semibold text-sm sm:text-base">TikTok</span>
+                </a>
+                <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" 
+                    class="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
+                    <span class="text-xl sm:text-2xl">📸</span>
+                    <span class="font-semibold text-sm sm:text-base">LinkedIn</span>
+                </a>
+            </div>
+            <p class="text-center text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
+                Follow us for tutorials, tips, and updates on geospatial technology and web development
+            </p>
         </div>
     </section>
 
     <!-- Footer -->
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-gray-400 py-6 mt-10">
-    <div class="max-w-4xl mx-auto text-center">
-        <p>© 2024 GeoTechieX. All Rights Reserved.</p>
-        <p class="text-sm">Explore. Innovate. Elevate with GeoTechieX.</p>
-    </div>
-</footer>
-<script src="js/index.js"></script>
+    <footer class="bg-gray-800 text-gray-300 py-8 border-t border-gray-700">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-6">
+                <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">GeoTechieX</h3>
+                <p class="text-sm sm:text-base">Explore. Innovate. Elevate with Geospatial Technology.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mb-6 text-xs sm:text-sm">
+                <a href="index.html" class="hover:text-blue-400 transition">Home</a>
+                <span>•</span>
+                <a href="#services" class="hover:text-blue-400 transition">Services</a>
+                <span>•</span>
+                <a href="#projects" class="hover:text-blue-400 transition">Projects</a>
+                <span>•</span>
+                <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
+            </div>
+            <div class="text-center text-xs sm:text-sm text-gray-500">
+                <p>© 2025 GeoTechieX. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/navigation.js"></script>
 </body>
 
 </html>

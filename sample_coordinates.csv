@@ -1,0 +1,11 @@
+ID,X,Y,Z,Name
+1,538156,787954,0,Control Point A
+2,538200,788000,0,Control Point B
+3,538300,788100,0,Control Point C
+4,538400,788200,0,Boundary Marker 1
+5,538500,788300,0,Boundary Marker 2
+6,538600,788400,0,Survey Station
+7,538700,788500,0,Reference Point
+8,538800,788600,0,Corner Point
+9,538900,788700,0,Center Point
+10,539000,788800,0,Terminal Point

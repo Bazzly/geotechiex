@@ -9,68 +9,251 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    /* Custom scrollbar for chat */
+    #chatBox::-webkit-scrollbar {
+      width: 8px;
+    }
+    #chatBox::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    #chatBox::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 4px;
+    }
+    #chatBox::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+    
+    /* Smooth animations */
+    .message-enter {
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Loading animation */
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%, 20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%, 100% { content: '...'; }
+    }
+    
+    /* Pulse animation for buttons */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+    .animate-pulse-subtle {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
 
-  <header class="bg-gradient-to-r from-blue-700 to-purple-800 text-white text-center p-6 shadow-lg">
-    <h1 class="text-3xl font-bold">🧭 GeoTechieX AI Assistant</h1>
-    <p class="text-sm text-blue-200">Ask: “Which area delineation does 538156, 787954 fall within?”</p>
+  <!-- Header with Navigation -->
+  <header class="bg-gradient-to-r from-blue-700 via-purple-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-4">
+        <a href="index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
+          <span class="text-2xl">🧭</span>
+          <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX AI</h1>
+        </a>
+        
+        <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        
+        <nav id="desktop-menu" class="hidden md:flex items-center space-x-4">
+          <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+          <a href="checkPoint.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+          <a href="coordTrans.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Coord Trans</a>
+          <a href="ngn_wards.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Ward Checker</a>
+        </nav>
+      </div>
+      
+      <!-- Mobile Menu Dropdown -->
+      <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
+        <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+        <a href="checkPoint.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+        <a href="coordTrans.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Coord Trans</a>
+        <a href="ngn_wards.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Ward Checker</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="max-w-4xl mx-auto mt-6 bg-gray-800 rounded-lg shadow-lg p-6">
-    <div id="chatBox" class="h-96 overflow-y-auto p-4 bg-gray-900 rounded-lg space-y-4">
-      <div class="text-gray-500 text-sm italic text-center">Chat started. Ask a question...</div>
+  <!-- Hero Banner -->
+  <div class="bg-gradient-to-b from-purple-900/50 to-gray-900 py-4 sm:py-6 text-center px-4">
+    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">AI Area Delineation Assistant</h2>
+    <p class="text-sm sm:text-base text-blue-200 max-w-2xl mx-auto">
+      Ask me about any coordinates! Example: "Which area delineation does 538156, 787954 fall within?"
+    </p>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      
+      <!-- Chat Section -->
+      <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[600px] lg:h-[700px]">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
+          <h3 class="text-lg font-semibold flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            Chat Assistant
+          </h3>
+        </div>
+        
+        <div id="chatBox" class="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-900">
+          <div class="text-gray-400 text-sm text-center p-4 bg-gray-800/50 rounded-lg">
+            👋 Chat started. Ask me about any coordinates!
+          </div>
+        </div>
+
+        <div class="p-4 bg-gray-800 border-t border-gray-700">
+          <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+            <input id="userInput" type="text" placeholder="Enter coordinates (e.g., 538156, 787954)..." 
+                   class="flex-grow px-4 py-3 bg-gray-700 rounded-lg text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" />
+            <button id="sendBtn" 
+                    class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition flex items-center justify-center space-x-2">
+              <span>Send</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="mt-2 text-xs text-gray-400 flex items-center justify-center sm:justify-start">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Press Enter to send quickly
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Section -->
+      <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[400px] lg:h-[700px]">
+        <div class="bg-gradient-to-r from-green-600 to-blue-600 p-4">
+          <h3 class="text-lg font-semibold flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+            </svg>
+            Interactive Map
+          </h3>
+        </div>
+        <div id="map" class="flex-grow"></div>
+        <div id="mapInfo" class="p-3 bg-gray-900 text-xs text-gray-400 border-t border-gray-700 text-center">
+          📍 Map centered on Ogun State | Click and zoom to interact
+        </div>
+      </div>
     </div>
 
-    <div class="mt-4 flex">
-      <input id="userInput" type="text" placeholder="Ask about coordinates..." 
-             class="flex-grow px-4 py-2 bg-gray-700 rounded-l-lg text-gray-100 border border-gray-600 focus:ring focus:ring-blue-500" />
-      <button id="sendBtn" 
-              class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-r-lg">
-        Send
-      </button>
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+      <div class="bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg border border-gray-700 hover:border-blue-500 transition transform hover:scale-105">
+        <div class="text-blue-400 text-3xl mb-2">🎯</div>
+        <h4 class="font-semibold mb-1 text-base sm:text-lg">Accurate Detection</h4>
+        <p class="text-sm text-gray-400">Precisely identifies Prime, Special Prime, and General areas</p>
+      </div>
+      <div class="bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg border border-gray-700 hover:border-purple-500 transition transform hover:scale-105">
+        <div class="text-purple-400 text-3xl mb-2">⚡</div>
+        <h4 class="font-semibold mb-1 text-base sm:text-lg">Real-time Analysis</h4>
+        <p class="text-sm text-gray-400">Instant coordinate processing with visual feedback</p>
+      </div>
+      <div class="bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg border border-gray-700 hover:border-green-500 transition transform hover:scale-105">
+        <div class="text-green-400 text-3xl mb-2">🗺️</div>
+        <h4 class="font-semibold mb-1 text-base sm:text-lg">Interactive Mapping</h4>
+        <p class="text-sm text-gray-400">Visual representation with highlighted boundary areas</p>
+      </div>
     </div>
-
-    <div id="map" class="mt-6 rounded-lg shadow-lg" style="height: 400px;"></div>
   </main>
 
-  <footer class="text-center text-gray-400 py-6 mt-10">
-    <p>© 2025 GeoTechieX | Intelligent Geospatial Insight</p>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-8 border-t border-gray-700">
+    <div class="container mx-auto px-4">
+      <p class="text-sm sm:text-base">© 2025 GeoTechieX | Intelligent Geospatial Insight</p>
+      <div class="mt-2 flex flex-wrap justify-center gap-2 sm:gap-4 text-xs">
+        <a href="index.html" class="hover:text-blue-400 transition">Home</a>
+        <span class="hidden sm:inline">•</span>
+        <a href="checkPoint.html" class="hover:text-blue-400 transition">Area Checker</a>
+        <span class="hidden sm:inline">•</span>
+        <a href="coordTrans.html" class="hover:text-blue-400 transition">Coordinate Trans</a>
+      </div>
+    </div>
   </footer>
 
   <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenuDropdown = document.getElementById("mobile-menu-dropdown");
+    
+    mobileMenuButton.addEventListener("click", () => {
+      mobileMenuDropdown.classList.toggle("hidden");
+    });
+
+    // Chat elements
     const chatBox = document.getElementById("chatBox");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
+    const mapInfo = document.getElementById("mapInfo");
 
     // Map initialization (centered roughly on Ogun State)
     let map = L.map('map').setView([7.15, 3.35], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     // Define projection (EPSG:26331 — Minna / UTM Zone 31N)
     proj4.defs("EPSG:26331","+proj=utm +zone=31 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs");
 
     let allLayers = [];
+    let currentMarkers = [];
 
     async function loadGeoData() {
       const files = ["data/PRIME_AREA.geojson", "data/SPECIAL_PRIME_AREA.geojson"];
       for (const file of files) {
-        const res = await fetch(file);
-        const data = await res.json();
-        allLayers.push({ name: data.name || file, data });
+        try {
+          const res = await fetch(file);
+          const data = await res.json();
+          allLayers.push({ name: data.name || file, data });
+        } catch (error) {
+          console.error(`Error loading ${file}:`, error);
+        }
       }
     }
 
-    function addMessage(sender, text) {
+    function addMessage(sender, text, isLoading = false) {
       const div = document.createElement("div");
-      div.className = sender === "user"
-        ? "text-right"
-        : "text-left text-blue-400";
-      div.innerHTML = `<div class="inline-block px-4 py-2 rounded-lg ${sender === 'user' ? 'bg-blue-700' : 'bg-gray-700'}">${text}</div>`;
+      div.className = `message-enter ${sender === "user" ? "text-right" : "text-left"}`;
+      
+      const messageClass = sender === 'user' 
+        ? 'bg-blue-600 text-white' 
+        : 'bg-gray-700 text-gray-100';
+      
+      const loadingClass = isLoading ? 'loading-dots' : '';
+      
+      div.innerHTML = `<div class="inline-block px-4 py-3 rounded-lg shadow-md ${messageClass} ${loadingClass} max-w-[90%] sm:max-w-md break-words">${text}</div>`;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
     }
 
     function parseCoordinates(input) {
@@ -80,13 +263,19 @@
       return null;
     }
 
+    function clearMarkers() {
+      currentMarkers.forEach(marker => map.removeLayer(marker));
+      currentMarkers = [];
+    }
+
     async function processQuery(query) {
       addMessage("user", query);
-      addMessage("bot", "Analyzing coordinates...");
+      const loadingMsg = addMessage("bot", "Analyzing coordinates", true);
 
       const coords = parseCoordinates(query);
       if (!coords) {
-        addMessage("bot", "⚠️ Please include valid coordinates, e.g. `538156, 787954`.");
+        loadingMsg.remove();
+        addMessage("bot", "⚠️ Please include valid coordinates, e.g. <code class='bg-gray-600 px-2 py-1 rounded'>538156, 787954</code>");
         return;
       }
 
@@ -97,29 +286,53 @@
       const point = turf.point([coords.x, coords.y]);
       let found = null;
 
+      // Clear previous markers
+      clearMarkers();
+
       for (const layer of allLayers) {
         for (const feature of layer.data.features) {
           if (turf.booleanPointInPolygon(point, feature)) {
             found = feature.properties.AREA_DEL || layer.name;
-            L.geoJSON(feature, {
-              style: { color: 'lime', weight: 2 }
+            const geoJsonLayer = L.geoJSON(feature, {
+              style: { color: 'lime', weight: 3, fillOpacity: 0.2 }
             }).addTo(map);
+            currentMarkers.push(geoJsonLayer);
             break;
           }
         }
         if (found) break;
       }
 
+      loadingMsg.remove();
+
       if (found) {
-        addMessage("bot", `✅ Coordinate (${coords.x}, ${coords.y}) is inside the ${found} area.`);
+        addMessage("bot", `✅ Coordinate <strong>(${coords.x}, ${coords.y})</strong> is inside the <strong class="text-green-400">${found}</strong> area.`);
+        mapInfo.innerHTML = `📍 Showing: ${found} | Coordinates: ${coords.x}, ${coords.y}`;
       } else {
-        addMessage("bot", `❌ No matching area found or General area for (${coords.x}, ${coords.y}).`);
+        addMessage("bot", `❌ No matching area found for <strong>(${coords.x}, ${coords.y})</strong>. It may be in a General area.`);
+        mapInfo.innerHTML = `📍 No specific area found | Coordinates: ${coords.x}, ${coords.y}`;
       }
 
       // Transform to WGS84 for map centering
-      const [lon, lat] = proj4("EPSG:26331", "EPSG:4326", [coords.x, coords.y]);
-      map.setView([lat, lon], 11);
-      L.marker([lat, lon]).addTo(map);
+      try {
+        const [lon, lat] = proj4("EPSG:26331", "EPSG:4326", [coords.x, coords.y]);
+        map.setView([lat, lon], 13);
+        const marker = L.marker([lat, lon], {
+          icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          })
+        }).addTo(map);
+        marker.bindPopup(`<strong>Coordinates:</strong><br>${coords.x}, ${coords.y}`).openPopup();
+        currentMarkers.push(marker);
+      } catch (error) {
+        console.error("Coordinate transformation error:", error);
+        addMessage("bot", "⚠️ Could not display location on map. Coordinates may be out of range.");
+      }
     }
 
     sendBtn.addEventListener("click", () => {
@@ -135,7 +348,23 @@
     });
 
     // Preload data
-    loadGeoData();
+    loadGeoData().then(() => {
+      console.log("Geospatial data loaded successfully");
+    });
+
+    // Add example queries
+    setTimeout(() => {
+      const exampleDiv = document.createElement("div");
+      exampleDiv.className = "text-center text-gray-400 text-xs p-3 bg-gray-800/30 rounded-lg";
+      exampleDiv.innerHTML = `
+        <p class="mb-2 font-semibold">Try these example coordinates:</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <button onclick="userInput.value='538156, 787954'; sendBtn.click();" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition">538156, 787954</button>
+          <button onclick="userInput.value='Which area is 540000, 790000?'; sendBtn.click();" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition">540000, 790000</button>
+        </div>
+      `;
+      chatBox.appendChild(exampleDiv);
+    }, 1000);
   </script>
 </body>
 </html>

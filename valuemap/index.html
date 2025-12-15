@@ -4,98 +4,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Survey Fee Estimator tool by GeoTechieX">
-    <title>Survey Fee Estimator | GeoTechiex</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="description" content="Advanced Survey Fee Estimator with real-time data - GeoTechieX">
+    <title>Survey Fee Estimator | GeoTechieX</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .loading { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 min-h-screen flex flex-col">
     <!-- Header with Navigation -->
-    <header class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-6">
+    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">GeoTechieX</h1>
-                <button id="mobile-menu-button" class="block md:hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
-                        <path fill-rule="evenodd"
-                            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                            clip-rule="evenodd" />
+            <div class="flex items-center justify-between py-4">
+                <a href="../index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
+                    <span class="text-2xl">💰</span>
+                    <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX</h1>
+                </a>
+                
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                <nav id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:space-x-4">
-                    <a href="index.html" class="hover:underline block">Home</a>
-                    <a href="#services" class="hover:underline block">Services</a>
-                    <a href="#contact" class="hover:underline block">Contact Us</a>
-                    <a href="/alli-bazeet-damola-profile.html" class="hover:underline block">Profile</a>
+                
+                <nav id="desktop-menu" class="hidden md:flex items-center space-x-2">
+                    <a href="../index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                    <a href="../checkPoint.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+                    <a href="../coordTrans.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Coord Trans</a>
+                    <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Fee Estimator</a>
                 </nav>
             </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
+                <a href="../index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                <a href="../checkPoint.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+                <a href="../coordTrans.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Coord Trans</a>
+                <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Fee Estimator</a>
+            </nav>
         </div>
     </header>
 
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-b from-purple-900/50 to-gray-900 text-white py-6 sm:py-8 text-center px-4">
+        <div class="text-4xl sm:text-5xl mb-3">💰</div>
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Advanced Survey Fee Estimator</h2>
+        <p class="text-sm sm:text-base text-blue-200 max-w-3xl mx-auto">
+            Get accurate survey cost estimates based on real-time data, land characteristics, and market rates
+        </p>
+    </div>
+
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Survey Fee Estimator</h2>
-        
+    <main class="flex-grow container mx-auto px-4 py-6 sm:py-10 max-w-7xl">
         <!-- Controls Section -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                    <input type="number" id="lat" step="0.0001" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    Location & Property Details
+                </h3>
+            </div>
+            
+            <div class="p-4 sm:p-6">
+                <!-- Coordinate System Selector -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                🔄 Coordinate System
+                            </label>
+                            <select id="coordSystem" onchange="toggleCoordinateInputs()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white">
+                                <option value="EPSG:4326">WGS84 (Latitude/Longitude)</option>
+                                <option value="EPSG:26331">Minna / UTM zone 31N</option>
+                                <option value="EPSG:26332">Minna / UTM zone 32N</option>
+                                <option value="EPSG:26391">Minna / Nigeria West Belt</option>
+                                <option value="EPSG:26392">Minna / Nigeria Mid Belt</option>
+                                <option value="EPSG:26393">Minna / Nigeria East Belt</option>
+                            </select>
+                        </div>
+                        <div id="convertInfo" class="hidden flex items-center text-sm text-blue-700 bg-blue-100 rounded-lg px-3 py-2">
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Coordinates will be auto-converted to Lat/Lng</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                    <input type="number" id="lng" step="0.0001" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <span id="xLabel">📍 Latitude</span>
+                        </label>
+                        <input type="number" id="lat" step="0.000001" placeholder="e.g., 6.5244"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <span id="yLabel">📍 Longitude</span>
+                        </label>
+                        <input type="number" id="lng" step="0.000001" placeholder="e.g., 3.3792"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            🌍 Analysis Radius (km)
+                        </label>
+                        <input type="number" id="buffer" value="5" step="0.1" min="0.5" max="50"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            📏 Land Area (sq.m)
+                        </label>
+                        <input type="number" id="landsqmts" value="500" step="10" min="1"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Buffer Radius (km)</label>
-                    <input type="number" id="buffer" value="5" step="0.1" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+
+                <!-- Additional Parameters -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            🏗️ Survey Type
+                        </label>
+                        <select id="surveyType" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                            <option value="topographic">Topographic Survey</option>
+                            <option value="cadastral" selected>Cadastral Survey</option>
+                            <option value="engineering">Engineering Survey</option>
+                            <option value="control">Control Survey</option>
+                            <option value="subdivision">Subdivision Survey</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            🎯 Accuracy Level
+                        </label>
+                        <select id="accuracyLevel" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                            <option value="standard">Standard</option>
+                            <option value="high" selected>High Precision</option>
+                            <option value="ultra">Ultra-High Precision</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            ⏱️ Urgency
+                        </label>
+                        <select id="urgency" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                            <option value="normal" selected>Normal (7-14 days)</option>
+                            <option value="express">Express (3-5 days)</option>
+                            <option value="urgent">Urgent (1-2 days)</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Land in (sqmts)</label>
-                    <input type="number" id="landsqmts" value="5" step="0.1" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div class="flex items-end">
+
+                <div class="flex flex-col sm:flex-row gap-3">
                     <button onclick="geolocate()" 
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        class="flex-1 sm:flex-none px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition transform hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
                         Use My Location
+                    </button>
+                    <button onclick="analyzeArea()" 
+                        class="flex-1 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span id="analyzeButtonText">Analyze & Calculate Fees</span>
                     </button>
                 </div>
             </div>
-            <button onclick="analyzeArea()" 
-                class="w-full md:w-auto px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                Analyze Area
-            </button>
         </div>
 
         <!-- Results Section -->
-        <div id="result" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
-            <h3 class="text-xl font-semibold mb-4 text-blue-600">Analysis Results</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="result-content"></div>
+        <div id="result" class="hidden space-y-6 mb-6">
+            <!-- Summary Card -->
+            <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl shadow-2xl p-6 text-white">
+                <h3 class="text-2xl font-bold mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Analysis Complete
+                </h3>
+                <div id="locationSummary" class="text-lg"></div>
+            </div>
+
+            <!-- Detailed Results Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Area Analysis -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-cyan-600 p-4">
+                        <h4 class="font-semibold text-white flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                            Area Characteristics
+                        </h4>
+                    </div>
+                    <div id="areaAnalysis" class="p-6"></div>
+                </div>
+
+                <!-- Fee Breakdown -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
+                        <h4 class="font-semibold text-white flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Cost Breakdown
+                        </h4>
+                    </div>
+                    <div id="feeBreakdown" class="p-6"></div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h4 class="font-semibold text-gray-800 mb-4 flex items-center text-lg">
+                    <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Additional Information
+                </h4>
+                <div id="additionalInfo" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <button onclick="downloadReport()" class="flex-1 sm:flex-none px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Download Report
+                </button>
+                <button onclick="shareResults()" class="flex-1 sm:flex-none px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                    </svg>
+                    Share Results
+                </button>
+            </div>
         </div>
 
         <!-- Map Section -->
-        <div id="map" class="h-96 w-full rounded-lg shadow-lg border border-gray-200"></div>
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-green-600 to-blue-600 p-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    Interactive Location Map
+                </h3>
+            </div>
+            <div id="map" class="h-96 lg:h-[500px] w-full"></div>
+            <div id="mapInfo" class="p-3 bg-gray-50 text-xs text-gray-600 border-t">
+                📍 Click on the map or use your location to analyze survey costs
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-6 mt-10">
-        <div class="max-w-4xl mx-auto text-center">
-            <p>© 2024 GeoTechieX. All Rights Reserved.</p>
-            <p class="text-sm">Explore. Innovate. Elevate with GeoTechieX.</p>
+    <footer class="bg-gray-800 text-gray-300 py-8 border-t border-gray-700 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-6">
+                <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">GeoTechieX</h3>
+                <p class="text-sm sm:text-base">Professional Survey Fee Estimation</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mb-6 text-xs sm:text-sm">
+                <a href="../index.html" class="hover:text-blue-400 transition">Home</a>
+                <span>•</span>
+                <a href="../checkPoint.html" class="hover:text-blue-400 transition">Area Checker</a>
+                <span>•</span>
+                <a href="../coordTrans.html" class="hover:text-blue-400 transition">Coord Trans</a>
+            </div>
+            <div class="text-center text-xs sm:text-sm text-gray-500">
+                <p>© 2025 GeoTechieX. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="../js/navigation.js"></script>
     <script>
+        // Define all Nigerian projection systems
+        proj4.defs([
+            ["EPSG:26331", "+proj=utm +zone=31 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs"],
+            ["EPSG:26332", "+proj=utm +zone=32 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs"],
+            ["EPSG:26391", "+proj=tmerc +lat_0=4 +lon_0=4.5 +k=0.99975 +x_0=230738.26 +y_0=0 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs"],
+            ["EPSG:26392", "+proj=tmerc +lat_0=4 +lon_0=8.5 +k=0.99975 +x_0=670553.98 +y_0=0 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs"],
+            ["EPSG:26393", "+proj=tmerc +lat_0=4 +lon_0=12.5 +k=0.99975 +x_0=1110369.7 +y_0=0 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs"],
+            ["EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"]
+        ]);
+
+        // Toggle coordinate input labels based on selected system
+        function toggleCoordinateInputs() {
+            const coordSystem = document.getElementById('coordSystem').value;
+            const xLabel = document.getElementById('xLabel');
+            const yLabel = document.getElementById('yLabel');
+            const latInput = document.getElementById('lat');
+            const lngInput = document.getElementById('lng');
+            const convertInfo = document.getElementById('convertInfo');
+            
+            if (coordSystem === 'EPSG:4326') {
+                xLabel.textContent = '📍 Latitude';
+                yLabel.textContent = '📍 Longitude';
+                latInput.placeholder = 'e.g., 6.5244';
+                lngInput.placeholder = 'e.g., 3.3792';
+                convertInfo.classList.add('hidden');
+            } else {
+                xLabel.textContent = '📐 Easting (X)';
+                yLabel.textContent = '📐 Northing (Y)';
+                latInput.placeholder = 'e.g., 538156';
+                lngInput.placeholder = 'e.g., 787954';
+                convertInfo.classList.remove('hidden');
+            }
+            
+            // Clear inputs when switching
+            latInput.value = '';
+            lngInput.value = '';
+        }
+
+        // Convert coordinates to WGS84 if needed
+        function getWGS84Coordinates() {
+            const coordSystem = document.getElementById('coordSystem').value;
+            const xValue = parseFloat(document.getElementById('lat').value);
+            const yValue = parseFloat(document.getElementById('lng').value);
+            
+            if (isNaN(xValue) || isNaN(yValue)) {
+                return null;
+            }
+            
+            if (coordSystem === 'EPSG:4326') {
+                // Already in WGS84
+                return { lat: xValue, lng: yValue };
+            } else {
+                // Convert from selected system to WGS84
+                try {
+                    const [lng, lat] = proj4(coordSystem, 'EPSG:4326', [xValue, yValue]);
+                    return { lat, lng };
+                } catch (error) {
+                    console.error('Coordinate conversion error:', error);
+                    alert('⚠️ Error converting coordinates. Please check your input values.');
+                    return null;
+                }
+            }
+        }
+
         // Initialize the map
         const map = L.map('map').setView([7.5, 3.9], 8);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -103,147 +369,335 @@
         }).addTo(map);
 
         let marker, circle;
-        let areaData = []; // Will store our GeoJSON data
+        let areaData = [];
+        let osmData = null;
         const analysisCache = {};
+        let currentAnalysisData = null;
 
-        // Load GeoJSON data with built-up and vacant percentages
+        // Load GeoJSON data
         async function loadAreaData() {
             try {
                 const response = await fetch('areas.geojson');
                 const data = await response.json();
                 areaData = data.features;
-                console.log('Area data loaded successfully');
-                
-                // Add markers for each area (optional visualization)
-                areaData.forEach(area => {
-                    const coords = area.geometry.coordinates;
-                    L.marker([coords[1], coords[0]]).addTo(map)
-                        .bindPopup(`<b>${area.properties.name}</b><br>Type: ${area.properties.type}`);
-                });
+                console.log('✓ Area data loaded:', areaData.length, 'areas');
             } catch (error) {
-                console.error('Error loading area data:', error);
-                // Fallback data if GeoJSON fails to load
+                console.warn('⚠ Using fallback area data');
                 areaData = [
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "Default Urban Area",
-                            "type": "urban",
-                            "built_up": 65,
-                            "vacant": 20,
-                            "roads": 15
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [3.4, 6.5]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "Default Rural Area",
-                            "type": "rural",
-                            "built_up": 25,
-                            "vacant": 65,
-                            "roads": 10
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [3.6, 6.3]
-                        }
-                    }
+                    { "type": "Feature", "properties": { "name": "Lagos Urban", "type": "urban", "built_up": 65, "vacant": 20, "roads": 15 }, "geometry": { "type": "Point", "coordinates": [3.4, 6.5] }},
+                    { "type": "Feature", "properties": { "name": "Rural Area", "type": "rural", "built_up": 25, "vacant": 65, "roads": 10 }, "geometry": { "type": "Point", "coordinates": [3.6, 6.3] }}
                 ];
             }
         }
 
-        // Call the function to load data
         loadAreaData();
 
+        // Geolocation function
         function geolocate() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Locating...';
+            
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
+                    // Geolocation always returns WGS84, so set system to WGS84
+                    document.getElementById('coordSystem').value = 'EPSG:4326';
+                    toggleCoordinateInputs();
+                    
                     document.getElementById('lat').value = pos.coords.latitude.toFixed(6);
                     document.getElementById('lng').value = pos.coords.longitude.toFixed(6);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Use My Location';
                     analyzeArea();
                 }, () => {
-                    alert("Geolocation failed.");
+                    alert("❌ Unable to get your location. Please check permissions.");
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Use My Location';
                 });
             } else {
-                alert("Geolocation not supported.");
+                alert("❌ Geolocation is not supported by your browser.");
+                btn.disabled = false;
             }
         }
 
-        function analyzeArea() {
-            const lat = parseFloat(document.getElementById('lat').value);
-            const lng = parseFloat(document.getElementById('lng').value);
+        // Main analysis function
+        async function analyzeArea() {
+            // Get coordinates and convert if needed
+            const coords = getWGS84Coordinates();
+            
+            if (!coords) {
+                alert("⚠ Please enter valid coordinates.");
+                return;
+            }
+            
+            const lat = coords.lat;
+            const lng = coords.lng;
             const landsize = parseFloat(document.getElementById('landsqmts').value);
             const buffer = parseFloat(document.getElementById('buffer').value) * 1000;
+            const surveyType = document.getElementById('surveyType').value;
+            const accuracyLevel = document.getElementById('accuracyLevel').value;
+            const urgency = document.getElementById('urgency').value;
 
-            if (isNaN(lat) || isNaN(lng)) {
-                alert("Please enter valid coordinates.");
+            if (isNaN(landsize)) {
+                alert("⚠ Please enter valid land area.");
                 return;
             }
 
-            const cacheKey = `${lat.toFixed(4)}_${lng.toFixed(4)}_${buffer}`;
+            // Show loading state
+            const analyzeBtn = document.getElementById('analyzeButtonText');
+            const originalText = analyzeBtn.textContent;
+            analyzeBtn.innerHTML = '<svg class="animate-spin w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Analyzing...';
 
-            if (analysisCache[cacheKey]) {
-                displayResults(analysisCache[cacheKey], landsize, buffer);
-                return;
-            }
-
+            // Update map
             if (marker) map.removeLayer(marker);
             if (circle) map.removeLayer(circle);
 
-            marker = L.marker([lat, lng]).addTo(map);
-            circle = L.circle([lat, lng], { radius: buffer, color: 'blue', fillOpacity: 0.2 }).addTo(map);
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(`<b>Analysis Location</b><br>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}`);
+            circle = L.circle([lat, lng], { 
+                radius: buffer, 
+                color: '#8b5cf6', 
+                fillColor: '#8b5cf6',
+                fillOpacity: 0.15,
+                weight: 2
+            }).addTo(map);
             map.setView([lat, lng], 14);
 
-            // Find the nearest area data point
-            let selectedArea = findNearestArea(lat, lng);
-            
-            // Use the area data for calculations
-            const areaType = selectedArea?.properties.type || "rural";
-            const builtUp = selectedArea?.properties.built_up || 30;
-            const vacant = selectedArea?.properties.vacant || 60;
-            const roads = selectedArea?.properties.roads || 10;
-            const areaName = selectedArea?.properties.name || "Unclassified Area";
+            try {
+                // Fetch OpenStreetMap data via Overpass API
+                await fetchOSMData(lat, lng, buffer);
 
-            // Get base fees
-            const urbanFee = parseFloat(localStorage.getItem("urbanFee")) || 75000;
-            const ruralFee = parseFloat(localStorage.getItem("ruralFee")) || 35000;
-            const baseFee = areaType === "urban" ? urbanFee : ruralFee;
-            
-            // Fee adjustment
-            let vacantFactor = calculateVacantFactor(vacant);
-            
-            const surveyFee = baseFee * vacantFactor;
-            const statutoryFee = baseFee * vacantFactor * 0.7;
+                // Find nearest reference area
+                const selectedArea = findNearestArea(lat, lng);
+                
+                // Determine area characteristics
+                const areaCharacteristics = analyzeAreaCharacteristics(osmData, selectedArea);
+                
+                // Calculate fees with all multipliers
+                const feeCalculation = calculateDetailedFees(
+                    areaCharacteristics, 
+                    landsize, 
+                    surveyType, 
+                    accuracyLevel, 
+                    urgency
+                );
 
-            // Cache results
-            analysisCache[cacheKey] = {
-                builtUp: builtUp.toFixed(2),
-                vacant: vacant.toFixed(2),
-                roads: roads.toFixed(2),
-                surveyFee,
-                statutoryFee,
-                areaType: areaType.charAt(0).toUpperCase() + areaType.slice(1),
-                baseFee,
-                areaName
-            };
+                // Store for report generation
+                currentAnalysisData = {
+                    location: { lat, lng, landsize, buffer },
+                    area: areaCharacteristics,
+                    fees: feeCalculation,
+                    parameters: { surveyType, accuracyLevel, urgency }
+                };
 
-            displayResults(analysisCache[cacheKey], landsize, buffer);
+                // Display results
+                displayResults(currentAnalysisData);
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                alert('⚠ Analysis completed with limited data. Results may be approximate.');
+                
+                // Fallback to local data
+                const selectedArea = findNearestArea(lat, lng);
+                const areaCharacteristics = {
+                    name: selectedArea?.properties.name || "Unknown Area",
+                    type: selectedArea?.properties.type || "rural",
+                    builtUp: selectedArea?.properties.built_up || 30,
+                    vacant: selectedArea?.properties.vacant || 60,
+                    roads: selectedArea?.properties.roads || 10,
+                    buildings: 0,
+                    landuse: "mixed"
+                };
+                
+                const feeCalculation = calculateDetailedFees(areaCharacteristics, landsize, surveyType, accuracyLevel, urgency);
+                
+                currentAnalysisData = {
+                    location: { lat, lng, landsize, buffer },
+                    area: areaCharacteristics,
+                    fees: feeCalculation,
+                    parameters: { surveyType, accuracyLevel, urgency }
+                };
+                
+                displayResults(currentAnalysisData);
+            } finally {
+                analyzeBtn.textContent = originalText;
+            }
         }
 
+        // Fetch OpenStreetMap data using Overpass API
+        async function fetchOSMData(lat, lng, radius) {
+            const query = `
+                [out:json][timeout:25];
+                (
+                  node["building"](around:${radius},${lat},${lng});
+                  way["building"](around:${radius},${lat},${lng});
+                  way["highway"](around:${radius},${lat},${lng});
+                  way["landuse"](around:${radius},${lat},${lng});
+                  way["natural"](around:${radius},${lat},${lng});
+                );
+                out body;
+                >;
+                out skel qt;
+            `;
+
+            try {
+                const response = await fetch('https://overpass-api.de/api/interpreter', {
+                    method: 'POST',
+                    body: query
+                });
+
+                if (!response.ok) throw new Error('API request failed');
+                
+                const data = await response.json();
+                osmData = data.elements;
+                console.log('✓ OSM data fetched:', osmData.length, 'elements');
+                return osmData;
+            } catch (error) {
+                console.warn('⚠ OSM API unavailable, using local data');
+                osmData = null;
+                throw error;
+            }
+        }
+
+        // Analyze area characteristics from OSM data
+        function analyzeAreaCharacteristics(osmData, referenceArea) {
+            let characteristics = {
+                name: referenceArea?.properties.name || "Unknown Area",
+                type: "suburban",
+                builtUp: 35,
+                vacant: 50,
+                roads: 15,
+                buildings: 0,
+                landuse: "mixed"
+            };
+
+            if (!osmData || osmData.length === 0) {
+                if (referenceArea) {
+                    characteristics.type = referenceArea.properties.type;
+                    characteristics.builtUp = referenceArea.properties.built_up;
+                    characteristics.vacant = referenceArea.properties.vacant;
+                    characteristics.roads = referenceArea.properties.roads;
+                }
+                return characteristics;
+            }
+
+            // Count different features
+            let buildingCount = 0;
+            let roadCount = 0;
+            let landuses = {};
+            
+            osmData.forEach(element => {
+                if (element.tags) {
+                    if (element.tags.building) buildingCount++;
+                    if (element.tags.highway) roadCount++;
+                    if (element.tags.landuse) {
+                        landuses[element.tags.landuse] = (landuses[element.tags.landuse] || 0) + 1;
+                    }
+                }
+            });
+
+            characteristics.buildings = buildingCount;
+
+            // Determine area type based on building density
+            if (buildingCount > 100) {
+                characteristics.type = "urban";
+                characteristics.builtUp = Math.min(85, 60 + buildingCount / 10);
+                characteristics.vacant = Math.max(5, 25 - buildingCount / 20);
+            } else if (buildingCount > 30) {
+                characteristics.type = "suburban";
+                characteristics.builtUp = 40 + buildingCount / 2;
+                characteristics.vacant = 50 - buildingCount / 2;
+            } else {
+                characteristics.type = "rural";
+                characteristics.builtUp = 20 + buildingCount;
+                characteristics.vacant = 70 - buildingCount;
+            }
+
+            characteristics.roads = Math.min(25, roadCount / 2);
+
+            // Determine primary land use
+            const sortedLanduses = Object.entries(landuses).sort((a, b) => b[1] - a[1]);
+            characteristics.landuse = sortedLanduses[0]?.[0] || "mixed";
+
+            return characteristics;
+        }
+
+        // Calculate fees with all multipliers
+        function calculateDetailedFees(area, landsize, surveyType, accuracyLevel, urgency) {
+            // Base fees by area type (per sq.m)
+            const baseFees = {
+                urban: 85,
+                suburban: 55,
+                rural: 35
+            };
+
+            let baseFee = baseFees[area.type] || 55;
+
+            // Survey type multipliers
+            const surveyMultipliers = {
+                topographic: 1.2,
+                cadastral: 1.0,
+                engineering: 1.3,
+                control: 1.5,
+                subdivision: 0.9
+            };
+
+            // Accuracy level multipliers
+            const accuracyMultipliers = {
+                standard: 1.0,
+                high: 1.3,
+                ultra: 1.6
+            };
+
+            // Urgency multipliers
+            const urgencyMultipliers = {
+                normal: 1.0,
+                express: 1.4,
+                urgent: 1.8
+            };
+
+            // Area complexity multiplier (based on built-up percentage)
+            const complexityMultiplier = 1 + (area.builtUp / 200);
+
+            // Calculate adjusted base fee
+            const adjustedBaseFee = baseFee * 
+                surveyMultipliers[surveyType] * 
+                accuracyMultipliers[accuracyLevel] * 
+                urgencyMultipliers[urgency] *
+                complexityMultiplier;
+
+            const surveyFee = adjustedBaseFee * landsize;
+            const statutoryFee = adjustedBaseFee * 0.65 * landsize;
+            const equipmentFee = surveyType === 'control' || surveyType === 'engineering' ? 25000 : 15000;
+            const transportFee = area.type === 'rural' ? 20000 : 10000;
+            
+            const totalFee = surveyFee + statutoryFee + equipmentFee + transportFee;
+
+            return {
+                baseFee,
+                adjustedBaseFee: adjustedBaseFee.toFixed(2),
+                surveyFee: surveyFee.toFixed(2),
+                statutoryFee: statutoryFee.toFixed(2),
+                equipmentFee,
+                transportFee,
+                totalFee: totalFee.toFixed(2),
+                multipliers: {
+                    survey: surveyMultipliers[surveyType],
+                    accuracy: accuracyMultipliers[accuracyLevel],
+                    urgency: urgencyMultipliers[urgency],
+                    complexity: complexityMultiplier.toFixed(2)
+                }
+            };
+        }
+
+        // Find nearest reference area
         function findNearestArea(lat, lng) {
             let nearestArea = null;
             let minDistance = Infinity;
             
             areaData.forEach(area => {
-                const areaCoords = area.geometry.coordinates;
-                const distance = Math.sqrt(
-                    Math.pow(lng - areaCoords[0], 2) + 
-                    Math.pow(lat - areaCoords[1], 2)
-                );
+                const [aLng, aLat] = area.geometry.coordinates;
+                const distance = Math.sqrt(Math.pow(lng - aLng, 2) + Math.pow(lat - aLat, 2));
                 
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -254,36 +708,249 @@
             return nearestArea;
         }
 
-        function calculateVacantFactor(vacant) {
-            if (vacant < 10) return 1.5;
-            if (vacant < 25) return 1.3;
-            if (vacant < 50) return 1.1;
-            return 1;
-        }
-
-        function displayResults(data, landsize, buffer) {
+        // Display comprehensive results
+        function displayResults(data) {
             document.getElementById("result").classList.remove('hidden');
-            document.getElementById("result-content").innerHTML = `
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-blue-800 mb-2">Area Details (${buffer/1000}km radius)</h4>
-                    <ul class="space-y-1">
-                        <li class="flex justify-between"><span>Location:</span> <span class="font-medium">${data.areaName}</span></li>
-                        <li class="flex justify-between"><span>Type:</span> <span class="font-medium ${data.areaType === 'Urban' ? 'text-green-600' : 'text-yellow-600'}">${data.areaType}</span></li>
-                        <li class="flex justify-between"><span>Built-up:</span> <span class="font-medium">${data.builtUp}%</span></li>
-                        <li class="flex justify-between"><span>Vacant:</span> <span class="font-medium">${data.vacant}%</span></li>
-                        <li class="flex justify-between"><span>Roads:</span> <span class="font-medium">${data.roads}%</span></li>
-                    </ul>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-purple-800 mb-2">Fee Calculation</h4>
-                    <ul class="space-y-1">
-                        <li class="flex justify-between"><span>Base Fee:</span> <span class="font-medium">₦${data.baseFee.toLocaleString()}</span></li>
-                        <li class="flex justify-between"><span>Multiplier:</span> <span class="font-medium">${(data.surveyFee/data.baseFee).toFixed(2)}x</span></li>
-                        <li class="flex justify-between border-t border-purple-200 mt-2 pt-2"><span class="font-semibold">Survey Fee:</span> <span class="font-bold">₦${(data.surveyFee * landsize).toLocaleString()}</span></li>
-                        <li class="flex justify-between border-t border-purple-200 mt-2 pt-2"><span class="font-semibold">Statutory Fee:</span> <span class="font-bold">₦${(data.statutoryFee * landsize).toLocaleString()}</span></li>
-                    </ul>
+            document.getElementById("result").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Get coordinate system name
+            const coordSystem = document.getElementById('coordSystem').value;
+            const coordSystemNames = {
+                'EPSG:4326': 'WGS84',
+                'EPSG:26331': 'Minna UTM 31N',
+                'EPSG:26332': 'Minna UTM 32N',
+                'EPSG:26391': 'Minna West Belt',
+                'EPSG:26392': 'Minna Mid Belt',
+                'EPSG:26393': 'Minna East Belt'
+            };
+            const coordSystemName = coordSystemNames[coordSystem] || coordSystem;
+
+            // Location Summary
+            document.getElementById('locationSummary').innerHTML = `
+                📍 <strong>${data.area.name}</strong> • ${data.area.type.charAt(0).toUpperCase() + data.area.type.slice(1)} Area<br>
+                📐 Land Area: <strong>${data.location.landsize.toLocaleString()} sq.m</strong> • Analysis Radius: <strong>${(data.location.buffer/1000).toFixed(1)} km</strong><br>
+                ${coordSystem !== 'EPSG:4326' ? `🔄 Converted from <strong>${coordSystemName}</strong> to WGS84` : ''}
+            `;
+
+            // Area Analysis
+            document.getElementById('areaAnalysis').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <span class="text-gray-700">🏙️ Area Classification</span>
+                        <span class="font-bold text-blue-600">${data.area.type.toUpperCase()}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <span class="text-gray-700">🏗️ Built-up Area</span>
+                        <span class="font-bold text-green-600">${data.area.builtUp.toFixed(1)}%</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                        <span class="text-gray-700">🌾 Vacant Land</span>
+                        <span class="font-bold text-yellow-600">${data.area.vacant.toFixed(1)}%</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-700">🛣️ Road Coverage</span>
+                        <span class="font-bold text-gray-600">${data.area.roads.toFixed(1)}%</span>
+                    </div>
+                    ${data.area.buildings ? `
+                    <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                        <span class="text-gray-700">🏢 Buildings Detected</span>
+                        <span class="font-bold text-purple-600">${data.area.buildings}</span>
+                    </div>` : ''}
+                    <div class="flex items-center justify-between p-3 bg-indigo-50 rounded-lg">
+                        <span class="text-gray-700">🗺️ Land Use Type</span>
+                        <span class="font-bold text-indigo-600">${data.area.landuse.toUpperCase()}</span>
+                    </div>
                 </div>
             `;
+
+            // Fee Breakdown
+            document.getElementById('feeBreakdown').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-600">Base Rate (per sq.m)</span>
+                        <span class="font-medium">₦${data.fees.baseFee}/sq.m</span>
+                    </div>
+                    <div class="border-t pt-2 space-y-2 text-sm">
+                        <div class="flex justify-between text-gray-600">
+                            <span>• Survey Type (${data.parameters.surveyType})</span>
+                            <span>${data.fees.multipliers.survey}x</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>• Accuracy (${data.parameters.accuracyLevel})</span>
+                            <span>${data.fees.multipliers.accuracy}x</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>• Urgency (${data.parameters.urgency})</span>
+                            <span>${data.fees.multipliers.urgency}x</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>• Area Complexity</span>
+                            <span>${data.fees.multipliers.complexity}x</span>
+                        </div>
+                    </div>
+                    <div class="border-t pt-3 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Survey Fee</span>
+                            <span class="font-semibold text-lg">₦${parseFloat(data.fees.surveyFee).toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Statutory Fee</span>
+                            <span class="font-semibold">₦${parseFloat(data.fees.statutoryFee).toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Equipment Fee</span>
+                            <span class="font-semibold">₦${data.fees.equipmentFee.toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Transport Fee</span>
+                            <span class="font-semibold">₦${data.fees.transportFee.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="border-t-2 border-purple-200 pt-3 mt-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-gray-800">TOTAL ESTIMATE</span>
+                            <span class="text-2xl font-bold text-purple-600">₦${parseFloat(data.fees.totalFee).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Additional Information
+            const surveyTypeDescriptions = {
+                topographic: "Detailed terrain mapping including contours, elevations, and physical features",
+                cadastral: "Property boundary survey for land registration and ownership documentation",
+                engineering: "Precision survey for construction projects and infrastructure development",
+                control: "High-accuracy reference network establishment for large-scale projects",
+                subdivision: "Land division survey for creating multiple parcels from single property"
+            };
+
+            document.getElementById('additionalInfo').innerHTML = `
+                <div class="col-span-full bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-700"><strong>Survey Type:</strong> ${surveyTypeDescriptions[data.parameters.surveyType]}</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">📋 Deliverables Include:</p>
+                    <ul class="text-xs text-gray-600 space-y-1 ml-4">
+                        <li>• Survey plan and coordinates</li>
+                        <li>• Cadastral diagram</li>
+                        <li>• Technical report</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">⏱️ Timeline:</p>
+                    <p class="text-xs text-gray-600">
+                        ${data.parameters.urgency === 'normal' ? '7-14 working days' : 
+                          data.parameters.urgency === 'express' ? '3-5 working days' : '1-2 working days'}
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">🎯 Accuracy:</p>
+                    <p class="text-xs text-gray-600">
+                        ${data.parameters.accuracyLevel === 'standard' ? '±5cm horizontal' : 
+                          data.parameters.accuracyLevel === 'high' ? '±2cm horizontal' : '±1cm horizontal'}
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">📞 Next Steps:</p>
+                    <p class="text-xs text-gray-600">Contact us to schedule site visit and finalize agreement</p>
+                </div>
+            `;
+
+            // Update map info
+            document.getElementById('mapInfo').innerHTML = `
+                📍 Analysis Area: <strong>${data.area.name}</strong> (${data.area.type}) • 
+                ${data.area.buildings ? `${data.area.buildings} buildings detected • ` : ''}
+                ${data.area.builtUp.toFixed(0)}% built-up, ${data.area.vacant.toFixed(0)}% vacant
+            `;
+        }
+
+        // Download report as CSV
+        function downloadReport() {
+            if (!currentAnalysisData) {
+                alert('⚠ No analysis data available. Please run an analysis first.');
+                return;
+            }
+
+            const d = currentAnalysisData;
+            const csv = [
+                'SURVEY FEE ESTIMATION REPORT',
+                `Generated: ${new Date().toLocaleString()}`,
+                '',
+                'LOCATION DETAILS',
+                `Latitude,${d.location.lat}`,
+                `Longitude,${d.location.lng}`,
+                `Land Area (sq.m),${d.location.landsize}`,
+                `Analysis Radius (km),${(d.location.buffer/1000).toFixed(1)}`,
+                '',
+                'AREA CHARACTERISTICS',
+                `Location Name,${d.area.name}`,
+                `Area Type,${d.area.type}`,
+                `Built-up Percentage,${d.area.builtUp.toFixed(1)}%`,
+                `Vacant Land,${d.area.vacant.toFixed(1)}%`,
+                `Road Coverage,${d.area.roads.toFixed(1)}%`,
+                `Buildings Detected,${d.area.buildings || 'N/A'}`,
+                `Land Use Type,${d.area.landuse}`,
+                '',
+                'SURVEY PARAMETERS',
+                `Survey Type,${d.parameters.surveyType}`,
+                `Accuracy Level,${d.parameters.accuracyLevel}`,
+                `Urgency,${d.parameters.urgency}`,
+                '',
+                'FEE BREAKDOWN',
+                `Base Rate (per sq.m),₦${d.fees.baseFee}`,
+                `Survey Type Multiplier,${d.fees.multipliers.survey}x`,
+                `Accuracy Multiplier,${d.fees.multipliers.accuracy}x`,
+                `Urgency Multiplier,${d.fees.multipliers.urgency}x`,
+                `Complexity Multiplier,${d.fees.multipliers.complexity}x`,
+                `Adjusted Rate,₦${d.fees.adjustedBaseFee}`,
+                '',
+                `Survey Fee,₦${parseFloat(d.fees.surveyFee).toLocaleString()}`,
+                `Statutory Fee,₦${parseFloat(d.fees.statutoryFee).toLocaleString()}`,
+                `Equipment Fee,₦${d.fees.equipmentFee.toLocaleString()}`,
+                `Transport Fee,₦${d.fees.transportFee.toLocaleString()}`,
+                '',
+                `TOTAL ESTIMATE,₦${parseFloat(d.fees.totalFee).toLocaleString()}`,
+                '',
+                'Note: This is an estimate. Final fees may vary based on site conditions.'
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `survey_estimate_${Date.now()}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Share results
+        function shareResults() {
+            if (!currentAnalysisData) {
+                alert('⚠ No analysis data available. Please run an analysis first.');
+                return;
+            }
+
+            const d = currentAnalysisData;
+            const shareText = `🏗️ Survey Fee Estimate\n\n` +
+                `📍 Location: ${d.area.name} (${d.area.type})\n` +
+                `📐 Land Area: ${d.location.landsize} sq.m\n` +
+                `🏷️ Survey Type: ${d.parameters.surveyType}\n` +
+                `💰 Total Estimate: ₦${parseFloat(d.fees.totalFee).toLocaleString()}\n\n` +
+                `Generated by GeoTechieX Survey Fee Estimator`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Survey Fee Estimate',
+                    text: shareText
+                }).catch(err => console.log('Share cancelled'));
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('✓ Results copied to clipboard!');
+                }).catch(() => {
+                    alert('⚠ Unable to share. Please try downloading the report instead.');
+                });
+            }
         }
     </script>
 </body>

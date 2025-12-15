@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoTechieX Coordinate Transformation</title>
+    <title>GeoTechieX - Coordinate Transformation Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf"></script>
@@ -12,127 +12,228 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
 </head>
 
-<body class="bg-gray-900 font-sans">
+<body class="bg-gray-900 font-sans min-h-screen flex flex-col">
 
-        <!-- Header with Navigation -->
-  <!-- Header Section -->
-  <header class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-6">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
-        <h1 class="text-2xl font-bold">GeoTechieX</h1>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="checkPoint.html" class="hover:text-blue-300">Area Del. Checker</a></li>
-                <li><a href="coordTrans.html" class="hover:text-blue-300">Coords Transform</a></li>
-                <li><a href="index.html" class="hover:text-blue-300">Home</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-    <main class="py-10 px-6">
-        <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        
-            <div class="p-4 bg-gray-100">
-                <div class="max-w-4xl mx-auto mt-10 bg-gray-800 rounded-lg shadow-xl overflow-hidden" id="geojsonChecker">
-                    <div class="p-8 text-center">
-                        <h1 class="text-4xl font-extrabold text-white mb-4">Coordinate Transformation</h1>
-                        <p class="text-lg text-gray-300 font-medium mb-6">
-                            Convert coordinates from the NNO coordinate system to the Minna Datum, and further transform them into a geographical coordinate system (latitude and longitude).
-                        </p>
-                    </div>
-              
-                <div class="mb-4">
-                    <label class="block text-white font-semibold" for="coordinateSystem">
-                        Select Coordinate System:
-                    </label>
-                    <select id="coordinateSystem" class="w-full p-2 border rounded">
-                        <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
-                        <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
-                        <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
-                        <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
-                        <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
-                        <option value="EPSG:4326">EPSG:4326 - WGS84</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-white font-semibold" for="transformSystem">
-                        Select Transform Coordinate System:
-                    </label>
-                    <select id="transformSystem" class="w-full p-2 border rounded">
-                        <option value="EPSG:4326">EPSG:4326 - WGS84</option>
-                        <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
-                        <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
-                        <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
-                        <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
-                        <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-white font-semibold" for="xCoord">X/E/Long Coordinate:</label>
-                    <input id="xCoord" type="text" class="w-full p-2 border rounded" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-white font-semibold" for="yCoord">Y/N/Lat Coordinate:</label>
-                    <input id="yCoord" type="text" class="w-full p-2 border rounded" />
-                </div>
-                <button id="transformButton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                    Transform Coordinates
+    <!-- Header with Navigation -->
+    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
+                    <span class="text-2xl">🌍</span>
+                    <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX</h1>
+                </a>
+                
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
                 </button>
-                <div id="output" class="mt-4 text-lg font-semibold text-white"></div>
-            </div>
-            <div id="map" style="height: 400px;" class="mt-6 hidden"></div>
+                
+                <nav id="desktop-menu" class="hidden md:flex items-center space-x-2">
+                    <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                    <a href="checkPoint.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+                    <a href="areadelAi.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">AI Checker</a>
+                    <a href="coordTrans.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Coord Trans</a>
+                    <a href="ngn_wards.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Ward Checker</a>
+                </nav>
             </div>
             
-    </main>
-<!-- About Section -->
-<div class="max-w-4xl mx-auto mt-10 bg-gray-800 rounded-lg shadow-xl overflow-hidden" id="about">
-    <div class="p-8 text-center">
-        <h2 class="text-2xl font-bold text-blue-400">About GeoTechieX</h2>
-        <p class="text-gray-300 mt-4">
-            GeoTechieX blends geospatial innovation with modern technology, making mapping simple and intuitive.
-        </p>
-    </div>
-</div>
-
-<!-- Dination  -->
-
-<div class="p-6 bg-gray-100">
-
-    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Support Our Mapping Project</h2>
-        <p class="text-gray-700 mb-4">
-            Help us enhance the accuracy of geospatial data transformations! Your donations empower us to engage more volunteers in mapping precise data, strengthening and supporting surveyor communities in Nigeria.
-        </p>
-        <p class="text-gray-700 mb-4">
-            Donate now and be a part of this transformative journey!
-        </p>
-        <div class="text-center">
-            <button class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
-                Donate Now
-            </button>
+            <!-- Mobile Menu Dropdown -->
+            <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
+                <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                <a href="checkPoint.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Area Checker</a>
+                <a href="areadelAi.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">AI Checker</a>
+                <a href="coordTrans.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Coord Trans</a>
+                <a href="ngn_wards.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Ward Checker</a>
+            </nav>
         </div>
-    </div>
-</div>
+    </header>
 
-</section>
-<!-- Contact Us Section -->
-<section id="contact" class="mb-8">
-    <h2 class="text-2xl font-semibold text-blue-400 mb-4">Connect with GeoTechieX</h2>
-    <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-        <a href="https://www.youtube.com/@GeotechieX" target="_blank" 
-            class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow-lg">
-            YouTube
-        </a>
-        <a href="https://www.tiktok.com/@GeotechieX" target="_blank" 
-            class="bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded shadow-lg">
-            TikTok
-        </a>
-        <a href="https://www.instagram.com/geotechiex" target="_blank" 
-            class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded shadow-lg">
-            Instagram
-        </a>
-    </div>
-</section>
+    <main class="flex-grow container mx-auto px-4 py-6 sm:py-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden" id="geojsonChecker">
+                <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-6 sm:p-8 text-center">
+                    <div class="text-4xl sm:text-5xl mb-3">🔄</div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3 sm:mb-4">Coordinate Transformation</h1>
+                    <p class="text-base sm:text-lg text-purple-100 font-medium max-w-3xl mx-auto">
+                        Convert coordinates between NNO, Minna Datum, and WGS84 geographical coordinate systems
+                    </p>
+                </div>
+              
+                <div class="p-4 sm:p-8">
+                    <!-- Mode Tabs -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <button id="singleModeBtn" class="flex-1 sm:flex-none px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold transition hover:bg-purple-700">
+                            Single Transform
+                        </button>
+                        <button id="bulkModeBtn" class="flex-1 sm:flex-none px-6 py-3 bg-gray-700 text-gray-300 rounded-lg font-semibold transition hover:bg-gray-600">
+                            Bulk Transform
+                        </button>
+                    </div>
+
+                    <!-- Single Transform Mode -->
+                    <div id="singleMode" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-gray-300 font-semibold mb-2 text-sm" for="coordinateSystem">
+                                    Source Coordinate System
+                                </label>
+                                <select id="coordinateSystem" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                                    <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
+                                    <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
+                                    <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
+                                    <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
+                                    <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
+                                    <option value="EPSG:4326">EPSG:4326 - WGS84</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 font-semibold mb-2 text-sm" for="transformSystem">
+                                    Target Coordinate System
+                                </label>
+                                <select id="transformSystem" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                                    <option value="EPSG:4326">EPSG:4326 - WGS84</option>
+                                    <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
+                                    <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
+                                    <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
+                                    <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
+                                    <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 font-semibold mb-2 text-sm" for="xCoord">X / Easting / Longitude</label>
+                                <input id="xCoord" type="text" placeholder="e.g., 538156 or 3.35" 
+                                       class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 font-semibold mb-2 text-sm" for="yCoord">Y / Northing / Latitude</label>
+                                <input id="yCoord" type="text" placeholder="e.g., 787954 or 7.15" 
+                                       class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition" />
+                            </div>
+                            
+                            <button id="transformButton" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 px-6 rounded-lg shadow-lg font-semibold transition transform hover:scale-105 active:scale-95">
+                                🔄 Transform Coordinates
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <div class="bg-gray-700/50 rounded-lg p-4 min-h-[300px]">
+                                <h3 class="text-lg font-semibold text-gray-200 mb-3">Results</h3>
+                                <div id="output" class="text-base text-gray-300 space-y-2">
+                                    <p class="text-gray-400 italic">Transformed coordinates will appear here...</p>
+                                </div>
+                            </div>
+                            <div id="map" style="height: 300px;" class="mt-4 rounded-lg shadow-lg hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Transform Mode -->
+                    <div id="bulkMode" class="hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-300 font-semibold mb-2 text-sm">Source Coordinate System</label>
+                                    <select id="bulkCoordinateSystem" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                                        <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
+                                        <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
+                                        <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
+                                        <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
+                                        <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
+                                        <option value="EPSG:4326">EPSG:4326 - WGS84</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 font-semibold mb-2 text-sm">Target Coordinate System</label>
+                                    <select id="bulkTransformSystem" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition">
+                                        <option value="EPSG:4326">EPSG:4326 - WGS84</option>
+                                        <option value="EPSG:26331">EPSG:26331 - Minna / UTM zone 31N</option>
+                                        <option value="EPSG:26332">EPSG:26332 - Minna / UTM zone 32N</option>
+                                        <option value="EPSG:26391">EPSG:26391 - Minna / Nigeria West Belt</option>
+                                        <option value="EPSG:26392">EPSG:26392 - Minna / Nigeria Mid Belt</option>
+                                        <option value="EPSG:26393">EPSG:26393 - Minna / Nigeria East Belt</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-gray-700/50 rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-gray-200 mb-2">📁 Upload CSV File</h3>
+                                    <label for="csvFileInput" class="cursor-pointer block">
+                                        <div class="border-2 border-dashed border-gray-500 rounded-lg p-6 text-center hover:border-purple-500 transition">
+                                            <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                            </svg>
+                                            <p class="text-gray-300 text-sm">Click to upload CSV file</p>
+                                            <p class="text-gray-500 text-xs mt-1">Format: ID,X,Y,Z,Name</p>
+                                        </div>
+                                        <input type="file" id="csvFileInput" accept=".csv,.txt" class="hidden" />
+                                    </label>
+                                    <p id="fileName" class="text-sm text-green-400 mt-2 hidden"></p>
+                                </div>
+
+                                <div class="text-center text-gray-400 text-sm">OR</div>
+
+                                <div>
+                                    <label class="block text-gray-300 font-semibold mb-2 text-sm">📝 Paste Coordinates</label>
+                                    <textarea id="bulkInput" rows="6" placeholder="Format (one per line):&#10;1,538156,787954,0,Point A&#10;2,538200,788000,0,Point B&#10;3,538300,788100,0,Point C" 
+                                              class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition font-mono text-sm"></textarea>
+                                    <p class="text-xs text-gray-400 mt-1">💡 Format: ID,X,Y,Z,Name (Z and Name are optional)</p>
+                                </div>
+
+                                <button id="bulkTransformButton" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 px-6 rounded-lg shadow-lg font-semibold transition transform hover:scale-105 active:scale-95">
+                                    🔄 Transform All Coordinates
+                                </button>
+                            </div>
+
+                            <div>
+                                <div class="bg-gray-700/50 rounded-lg p-4">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h3 class="text-lg font-semibold text-gray-200">Results (<span id="resultCount">0</span>)</h3>
+                                        <button id="downloadBtn" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                                            📥 Download CSV
+                                        </button>
+                                    </div>
+                                    <div id="bulkOutput" class="max-h-[500px] overflow-y-auto">
+                                        <p class="text-gray-400 italic text-sm">Upload a CSV file or paste coordinates to see results...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-8 border-t border-gray-700 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-6">
+                <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">GeoTechieX</h3>
+                <p class="text-sm sm:text-base">Explore. Innovate. Elevate with Geospatial Technology.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mb-6 text-xs sm:text-sm">
+                <a href="index.html" class="hover:text-blue-400 transition">Home</a>
+                <span>•</span>
+                <a href="checkPoint.html" class="hover:text-blue-400 transition">Area Checker</a>
+                <span>•</span>
+                <a href="areadelAi.html" class="hover:text-blue-400 transition">AI Checker</a>
+                <span>•</span>
+                <a href="coordTrans.html" class="hover:text-blue-400 transition">Coord Trans</a>
+            </div>
+            <div class="text-center text-xs sm:text-sm text-gray-500">
+                <p>© 2025 GeoTechieX. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/navigation.js"></script>
+    <script src="js/cordTrans.js"></script>
+</body>
+</html>
 
 
 
