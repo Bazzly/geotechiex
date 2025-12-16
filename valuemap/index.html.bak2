@@ -15,6 +15,7 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
         .loading { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
@@ -336,6 +337,7 @@
             // Clear inputs when switching
             latInput.value = '';
             lngInput.value = '';
+        }
 
         // Convert coordinates to WGS84 if needed
         function getWGS84Coordinates() {
@@ -361,6 +363,7 @@
                     return null;
                 }
             }
+        }
 
         // Initialize the map
         const map = L.map('map').setView([7.5, 3.9], 8);
@@ -388,6 +391,7 @@
                     { "type": "Feature", "properties": { "name": "Rural Area", "type": "rural", "built_up": 25, "vacant": 65, "roads": 10 }, "geometry": { "type": "Point", "coordinates": [3.6, 6.3] }}
                 ];
             }
+        }
 
         loadAreaData();
 
@@ -417,6 +421,7 @@
                 alert("❌ Geolocation is not supported by your browser.");
                 btn.disabled = false;
             }
+        }
 
         // Main analysis function
         async function analyzeArea() {
@@ -520,6 +525,7 @@
             } finally {
                 analyzeBtn.textContent = originalText;
             }
+        }
 
         // Fetch OpenStreetMap data using Overpass API
         async function fetchOSMData(lat, lng, radius) {
@@ -554,6 +560,7 @@
                 osmData = null;
                 throw error;
             }
+        }
 
         // Analyze area characteristics from OSM data
         function analyzeAreaCharacteristics(osmData, referenceArea) {
@@ -616,6 +623,7 @@
             characteristics.landuse = sortedLanduses[0]?.[0] || "mixed";
 
             return characteristics;
+        }
 
         // Calculate fees with all multipliers
         function calculateDetailedFees(area, landsize, surveyType, accuracyLevel, urgency) {
@@ -690,6 +698,7 @@
                     complexity: complexityMultiplier.toFixed(2)
                 }
             };
+        }
 
         // Find nearest reference area
         function findNearestArea(lat, lng) {
@@ -707,6 +716,7 @@
             });
             
             return nearestArea;
+        }
 
         // Display comprehensive results
         function displayResults(data) {
@@ -862,6 +872,7 @@
                 ${data.area.buildings ? `${data.area.buildings} buildings detected • ` : ''}
                 ${data.area.builtUp.toFixed(0)}% built-up, ${data.area.vacant.toFixed(0)}% vacant
             `;
+        }
 
         // Download report as CSV
         function downloadReport() {
@@ -920,6 +931,7 @@
             a.download = `survey_estimate_${Date.now()}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
+        }
 
         // Share results
         function shareResults() {
@@ -949,6 +961,7 @@
                     alert('⚠ Unable to share. Please try downloading the report instead.');
                 });
             }
+        }
     </script>
     
     <!-- Usage Tracker System -->
@@ -966,13 +979,17 @@
         }, 500);
         
         // Wrap the main calculate button click with usage tracking
-        // Wrap analyzeArea function with usage tracking
-        const originalAnalyzeArea = analyzeArea;
-        analyzeArea = function() {
-            usageTracker.processAction(() => {
-                originalAnalyzeArea();
-            });
-        };
+        const calculateBtn = document.getElementById('calculateBtn');
+        if (calculateBtn) {
+            const originalClickHandler = calculateBtn.onclick;
+            calculateBtn.onclick = function(e) {
+                usageTracker.processAction(() => {
+                    if (originalClickHandler) {
+                        originalClickHandler.call(this, e);
+                    }
+                });
+            };
+        }
     </script>
 </body>
 </html>
