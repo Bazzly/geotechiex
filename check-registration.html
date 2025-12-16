@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Diagnostic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center">🔍 Registration Diagnostic Tool</h1>
+        
+        <!-- Status Display -->
+        <div id="status-container" class="space-y-4 mb-8">
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-2xl font-bold mb-4">System Status</h2>
+                <div id="status-items" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span>🔌 API Connection</span>
+                        <span id="api-status" class="text-yellow-400">Testing...</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>🗄️ Database Connection</span>
+                        <span id="db-status" class="text-yellow-400">Testing...</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>📋 Registration Endpoint</span>
+                        <span id="reg-endpoint-status" class="text-yellow-400">Testing...</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>👤 User Table (geotechiex_users)</span>
+                        <span id="user-table-status" class="text-yellow-400">Testing...</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>📱 Device Table (user_devices)</span>
+                        <span id="device-table-status" class="text-yellow-400">Testing...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Registration -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Test Registration</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold">Your Email:</label>
+                    <input type="email" id="test-email" 
+                        class="w-full bg-gray-700 text-white border border-gray-600 rounded px-4 py-3"
+                        placeholder="your.email@example.com">
+                </div>
+                <button onclick="testRegistration()" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 rounded-lg transition">
+                    🚀 Test Registration
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="result-container" class="bg-gray-800 rounded-lg p-6 hidden">
+            <h2 class="text-2xl font-bold mb-4">Result</h2>
+            <div id="result-content"></div>
+        </div>
+
+        <!-- Detailed Logs -->
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Detailed Logs</h2>
+            <pre id="logs" class="bg-gray-900 p-4 rounded text-xs overflow-auto max-h-96 text-green-400"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = 'https://www.bazzlylinks.com/geotechiex.php';
+        let logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            const logMessage = `[${timestamp}] ${prefix} ${message}`;
+            logs.push(logMessage);
+            document.getElementById('logs').textContent = logs.join('\n');
+        }
+
+        function updateStatus(id, status, type) {
+            const element = document.getElementById(id);
+            const colors = {
+                success: 'text-green-400',
+                error: 'text-red-400',
+                warning: 'text-yellow-400'
+            };
+            element.className = colors[type] || 'text-gray-400';
+            element.textContent = status;
+        }
+
+        async function runDiagnostics() {
+            log('Starting diagnostics...');
+            
+            // Test 1: API Connection
+            try {
+                log('Testing API connection...');
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('api-status', '✅ Connected', 'success');
+                    log('API connection successful', 'success');
+                    
+                    // Test 2: Database
+                    updateStatus('db-status', '✅ Working', 'success');
+                    log('Database connection confirmed', 'success');
+                } else {
+                    updateStatus('api-status', '❌ Failed', 'error');
+                    log('API returned error: ' + data.message, 'error');
+                }
+            } catch (error) {
+                updateStatus('api-status', '❌ Failed', 'error');
+                updateStatus('db-status', '❌ Unknown', 'error');
+                log('API connection failed: ' + error.message, 'error');
+            }
+
+            // Test 3: Registration Endpoint
+            try {
+                log('Testing registration endpoint...');
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'register_user',
+                        email: 'diagnostic_test_' + Date.now() + '@test.com',
+                        device_id: 'diagnostic_' + Date.now()
+                    })
+                });
+                
+                const text = await response.text();
+                log('Registration response: ' + text);
+                
+                try {
+                    const data = JSON.parse(text);
+                    
+                    if (data.success) {
+                        updateStatus('reg-endpoint-status', '✅ Working', 'success');
+                        updateStatus('user-table-status', '✅ Exists', 'success');
+                        updateStatus('device-table-status', '✅ Exists', 'success');
+                        log('Registration endpoint is fully functional!', 'success');
+                    } else {
+                        updateStatus('reg-endpoint-status', '⚠️ Error', 'error');
+                        
+                        // Parse error message to determine issue
+                        if (data.message.includes("doesn't exist") || data.message.includes("geotechiex_users")) {
+                            updateStatus('user-table-status', '❌ Missing', 'error');
+                            updateStatus('device-table-status', '❌ Missing', 'error');
+                            log('Tables not created! Run: mysql -u USERNAME -p geotechiex_payments < api/complete_setup.sql', 'error');
+                        } else {
+                            log('Registration error: ' + data.message, 'error');
+                        }
+                    }
+                } catch (e) {
+                    updateStatus('reg-endpoint-status', '❌ Invalid Response', 'error');
+                    log('Could not parse registration response', 'error');
+                }
+            } catch (error) {
+                updateStatus('reg-endpoint-status', '❌ Failed', 'error');
+                log('Registration test failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testRegistration() {
+            const email = document.getElementById('test-email').value.trim();
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            const resultContainer = document.getElementById('result-container');
+            const resultContent = document.getElementById('result-content');
+            
+            resultContainer.classList.remove('hidden');
+            resultContent.innerHTML = '<p class="text-yellow-400">Testing registration...</p>';
+            
+            log(`\n=== REGISTRATION TEST ===`);
+            log(`Email: ${email}`);
+            
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'register_user',
+                        email: email,
+                        device_id: 'test_device_' + Date.now(),
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const text = await response.text();
+                log('Raw response: ' + text);
+                
+                const data = JSON.parse(text);
+                
+                if (data.success) {
+                    resultContent.innerHTML = `
+                        <div class="bg-green-900 border-2 border-green-500 rounded-lg p-6">
+                            <h3 class="text-2xl font-bold text-green-400 mb-4">✅ Registration Successful!</h3>
+                            <p class="text-green-300 mb-2">User ID: ${data.user_id}</p>
+                            <p class="text-green-300">Email: ${email}</p>
+                            <p class="text-green-300 mt-4 text-sm">The system is working correctly! You can now use the tools.</p>
+                        </div>
+                    `;
+                    log('Registration successful!', 'success');
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="bg-red-900 border-2 border-red-500 rounded-lg p-6">
+                            <h3 class="text-2xl font-bold text-red-400 mb-4">❌ Registration Failed</h3>
+                            <p class="text-red-300 mb-4">Error: ${data.message}</p>
+                            ${data.message.includes("doesn't exist") ? `
+                                <div class="bg-yellow-900 border border-yellow-500 rounded p-4 mt-4">
+                                    <p class="text-yellow-300 font-bold mb-2">🔧 Fix Required:</p>
+                                    <p class="text-yellow-200 text-sm mb-2">The database tables haven't been created yet.</p>
+                                    <p class="text-yellow-200 text-sm">Run this command:</p>
+                                    <pre class="bg-gray-900 p-3 rounded mt-2 text-xs text-green-400">mysql -u YOUR_USERNAME -p geotechiex_payments < api/complete_setup.sql</pre>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    log('Registration failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                resultContent.innerHTML = `
+                    <div class="bg-red-900 border-2 border-red-500 rounded-lg p-6">
+                        <h3 class="text-2xl font-bold text-red-400 mb-4">❌ Connection Error</h3>
+                        <p class="text-red-300">${error.message}</p>
+                    </div>
+                `;
+                log('Connection error: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-run diagnostics on load
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Diagnostic tool loaded');
+            log('API Endpoint: ' + API_ENDPOINT);
+            runDiagnostics();
+        });
+    </script>
+</body>
+</html>
