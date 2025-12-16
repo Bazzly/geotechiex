@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+        
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">🌍</div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">GeoTechieX Admin</h1>
+            <p class="text-gray-600">Management Dashboard</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Username</label>
+                <input type="text" id="username" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter username">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Password</label>
+                <input type="password" id="password" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter password">
+            </div>
+
+            <div>
+                <label class="flex items-center">
+                    <input type="checkbox" id="remember" class="mr-2">
+                    <span class="text-sm text-gray-600">Remember me for 7 days</span>
+                </label>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-lg hover:shadow-lg transition">
+                🔐 Login
+            </button>
+
+        </form>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        </div>
+
+        <!-- Info -->
+        <div class="mt-8 text-center text-sm text-gray-500">
+            <p>🔒 Authorized access only</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        if (localStorage.getItem('admin_auth') && new Date(localStorage.getItem('admin_expiry')) > new Date()) {
+            window.location.href = 'panel.html';
+        }
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // Hash password
+            const hash = await hashPassword(password + username);
+            
+            // Correct hash: geotechiex / Companybazzly40#
+            if (hash === '9c1877c2959b76a3d084ce50149df9c03f525e400b03435b32f0623d4efba663') {
+                // Set auth
+                localStorage.setItem('admin_auth', 'true');
+                localStorage.setItem('admin_user', username);
+                
+                const expiry = new Date();
+                expiry.setDate(expiry.getDate() + (remember ? 7 : 1));
+                localStorage.setItem('admin_expiry', expiry.toISOString());
+                
+                // Redirect
+                window.location.href = 'panel.html';
+            } else {
+                showError('Invalid credentials');
+            }
+        });
+
+        async function hashPassword(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

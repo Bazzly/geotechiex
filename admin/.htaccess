@@ -1,0 +1,57 @@
+# Security Headers
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevent clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Enable XSS protection in older browsers
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Control referrer information
+    Header always set Referrer-Policy "no-referrer"
+    
+    # Restrict feature access
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Content Security Policy
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://www.bazzlylinks.com; frame-ancestors 'none';"
+    
+    # Remove server signature
+    Header always unset X-Powered-By
+    Header always unset Server
+</IfModule>
+
+# Prevent Directory Listing
+Options -Indexes
+
+# Prevent access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|env)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block access to hidden files
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Enable HTTPS redirect (uncomment when using HTTPS)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# Limit request methods
+<LimitExcept GET POST>
+    Deny from all
+</LimitExcept>
+
+# Rate limiting (requires mod_ratelimit)
+<IfModule mod_ratelimit.c>
+    SetOutputFilter RATE_LIMIT
+    SetEnv rate-limit 400
+</IfModule>

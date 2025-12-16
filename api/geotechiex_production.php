@@ -168,6 +168,10 @@ try {
             adminGetUsageLog($pdo, $data);
             break;
 
+        case 'generate_code':
+            adminGenerateCode($pdo, $data);
+            break;
+
         default:
             sendResponse(false, 'Invalid action: ' . $action);
     }
@@ -801,6 +805,51 @@ function logUserUsage($pdo, $data) {
     } catch (Exception $e) {
         logError("Log user usage error: " . $e->getMessage());
         sendResponse(false, 'Usage logging failed');
+    }
+}
+
+/**
+ * Admin: Generate activation code
+ */
+function adminGenerateCode($pdo, $data) {
+    try {
+        $credits = isset($data['credits']) ? (int)$data['credits'] : 0;
+        $description = isset($data['description']) ? trim($data['description']) : 'Admin Generated';
+        
+        if ($credits <= 0) {
+            sendResponse(false, 'Invalid credit amount');
+            return;
+        }
+        
+        // Generate unique code
+        $code = generateActivationCode();
+        
+        // Check if code already exists (very unlikely but safety check)
+        $checkStmt = $pdo->prepare("SELECT id FROM activation_codes WHERE code = ?");
+        $checkStmt->execute([$code]);
+        
+        if ($checkStmt->fetch()) {
+            // Code exists, generate a new one
+            $code = generateActivationCode();
+        }
+        
+        // Insert into database
+        $stmt = $pdo->prepare("
+            INSERT INTO activation_codes (code, credits, description, status, created_at) 
+            VALUES (?, ?, ?, 'active', NOW())
+        ");
+        
+        $stmt->execute([$code, $credits, $description]);
+        
+        sendResponse(true, 'Activation code generated successfully', [
+            'code' => $code,
+            'credits' => $credits,
+            'description' => $description
+        ]);
+        
+    } catch (PDOException $e) {
+        logError("Generate code error: " . $e->getMessage());
+        sendResponse(false, 'Failed to generate activation code');
     }
 }
 ?>

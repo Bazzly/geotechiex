@@ -20,6 +20,23 @@ class AdminDashboard {
      */
     async loadAllData() {
         try {
+            // Test API connection first
+            const testResponse = await fetch(this.apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'test' })
+            });
+            
+            if (!testResponse.ok) {
+                throw new Error('API server is not responding. Status: ' + testResponse.status);
+            }
+            
+            const testData = await testResponse.json();
+            if (!testData.success) {
+                throw new Error('API test failed: ' + (testData.message || 'Unknown error'));
+            }
+            
+            // Load all data
             await Promise.all([
                 this.loadStats(),
                 this.loadPayments(),
@@ -32,7 +49,30 @@ class AdminDashboard {
             
         } catch (error) {
             console.error('Error loading dashboard data:', error);
-            this.showError('Failed to load dashboard data');
+            
+            // Create detailed error modal instead of alert
+            const errorDetails = `
+                <div style="background:#fee; border:2px solid #c00; padding:20px; border-radius:8px; max-width:600px; margin:20px auto;">
+                    <h3 style="color:#c00; margin:0 0 10px 0;">⚠️ Dashboard Loading Failed</h3>
+                    <p><strong>Error:</strong> ${error.message || 'Unknown error'}</p>
+                    <hr style="margin:15px 0; border:none; border-top:1px solid #fcc;">
+                    <p><strong>Troubleshooting Steps:</strong></p>
+                    <ol style="margin:10px 0; padding-left:20px;">
+                        <li>Check your internet connection</li>
+                        <li>Verify API server is online at: <code>www.bazzlylinks.com</code></li>
+                        <li>Open browser console (F12) for detailed logs</li>
+                        <li>Try refreshing the page</li>
+                    </ol>
+                    <button onclick="location.reload()" style="background:#c00; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; margin-top:10px;">
+                        🔄 Reload Dashboard
+                    </button>
+                </div>
+            `;
+            
+            const container = document.querySelector('.container');
+            if (container) {
+                container.innerHTML = errorDetails + container.innerHTML;
+            }
         }
     }
 
@@ -171,27 +211,27 @@ class AdminDashboard {
      * Update stats display
      */
     updateStatsDisplay() {
-        const stats = this.data.stats;
+        const stats = this.data.stats || {};
         
-        document.getElementById('total-revenue').textContent = 
-            `₦${(stats.total_revenue || 0).toLocaleString()}`;
-        document.getElementById('revenue-change').textContent = 
-            `${stats.revenue_change || 0}% from last month`;
+        // Safely update each stat with fallbacks
+        const updateElement = (id, value, defaultValue = '0') => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value || defaultValue;
+            }
+        };
         
-        document.getElementById('total-payments').textContent = 
-            (stats.total_payments || 0).toLocaleString();
-        document.getElementById('payments-change').textContent = 
-            `${stats.completed_payments || 0} completed`;
+        updateElement('total-revenue', `₦${(stats.total_revenue || 0).toLocaleString()}`);
+        updateElement('revenue-change', `${stats.revenue_change || 0}% from last month`);
         
-        document.getElementById('active-users').textContent = 
-            (stats.active_users || 0).toLocaleString();
-        document.getElementById('users-change').textContent = 
-            `${stats.new_users || 0} new this month`;
+        updateElement('total-payments', (stats.total_payments || 0).toLocaleString());
+        updateElement('payments-change', `${stats.completed_payments || 0} completed`);
         
-        document.getElementById('tool-usage').textContent = 
-            (stats.tool_usage_today || 0).toLocaleString();
-        document.getElementById('usage-change').textContent = 
-            `${stats.total_tool_usage || 0} total uses`;
+        updateElement('active-users', (stats.active_users || 0).toLocaleString());
+        updateElement('users-change', `${stats.new_users || 0} new this month`);
+        
+        updateElement('tool-usage', (stats.tool_usage_today || 0).toLocaleString());
+        updateElement('usage-change', `${stats.total_tool_usage || 0} total uses`);
     }
 
     /**
@@ -501,6 +541,29 @@ class AdminDashboard {
         a.download = filename;
         a.click();
         window.URL.revokeObjectURL(url);
+    }
+
+    /**
+     * Generate activation code
+     */
+    async generateCode(credits, description = '') {
+        try {
+            const response = await fetch(this.apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'generate_code',
+                    credits: credits,
+                    description: description
+                })
+            });
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Code generation error:', error);
+            return { success: false, message: error.message };
+        }
     }
 
     /**
