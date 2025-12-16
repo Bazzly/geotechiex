@@ -60,6 +60,10 @@
                 <p class="text-base sm:text-lg text-blue-100 font-medium mb-3 max-w-3xl mx-auto">
                     Enter coordinates (Minna datum only) to check if they fall within Prime, Special Prime, or General areas.
                 </p>
+                
+                <!-- Usage Tracker Display -->
+                <div id="usage-tracker-display" class="mb-4"></div>
+                
                 <div class="inline-block bg-red-500/20 border border-red-400 text-red-200 px-4 py-2 rounded-lg text-xs sm:text-sm">
                     <strong>Note:</strong> Output might not be 100% accurate as this project is still in testing stage
                 </div>
@@ -161,5 +165,28 @@
     </footer>
     <script src="js/navigation.js"></script>
     <script src="js/check.js"></script>
+    <script src="js/usage-tracker.js"></script>
+    <script>
+        const usageTracker = new UsageTracker('area_checker');
+        
+        // Display usage info on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const displayDiv = document.getElementById('usage-tracker-display');
+            if (displayDiv && typeof usageTracker !== 'undefined') {
+                displayDiv.innerHTML = usageTracker.showUsageInfo();
+            }
+            
+            // Wrap check button with credit check
+            const originalCheckBtn = document.getElementById('checkButton');
+            if (originalCheckBtn) {
+                const originalOnClick = originalCheckBtn.onclick;
+                originalCheckBtn.onclick = function(e) {
+                    usageTracker.processAction(() => {
+                        if (originalOnClick) originalOnClick.call(this, e);
+                    });
+                };
+            }
+        });
+    </script>
   </body>
   </html>

@@ -58,6 +58,9 @@
                     <p class="text-base sm:text-lg text-purple-100 font-medium max-w-3xl mx-auto">
                         Convert coordinates between NNO, Minna Datum, and WGS84 geographical coordinate systems
                     </p>
+                    
+                    <!-- Usage Tracker Display -->
+                    <div id="usage-tracker-display" class="mb-6"></div>
                 </div>
               
                 <div class="p-4 sm:p-8">
@@ -251,6 +254,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf"></script>
     <script src="js/cordTrans.js"></script>
+    <script src="js/usage-tracker.js"></script>
+    <script>
+        const usageTracker = new UsageTracker('coord_transformer');
+        
+        // Display usage info on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const displayDiv = document.getElementById('usage-tracker-display');
+            if (displayDiv && typeof usageTracker !== 'undefined') {
+                displayDiv.innerHTML = usageTracker.showUsageInfo();
+            }
+            
+            // Wrap transform button with credit check
+            const originalTransformBtn = document.getElementById('transformButton');
+            if (originalTransformBtn) {
+                const originalOnClick = originalTransformBtn.onclick;
+                originalTransformBtn.onclick = function(e) {
+                    usageTracker.processAction(() => {
+                        if (originalOnClick) originalOnClick.call(this, e);
+                    });
+                };
+            }
+        });
+    </script>
     </body>
     
     </html>

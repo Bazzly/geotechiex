@@ -119,6 +119,9 @@
                         </p>
                     </div>
                     
+                    <!-- Usage Tracker Display -->
+                    <div id="usage-tracker-display" class="mb-6"></div>
+                    
                     <!-- Coordinate Input Section -->
                     <div class="p-6 bg-gray-700 rounded-lg mb-6">
                         <h2 class="text-xl font-bold text-white mb-4">Destination Coordinates</h2>
@@ -339,6 +342,15 @@
         
         // Start navigation
         function startNavigation() {
+            // Check credit before allowing navigation
+            const canProceed = usageTracker.processAction(() => {
+                executeNavigation();
+            });
+            
+            if (!canProceed) return;
+        }
+        
+        function executeNavigation() {
             const x = document.getElementById('targetX').value;
             const y = document.getElementById('targetY').value;
             
@@ -547,11 +559,21 @@
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
             
+            // Display usage info
+            const displayDiv = document.getElementById('usage-tracker-display');
+            if (displayDiv && typeof usageTracker !== 'undefined') {
+                displayDiv.innerHTML = usageTracker.showUsageInfo();
+            }
+            
             // Add event listeners
             document.getElementById('useCurrentLocation').addEventListener('click', getCurrentLocation);
             document.getElementById('startNavigation').addEventListener('click', startNavigation);
             document.getElementById('stopNavigation').addEventListener('click', stopNavigation);
         });
+    </script>
+    <script src="js/usage-tracker.js"></script>
+    <script>
+        const usageTracker = new UsageTracker('compass_navigation');
     </script>
 </body>
 </html>
