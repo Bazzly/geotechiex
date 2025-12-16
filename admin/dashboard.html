@@ -217,7 +217,7 @@
         </div>
 
         <!-- System Status -->
-        <div class="bg-white rounded-2xl shadow-xl p-6">
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
             <h3 class="text-xl font-bold text-gray-800 mb-4">⚙️ System Status</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="border border-gray-200 rounded-lg p-4">
@@ -240,6 +240,31 @@
                         <span id="paystack-status" class="text-2xl">✅</span>
                     </div>
                     <p class="text-sm text-gray-500 mt-2">Connected</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GeoJSON File Manager -->
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📁 GeoJSON File Manager</h3>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h4 class="font-bold text-blue-900 mb-3">📤 Upload GeoJSON File</h4>
+                <form id="geojson-upload-form" class="space-y-3">
+                    <input type="file" id="geojson-file" accept=".geojson,.json" 
+                        class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 p-2">
+                    <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+                        📤 Upload File
+                    </button>
+                </form>
+                <div id="upload-status" class="mt-3"></div>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold text-gray-800 mb-3">📂 Manage GeoJSON Files</h4>
+                <div id="geojson-file-list" class="space-y-2">
+                    <p class="text-gray-500 text-sm">Loading files...</p>
                 </div>
             </div>
         </div>
@@ -317,6 +342,135 @@
                 adminDashboard.exportToCSV('usage_log');
             }
         }
+
+        // GeoJSON File Manager Functions
+        function initGeoJSONManager() {
+            const uploadForm = document.getElementById('geojson-upload-form');
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', uploadGeoJSONFile);
+            }
+            loadGeoJSONFiles();
+        }
+
+        async function uploadGeoJSONFile(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('geojson-file');
+            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('upload-status');
+            
+            if (!file) {
+                statusDiv.innerHTML = '<p class="text-red-600 text-sm">Please select a file</p>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<p class="text-blue-600 text-sm">⏳ Uploading...</p>';
+
+            const formData = new FormData();
+            formData.append('geojsonFile', file);
+
+            try {
+                const response = await fetch('upload_geojson.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.innerHTML = '<p class="text-green-600 text-sm font-semibold">✅ ' + result.message + '</p>';
+                    fileInput.value = '';
+                    setTimeout(() => {
+                        statusDiv.innerHTML = '';
+                        loadGeoJSONFiles();
+                    }, 3000);
+                } else {
+                    statusDiv.innerHTML = '<p class="text-red-600 text-sm">❌ ' + result.message + '</p>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p class="text-red-600 text-sm">❌ Upload failed: ' + error.message + '</p>';
+            }
+        }
+
+        async function loadGeoJSONFiles() {
+            const fileListDiv = document.getElementById('geojson-file-list');
+            
+            try {
+                const response = await fetch('list_geojson.php');
+                const result = await response.json();
+
+                if (result.success && result.files && result.files.length > 0) {
+                    fileListDiv.innerHTML = result.files.map(file => `
+                        <div class="flex items-center justify-between p-3 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xl">📄</span>
+                                <span class="font-medium text-gray-700">${file.name}</span>
+                                <span class="text-xs text-gray-500">(${file.size})</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="downloadGeoJSON('${file.name}')" 
+                                    class="text-blue-600 hover:text-blue-700 text-sm px-3 py-1 border border-blue-600 rounded">
+                                    📥 Download
+                                </button>
+                                <button onclick="deleteGeoJSON('${file.name}')" 
+                                    class="text-red-600 hover:text-red-700 text-sm px-3 py-1 border border-red-600 rounded">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    fileListDiv.innerHTML = '<p class="text-gray-500 text-sm">No GeoJSON files uploaded yet</p>';
+                }
+            } catch (error) {
+                fileListDiv.innerHTML = '<p class="text-red-500 text-sm">Error loading files: ' + error.message + '</p>';
+            }
+        }
+
+        function downloadGeoJSON(filename) {
+            window.location.href = 'download_geojson.php?file=' + encodeURIComponent(filename);
+        }
+
+        async function deleteGeoJSON(filename) {
+            if (!confirm('Are you sure you want to delete ' + filename + '?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('delete_geojson.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename: filename })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ File deleted successfully');
+                    loadGeoJSONFiles();
+                } else {
+                    alert('❌ Delete failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Delete failed: ' + error.message);
+            }
+        }
+
+        // Initialize GeoJSON manager when dashboard loads
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Initialize admin dashboard
+            adminDashboard = new AdminDashboard();
+            await adminDashboard.loadAllData();
+            
+            // Initialize GeoJSON manager
+            initGeoJSONManager();
+        });
     </script>
 </body>
 </html>

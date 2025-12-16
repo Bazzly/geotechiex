@@ -151,10 +151,15 @@
                         updateStatus('reg-endpoint-status', '⚠️ Error', 'error');
                         
                         // Parse error message to determine issue
-                        if (data.message.includes("doesn't exist") || data.message.includes("geotechiex_users")) {
+                    if (data.message.includes("doesn't exist") || data.message.includes("geotechiex_users")) {
                             updateStatus('user-table-status', '❌ Missing', 'error');
                             updateStatus('device-table-status', '❌ Missing', 'error');
                             log('Tables not created! Run: mysql -u USERNAME -p geotechiex_payments < api/complete_setup.sql', 'error');
+                        } else if (data.message.includes("Invalid action")) {
+                            updateStatus('reg-endpoint-status', '❌ Old PHP File', 'error');
+                            updateStatus('user-table-status', '⚠️ Unknown', 'warning');
+                            updateStatus('device-table-status', '⚠️ Unknown', 'warning');
+                            log('SERVER HAS OLD PHP FILE! Upload api/geotechiex_production.php to server as geotechiex.php', 'error');
                         } else {
                             log('Registration error: ' + data.message, 'error');
                         }
@@ -218,7 +223,23 @@
                         <div class="bg-red-900 border-2 border-red-500 rounded-lg p-6">
                             <h3 class="text-2xl font-bold text-red-400 mb-4">❌ Registration Failed</h3>
                             <p class="text-red-300 mb-4">Error: ${data.message}</p>
-                            ${data.message.includes("doesn't exist") ? `
+                            ${data.message.includes("Invalid action") ? `
+                                <div class="bg-orange-900 border-2 border-orange-500 rounded p-4 mt-4">
+                                    <p class="text-orange-300 font-bold mb-2 text-xl">🚨 SERVER FILE NOT UPDATED!</p>
+                                    <p class="text-orange-200 mb-3">Your server is running the OLD PHP file that doesn't have registration endpoints.</p>
+                                    <div class="bg-gray-900 rounded p-4 mb-3">
+                                        <p class="text-yellow-300 font-bold mb-2">✅ Quick Fix (3 steps):</p>
+                                        <ol class="text-yellow-100 text-sm space-y-2 list-decimal list-inside">
+                                            <li>Open: <code class="bg-gray-800 px-2 py-1 rounded">api/geotechiex_production.php</code></li>
+                                            <li>Update lines 32-34 with your actual database credentials & Paystack key</li>
+                                            <li>Upload to server as <code class="bg-gray-800 px-2 py-1 rounded">geotechiex.php</code> (replace old file)</li>
+                                        </ol>
+                                    </div>
+                                    <a href="UPLOAD_PHP_NOW.md" target="_blank" class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-3 rounded-lg">
+                                        📖 Read Full Upload Instructions
+                                    </a>
+                                </div>
+                            ` : data.message.includes("doesn't exist") ? `
                                 <div class="bg-yellow-900 border border-yellow-500 rounded p-4 mt-4">
                                     <p class="text-yellow-300 font-bold mb-2">🔧 Fix Required:</p>
                                     <p class="text-yellow-200 text-sm mb-2">The database tables haven't been created yet.</p>

@@ -4,6 +4,17 @@
 
 USE geotechiex_payments;
 
+-- OPTIONAL: Drop existing view/tables to recreate cleanly
+SET FOREIGN_KEY_CHECKS = 0;
+DROP VIEW IF EXISTS user_stats;
+DROP TABLE IF EXISTS user_devices;
+DROP TABLE IF EXISTS activation_codes;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS usage_log;
+DROP TABLE IF EXISTS sync_data;
+DROP TABLE IF EXISTS geotechiex_users;
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- ============================================
 -- 1. CREATE CORE PAYMENT TABLES
 -- ============================================
