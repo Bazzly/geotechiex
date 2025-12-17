@@ -117,12 +117,6 @@
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Description (Optional)</label>
-                    <input type="text" id="description"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                        placeholder="e.g., Holiday Promo 2025">
-                </div>
                 
                 <button type="submit"
                     class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 rounded-lg hover:shadow-lg transition">
@@ -278,6 +272,9 @@
                             <th class="px-3 py-2 text-left">Email</th>
                             <th class="px-3 py-2 text-left">Registered</th>
                             <th class="px-3 py-2 text-left">Last Active</th>
+                            <th class="px-3 py-2 text-center">Total Free Uses</th>
+                            <th class="px-3 py-2 text-center">Status</th>
+                            <th class="px-3 py-2 text-center">Block/Unblock</th>
                         </tr>
                     </thead>
                     <tbody id="usersTable" class="text-gray-700">
@@ -374,7 +371,14 @@
         function renderActivationsTable() {
             const start = (activationsPage - 1) * activationsPageSize;
             const end = start + activationsPageSize;
-            const pageData = activationsData.slice(start, end);
+            // Map backend fields to expected frontend fields
+            const normalized = activationsData.map(a => ({
+                code: a.code || a.activation_code,
+                credits: a.credits,
+                status: a.status,
+                created_at: a.created_at || a.generated_at
+            }));
+            const pageData = normalized.slice(start, end);
             const html = pageData.length ? pageData.map(a => `
                 <tr class="border-b">
                     <td class="px-3 py-2 font-mono text-xs">${a.code}</td>
@@ -384,7 +388,7 @@
                             ${a.status}
                         </span>
                     </td>
-                    <td class="px-3 py-2">${new Date(a.created_at).toLocaleDateString()}</td>
+                    <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</td>
                 </tr>
             `).join('') : `<tr><td colspan="4" class="px-3 py-8 text-center text-gray-400">No activations found</td></tr>`;
             document.getElementById('activationsTable').innerHTML = html;
@@ -515,14 +519,47 @@
                             <td class="px-3 py-2 font-mono text-xs">${u.email}</td>
                             <td class="px-3 py-2">${new Date(u.registered_at).toLocaleDateString()}</td>
                             <td class="px-3 py-2">${new Date(u.last_active).toLocaleDateString()}</td>
+                            <td class="px-3 py-2 text-center">${u.total_free_uses ?? 0}</td>
+                            <td class="px-3 py-2 text-center">
+                                <span class="px-2 py-1 rounded text-xs ${u.is_blocked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
+                                    ${u.is_blocked ? 'Blocked' : 'Active'}
+                                </span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <button onclick="toggleBlockUser(${u.id}, ${u.is_blocked})" class="text-xs px-3 py-1 rounded ${u.is_blocked ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">
+                                    ${u.is_blocked ? 'Unblock' : 'Block'}
+                                </button>
+                            </td>
                         </tr>
                     `).join('');
                     document.getElementById('usersTable').innerHTML = html;
                 } else {
-                    document.getElementById('usersTable').innerHTML = '<tr><td colspan="3" class="px-3 py-8 text-center text-gray-400">No users found</td></tr>';
+                    document.getElementById('usersTable').innerHTML = '<tr><td colspan="6" class="px-3 py-8 text-center text-gray-400">No users found</td></tr>';
                 }
             } catch (error) {
-                document.getElementById('usersTable').innerHTML = '<tr><td colspan="3" class="px-3 py-8 text-center text-red-400">Error loading users</td></tr>';
+                document.getElementById('usersTable').innerHTML = '<tr><td colspan="6" class="px-3 py-8 text-center text-red-400">Error loading users</td></tr>';
+            }
+        }
+
+        // Block/Unblock user
+        async function toggleBlockUser(userId, isBlocked) {
+            const confirmMsg = isBlocked ? 'Unblock this user?' : 'Block this user?';
+            if (!confirm(confirmMsg)) return;
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: isBlocked ? 'admin_unblock_user' : 'admin_block_user', user_id: userId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('User status updated!');
+                    loadUsers();
+                } else {
+                    alert('Failed: ' + (data.message || 'Could not update user.'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
             }
         }
 
@@ -536,21 +573,66 @@
                 });
                 const data = await response.json();
                 if (data.success && data.usage_log.length > 0) {
-                    const html = data.usage_log.map(l => `
-                        <tr class="border-b">
-                            <td class="px-3 py-2 font-mono text-xs">${l.email}</td>
-                            <td class="px-3 py-2">${l.tool_name}</td>
-                            <td class="px-3 py-2">${l.action}</td>
-                            <td class="px-3 py-2">${l.credits_used}</td>
-                            <td class="px-3 py-2">${new Date(l.created_at).toLocaleString()}</td>
+                    // Group by email
+                    const grouped = {};
+                    data.usage_log.forEach(l => {
+                        if (!grouped[l.email]) grouped[l.email] = [];
+                        grouped[l.email].push(l);
+                    });
+                    const html = Object.keys(grouped).map(email => {
+                        const logs = grouped[email];
+                        const emailId = email.replace(/[^a-zA-Z0-9]/g, '_');
+                        return `
+                        <tr class="border-b bg-gray-50">
+                            <td class="px-3 py-2 font-mono text-xs">${email}</td>
+                            <td class="px-3 py-2" colspan="3">${logs.length} activities</td>
+                            <td class="px-3 py-2 text-right">
+                                <button onclick="toggleUserLogDetails('${emailId}')" class="text-blue-600 hover:underline text-xs">View</button>
+                            </td>
                         </tr>
-                    `).join('');
+                        <tr id="details-${emailId}" class="hidden">
+                            <td colspan="5" class="bg-white px-3 py-2">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-xs border">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-2 py-1 text-left">Tool</th>
+                                                <th class="px-2 py-1 text-left">Action</th>
+                                                <th class="px-2 py-1 text-left">Credits Used</th>
+                                                <th class="px-2 py-1 text-left">Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${logs.map(l => {
+                                                const credits = l.credits_used !== undefined ? l.credits_used : (l.credits !== undefined ? l.credits : '');
+                                                return `<tr>
+                                                    <td class="px-2 py-1">${l.tool_name}</td>
+                                                    <td class="px-2 py-1">${l.action}</td>
+                                                    <td class="px-2 py-1">${credits}</td>
+                                                    <td class="px-2 py-1">${new Date(l.created_at).toLocaleString()}</td>
+                                                </tr>`;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
                     document.getElementById('usageLogTable').innerHTML = html;
                 } else {
                     document.getElementById('usageLogTable').innerHTML = '<tr><td colspan="5" class="px-3 py-8 text-center text-gray-400">No usage log found</td></tr>';
                 }
             } catch (error) {
                 document.getElementById('usageLogTable').innerHTML = '<tr><td colspan="5" class="px-3 py-8 text-center text-red-400">Error loading usage log</td></tr>';
+            }
+        }
+
+        // Toggle details row for user
+        function toggleUserLogDetails(emailId) {
+            const row = document.getElementById('details-' + emailId);
+            if (row) {
+                row.classList.toggle('hidden');
             }
         }
 
@@ -617,23 +699,38 @@
                     body: JSON.stringify({ action: 'admin_activations', limit: 20 })
                 });
                 const data = await response.json();
-                
                 if (data.success && data.activations.length > 0) {
-                    const html = data.activations.map(a => `
+                    // Normalize backend fields to code/created_at
+                    const normalized = data.activations.map(a => ({
+                        code: a.code || a.activation_code,
+                        credits: a.credits,
+                        status: a.status,
+                        created_at: a.created_at || a.generated_at
+                    }));
+                    const html = normalized.map(a => `
                         <tr class="border-b">
-                            <td class="px-3 py-2 font-mono text-xs">${a.code}</td>
+                            <td class="px-3 py-2 font-mono text-xs flex items-center gap-2">
+                                <span>${a.code}</span>
+                                <button onclick="copyCodeToClipboard('${a.code}')" title="Copy code" class="text-green-600 hover:text-green-800 px-2 py-1 rounded border border-green-200 bg-green-50 text-xs">📋</button>
+                            </td>
                             <td class="px-3 py-2">${a.credits}</td>
                             <td class="px-3 py-2">
                                 <span class="px-2 py-1 rounded text-xs ${a.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
                                     ${a.status}
                                 </span>
                             </td>
-                            <td class="px-3 py-2">${new Date(a.created_at).toLocaleDateString()}</td>
+                            <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</td>
                         </tr>
                     `).join('');
+                            // Copy to clipboard for activation code
+                            function copyCodeToClipboard(code) {
+                                navigator.clipboard.writeText(code).then(() => {
+                                    alert('✅ Code copied: ' + code);
+                                });
+                            }
                     document.getElementById('activationsTable').innerHTML = html;
                 } else {
-                    document.getElementById('activationsTable').innerHTML = '<tr><td colspan="4" class="px-3 py-8 text-center text-gray-400">No activations yet</td></tr>';
+                    document.getElementById('activationsTable').innerHTML = '<tr><td colspan="4" class="px-3 py-8 text-center text-gray-400">No activations found</td></tr>';
                 }
             } catch (error) {
                 console.error('Activations error:', error);
