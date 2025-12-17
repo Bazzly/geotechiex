@@ -32,6 +32,7 @@ $config = [
     'db_user' => 'your_db_username',        // UPDATE THIS
     'db_pass' => 'your_db_password',        // UPDATE THIS
     'paystack_secret' => 'sk_live_YOUR_SECRET_KEY_HERE', // UPDATE THIS with your actual key
+    'paystack_public' => 'pk_live_YOUR_PUBLIC_KEY_HERE', // Add your public key here
     'debug_mode' => true // Set to false in production
 ];
 
@@ -106,6 +107,46 @@ if (empty($action)) {
 
 try {
     switch ($action) {
+        case 'get_config':
+            // Try to fetch Paystack public key from DB first
+            try {
+                $stmt = $pdo->prepare("SELECT config_value FROM admin_config WHERE config_key = 'paystack_public_key' LIMIT 1");
+                $stmt->execute();
+                $row = $stmt->fetch();
+                $paystackPublicKey = $row ? $row['config_value'] : ($config['paystack_public'] ?? 'pk_test_xxx');
+            } catch (Exception $e) {
+                logError("get_config DB error: " . $e->getMessage());
+                $paystackPublicKey = $config['paystack_public'] ?? 'pk_test_xxx';
+            }
+            sendResponse(true, 'Config loaded', [
+                'paystack_public_key' => $paystackPublicKey
+            ]);
+            break;
+
+        case 'update_config':
+            // Only allow updating Paystack public key for now
+            $key = $data['key'] ?? '';
+            $value = $data['value'] ?? '';
+            if ($key !== 'paystack_public_key' || empty($value)) {
+                sendResponse(false, 'Invalid config key or value');
+            }
+            try {
+                // Upsert into admin_config
+                $stmt = $pdo->prepare("
+                    INSERT INTO admin_config (config_key, config_value, updated_at)
+                    VALUES (:key, :value, NOW())
+                    ON DUPLICATE KEY UPDATE config_value = :value, updated_at = NOW()
+                ");
+                $stmt->execute([
+                    ':key' => $key,
+                    ':value' => $value
+                ]);
+                sendResponse(true, 'Config updated', ['key' => $key, 'value' => $value]);
+            } catch (Exception $e) {
+                logError("update_config error: " . $e->getMessage());
+                sendResponse(false, 'Failed to update config');
+            }
+            break;
         case 'test':
             sendResponse(true, 'API is working correctly!', ['timestamp' => date('Y-m-d H:i:s')]);
             break;
@@ -814,37 +855,30 @@ function logUserUsage($pdo, $data) {
 function adminGenerateCode($pdo, $data) {
     try {
         $credits = isset($data['credits']) ? (int)$data['credits'] : 0;
-        $description = isset($data['description']) ? trim($data['description']) : 'Admin Generated';
-        
         if ($credits <= 0) {
             sendResponse(false, 'Invalid credit amount');
             return;
         }
-        
         // Generate unique code
         $code = generateActivationCode();
-        
         // Check if code already exists (very unlikely but safety check)
-        $checkStmt = $pdo->prepare("SELECT id FROM activation_codes WHERE code = ?");
+        $checkStmt = $pdo->prepare("SELECT id FROM activation_codes WHERE activation_code = ?");
         $checkStmt->execute([$code]);
-        
         if ($checkStmt->fetch()) {
             // Code exists, generate a new one
             $code = generateActivationCode();
         }
-        
+        // Use dummy payment_id for admin-generated codes (e.g., 0)
+        $payment_id = 0;
         // Insert into database
         $stmt = $pdo->prepare("
-            INSERT INTO activation_codes (code, credits, description, status, created_at) 
+            INSERT INTO activation_codes (activation_code, payment_id, credits, status, generated_at) 
             VALUES (?, ?, ?, 'active', NOW())
         ");
-        
-        $stmt->execute([$code, $credits, $description]);
-        
+        $stmt->execute([$code, $payment_id, $credits]);
         sendResponse(true, 'Activation code generated successfully', [
             'code' => $code,
-            'credits' => $credits,
-            'description' => $description
+            'credits' => $credits
         ]);
         
     } catch (PDOException $e) {

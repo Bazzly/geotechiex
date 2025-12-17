@@ -8,20 +8,38 @@ class PaymentAPI {
     constructor() {
         // Your PHP API endpoint
         this.apiEndpoint = 'https://www.bazzlylinks.com/geotechiex.php';
-        
-        // Paystack Public Key (Replace with your actual key)
-        this.paystackPublicKey = 'pk_live_YOUR_PUBLIC_KEY_HERE'; // TODO: Replace with actual key
-        
+        this.paystackPublicKey = null; // Will be loaded dynamically
         this.storageKey = 'geotechiex_payment_data';
         this.init();
     }
 
-    init() {
+    async init() {
+        // Fetch Paystack public key from API
+        await this.fetchPaystackKey();
         // Load Paystack script dynamically
         if (!document.querySelector('script[src*="paystack"]')) {
             const script = document.createElement('script');
             script.src = 'https://js.paystack.co/v1/inline.js';
             document.head.appendChild(script);
+        }
+    }
+
+    async fetchPaystackKey() {
+        try {
+            const response = await fetch(this.apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'get_config' })
+            });
+            const data = await response.json();
+            if (data.success && data.paystack_public_key) {
+                this.paystackPublicKey = data.paystack_public_key;
+            } else {
+                throw new Error('Unable to fetch Paystack public key');
+            }
+        } catch (error) {
+            console.error('Failed to fetch Paystack key:', error);
+            throw error;
         }
     }
 
@@ -41,6 +59,10 @@ class PaymentAPI {
         } = paymentData;
 
         try {
+            // Ensure Paystack key is loaded
+            if (!this.paystackPublicKey) {
+                await this.fetchPaystackKey();
+            }
             // First, register the payment intent with your API
             const reference = this.generateReference();
             const paymentRecord = {
