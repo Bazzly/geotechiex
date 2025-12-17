@@ -242,7 +242,7 @@ class UsageTracker {
                     email: email,
                     device_id: this.getDeviceId(),
                     tool_name: this.toolName,
-                    credits_used: 0,
+                    credits_used: 1,
                     timestamp: new Date().toISOString()
                 })
             });

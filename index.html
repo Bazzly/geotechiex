@@ -94,104 +94,138 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
+    <!-- Projects Section - split into AI Tools and Other Tools -->
     <section id="projects" class="py-12 sm:py-20 bg-gradient-to-br from-blue-50 to-purple-50">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 text-gray-800">Interactive Geospatial Tools</h2>
             <p class="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
-                Powerful tools for surveyors, engineers, and GIS professionals
+                Choose from intelligent AI-driven assistants or traditional geospatial tools
             </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                
-                <!-- Area Delineation Checker -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-green-500 to-blue-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">🎯</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Area Delineation</h3>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Check if coordinates fall within Prime, Special Prime, or General areas.</p>
-                        <div class="space-y-2">
-                            <a href="checkPoint.html" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Standard Checker
-                            </a>
+
+            <!-- AI Tools -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">🤖 AI Tools</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <!-- Area Delineation AI -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-green-600 to-emerald-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🎯</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Area Delineation AI</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Use an AI assistant to analyze coordinates and classify areas (Prime, Special Prime, General).</p>
                             <a href="areadelAi.html" class="block bg-green-600 hover:bg-green-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                AI Assistant 🤖
+                                Launch AI Assistant
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Survey Drafting AI (if available) -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">✏️</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Drafting AI</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">AI-assisted survey drafting to speed up polygon creation and annotations.</p>
+                            <a href="Polygon/survdraft.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Open Drafting AI
                             </a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Coordinate Transformation -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">🔄</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Coordinate Transform</h3>
+            <!-- Other Tools -->
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">🧰 Other Tools</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+
+                    <!-- Standard Area Checker -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-green-500 to-blue-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">📍</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Area Delineation</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Check if coordinates fall within Prime, Special Prime, or General areas.</p>
+                            <a href="checkPoint.html" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Standard Checker
+                            </a>
+                        </div>
                     </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Convert coordinates between NNO, Minna Datum, and WGS84 lat/long systems.</p>
-                        <a href="coordTrans.html" class="block bg-purple-600 hover:bg-purple-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                            Transform Now
-                        </a>
+
+                    <!-- Coordinate Transformation -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🔄</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Coordinate Transform</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Convert coordinates between NNO, Minna Datum, and WGS84 lat/long systems.</p>
+                            <a href="coordTrans.html" class="block bg-purple-600 hover:bg-purple-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Transform Now
+                            </a>
+                        </div>
                     </div>
+
+                    <!-- Nigeria Ward Checker -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🇳🇬</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Nigeria Ward Checker</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Identify State, LGA, and Ward from coordinates across Nigeria.</p>
+                            <a href="ngn_wards.html" class="block bg-orange-600 hover:bg-orange-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Check Location
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Compass & Distance -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🧭</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Compass & Distance</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Real-time compass bearing and distance calculator for field work.</p>
+                            <a href="compass.html" class="block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Launch Compass
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Survey Fee Estimator -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
+                            <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Estimate Fees
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Polygon Tools -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">📐</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Polygon Creator</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Professional survey data processor with coordinate transformation and polygon creation.</p>
+                            <a href="Polygon/index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Launch Tool
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
-
-                <!-- Nigeria Ward Checker -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">🇳🇬</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Nigeria Ward Checker</h3>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Identify State, LGA, and Ward from coordinates across Nigeria.</p>
-                        <a href="ngn_wards.html" class="block bg-orange-600 hover:bg-orange-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                            Check Location
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Compass & Distance -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">🧭</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Compass & Distance</h3>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Real-time compass bearing and distance calculator for field work.</p>
-                        <a href="compass.html" class="block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                            Launch Compass
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Survey Fee Estimator -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">💰</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h3>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
-                        <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                            Estimate Fees
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Polygon Tools -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-4 sm:p-6">
-                        <div class="text-3xl sm:text-4xl mb-2">📐</div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white">Polygon Creator</h3>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <p class="text-gray-600 mb-4 text-sm sm:text-base">Professional survey data processor with coordinate transformation and polygon creation.</p>
-                        <a href="Polygon/index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                            Launch Tool
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
