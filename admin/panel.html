@@ -36,6 +36,16 @@
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
+
+        <!-- Paystack Public Key Config -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">🔑 Paystack Public Key</h3>
+            <form id="paystackKeyForm" class="flex flex-col md:flex-row items-center gap-4">
+                <input type="text" id="paystackKeyInput" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono" placeholder="pk_live_xxx..." required>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg">Update Key</button>
+            </form>
+            <div id="paystackKeyStatus" class="mt-2 text-sm"></div>
+        </div>
         
         <!-- Quick Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -298,6 +308,7 @@
             loadGeoFiles();
             loadUsers();
             loadUsageLog();
+            loadPaystackKey();
         });
 
         async function loadAllData() {
@@ -548,6 +559,46 @@
                 exportCodesToCSV();
             } else {
                 alert('Export feature coming soon!');
+            }
+
+            // --- PAYSTACK KEY CONFIG ---
+            async function loadPaystackKey() {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'get_config' })
+                    });
+                    const data = await response.json();
+                    if (data.success && data.paystack_public_key) {
+                        document.getElementById('paystackKeyInput').value = data.paystack_public_key;
+                    }
+                } catch (error) {
+                    document.getElementById('paystackKeyStatus').textContent = '❌ Error loading key';
+                }
+            }
+
+            document.getElementById('paystackKeyForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const key = document.getElementById('paystackKeyInput').value.trim();
+                const statusDiv = document.getElementById('paystackKeyStatus');
+                statusDiv.textContent = '⏳ Updating...';
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'update_config', paystack_public_key: key })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        statusDiv.textContent = '✅ Key updated!';
+                    } else {
+                        statusDiv.textContent = '❌ ' + (data.message || 'Update failed');
+                    }
+                } catch (error) {
+                    statusDiv.textContent = '❌ Error updating key';
+                }
+            });
             }
         }
 
