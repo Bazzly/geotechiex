@@ -1,149 +1,55 @@
-# Bulk Coordinate Transformation Tool - User Guide
+Owner name:  (current: PATIENCE OBEHI ADUDU).-  correct
+Full address: FAGBAMIYE SEUN STREET ORINYANRIN,MOWE,OBAFEMI/OWODE LOCAL GOVERNMENT AREA, OGUN STATE. should be writtent like this and also split below (not conrrected and fix)
+Street: "FAGBAMIYE SEUN STREET ORINYANRIN" — confirm.
+Via: "MOWE" —  confirm.
+LGA: "OBAFEMI/OWODE" —  confirm.
+State: "OGUN" —  confirm.
+Scale: should be parsed as numeric ratio "1:500" — confirm.
+Area: OCR shows "462.151 SO.MTS" — should this be "462.151 SQ.MTS" (square meters)? Confirm value and unit. -  confirm.
+Coordinate system: confirm "UTM" and zone is "31" and whether datum is WGS84 (confirm if present). -  confirm.
+ northing  - "74955.594mN"
+ easting - "Not detected but we have it as 542540.622mE"
+coordinate(s):  should be "542540.622mE,74955.594" — not conrrected and fix
+Point IDs: confirm meanings of labels like "FM565AHX", "FM566AHX" ,   confirm. but not all id is detected 
+Plan number / registry: confirm "OG/5093/2025/O53" — i have correcte it
+Surveyor: confirm full surveyor name and credentials ("ALLI BAZEET D., mnis") — not conrrected and fix?
+Date: confirm format should be ISO (YYYY-MM-DD) — here "17-09-2025" → 2025-09-17.
+Misc fields: any extraction of bearings(as value with  ° and ' which is degree amd minut sign ), distances(m unit), scale bars (e.g., "m10 5 0 10 20 30 40m"),  - not conrrected and fix?
 
-## Overview
-The enhanced Coordinate Transformation tool now supports bulk processing of coordinates through CSV upload or direct paste.
 
-## Features
+Title / heading: "PLAN SHEWING PROPERTY"
+Owner / name: "PATIENCE OBEHI ADUDU"
+Street / via: "OF FAGBAMIYE SEUN STREET ORINYANRIN VIA MOWE"
+LGA: "OBAFEMI/OWODE LOCAL GOVERNMENT AREA"
+State: "OGUN - STATE"
+Scale: "1:500"
+Origin / system: "U.T.M (ZONE 31)"
+Area: "462.151 SO.MTS" (OCR; likely "SQ.MTS")
+Plan number / certificate: "OG/5093/2025/OS3"
+Surveyor: "ALLI BAZEET D., mms" (SURVEYOR)
+Date: "17 - 09 - 2025"
+Coordinate snippets / point labels: "FM565AHX", "FM566AHX", "FM567AHX", "FM568AHX"; one numeric: "74955.594mN"
+Other: "Certified true copy of original plan", "NO", small fragments like "19. m", "40m"
+Labeling questions (please correct/confirm)
 
-### 🔄 Single Transform Mode
-- Transform individual coordinates
-- Interactive map display (for WGS84 output)
-- Real-time visual results
-- Support for all Nigerian coordinate systems
+Owner name: confirm exact owner string (current: PATIENCE OBEHI ADUDU). Any extra parts (e.g., titles)?
+Full address: confirm street, via, LGA, and state as separate fields:
+Street: "FAGBAMIYE SEUN STREET ORINYANRIN" — correct?
+Via: "MOWE" — correct?
+LGA: "OBAFEMI/OWODE" — correct?
+State: "OGUN" — correct?
+Scale: should be parsed as numeric ratio "1:500" — confirm.
+Area: OCR shows "462.151 SO.MTS" — should this be "462.151 SQ.MTS" (square meters)? Confirm value and unit.
+Coordinate system: confirm "UTM" and zone is "31" and whether datum is WGS84 (confirm if present).
+Primary coordinate(s): OCR shows "74955.594mN" — is this a northing? Do you have the easting for that point, or is a combined point elsewhere? Provide the primary reference point (easting, northing, zone) if available.
+Point IDs: confirm meanings of labels like "FM565AHX", "FM566AHX", etc. Are these control point IDs to be stored as points[].id?
+Plan number / registry: confirm "OG/5093/2025/OS3" — any prefix/suffix normalization rules?
+Surveyor: confirm full surveyor name and credentials ("ALLI BAZEET D., mms") — how should we store (name / registration)?
+Date: confirm format should be ISO (YYYY-MM-DD) — here "17-09-2025" → 2025-09-17.
+Misc fields: any extraction of bearings, distances, scale bars (e.g., "40m"), or seals to capture?
+Priority: which fields are highest priority to extract correctly for you? (e.g., owner, coordinates, area, plan number)
+If you confirm/correct these, I will:
 
-### 📊 Bulk Transform Mode
-- Process multiple coordinates at once
-- CSV file upload support
-- Direct paste functionality
-- Download results as CSV
-- Real-time validation and error reporting
-
-## Input Format
-
-### CSV Format
-```
-ID,X,Y,Z,Name
-1,538156,787954,0,Control Point A
-2,538200,788000,0,Control Point B
-3,538300,788100,0,Control Point C
-```
-
-### Field Descriptions
-- **ID**: Unique identifier (required)
-- **X**: Easting/Longitude coordinate (required)
-- **Y**: Northing/Latitude coordinate (required)
-- **Z**: Elevation (optional, defaults to 0)
-- **Name**: Point description (optional, defaults to "Point [ID]")
-
-### Minimum Format
-You can use simplified format with just ID, X, Y:
-```
-1,538156,787954
-2,538200,788000
-3,538300,788100
-```
-
-## How to Use
-
-### Single Transformation
-1. Select **Single Transform** tab
-2. Choose source coordinate system
-3. Choose target coordinate system
-4. Enter X and Y coordinates
-5. Click **Transform Coordinates**
-6. View results and map (if applicable)
-
-### Bulk Transformation
-
-#### Method 1: Upload CSV File
-1. Select **Bulk Transform** tab
-2. Choose source and target coordinate systems
-3. Click the upload area or drag and drop CSV file
-4. Click **Transform All Coordinates**
-5. Review results
-6. Click **Download CSV** to save results
-
-#### Method 2: Paste Coordinates
-1. Select **Bulk Transform** tab
-2. Choose source and target coordinate systems
-3. Paste coordinates in the text area (one per line)
-4. Click **Transform All Coordinates**
-5. Review results
-6. Click **Download CSV** to save results
-
-## Output Format
-
-The downloaded CSV includes:
-- ID
-- Name
-- Original_X
-- Original_Y
-- Z
-- Transformed_X
-- Transformed_Y
-- Source_EPSG
-- Target_EPSG
-
-## Supported Coordinate Systems
-
-### Source Systems
-- **EPSG:26331** - Minna / UTM zone 31N
-- **EPSG:26332** - Minna / UTM zone 32N
-- **EPSG:26391** - Minna / Nigeria West Belt
-- **EPSG:26392** - Minna / Nigeria Mid Belt
-- **EPSG:26393** - Minna / Nigeria East Belt
-- **EPSG:4326** - WGS84 (Lat/Long)
-
-### Target Systems
-Same as source systems
-
-## Tips & Best Practices
-
-1. **File Size**: For optimal performance, process up to 1000 coordinates at a time
-2. **Format Check**: Ensure no extra commas or spaces in your CSV
-3. **Validation**: Review the success/error summary before downloading
-4. **Naming**: Use descriptive names for better identification
-5. **Backup**: Keep original files before transformation
-
-## Error Messages
-
-- **"Invalid format"**: Line doesn't have minimum required fields (ID,X,Y)
-- **"Invalid coordinates"**: X or Y values are not valid numbers
-- **"Transformation failed"**: Coordinates are outside valid range for projection
-
-## Example Use Cases
-
-### Survey Data Processing
-Convert multiple survey points from Minna datum to WGS84 for GIS applications
-
-### CAD to GIS Conversion
-Transform CAD coordinates to geographical coordinates for mapping
-
-### Field Data Integration
-Batch convert GPS coordinates between different systems
-
-### Legacy Data Update
-Modernize old coordinate datasets to current standards
-
-## Sample Files
-
-A sample CSV file (`sample_coordinates.csv`) is included in the project directory for testing.
-
-## Technical Details
-
-- Built with Proj4js for accurate transformations
-- Supports WGS84 datum shifts for Nigerian coordinate systems
-- Client-side processing (no data uploaded to servers)
-- Real-time validation and feedback
-
-## Support
-
-For issues or questions:
-- Check format requirements
-- Ensure coordinates are within valid ranges
-- Contact GeoTechieX support team
-
----
-**Version**: 2.0
-**Last Updated**: December 15, 2025
-**Developer**: GeoTechieX Team
+Create a normalized JSON label for this image (example training sample).
+Add it to the AdvancedSurveyTrainer store (instructions or automatic via UI).
+Suggest a few additional questions or bounding-box tasks (if you want region-level annotations).

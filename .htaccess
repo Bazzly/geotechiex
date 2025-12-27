@@ -1,0 +1,24 @@
+# Disable directory listing
+Options -Indexes
+
+# Block access to sensitive files
+<FilesMatch "\.(env|log|sql|sh|bak|ini|json|yml|yaml|md|git|htaccess|htpasswd)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Restrict HTTP methods
+<LimitExcept GET POST>
+    Deny from all
+</LimitExcept>
+
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "DENY"
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy "no-referrer"
+Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+# Block .git and hidden files
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\..*

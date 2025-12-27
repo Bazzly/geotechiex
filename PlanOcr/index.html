@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTechieX — Advanced Geo AI Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.1/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .ocr-output { white-space: pre-wrap; background: #0f172a; color: #e6eef8; padding: 1rem; border-radius: 0.5rem; min-height: 160px; }
+        .file-label { cursor: pointer; }
+        .chat-message { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .preview-container { position: relative; overflow: hidden; }
+        .preview-image { max-width: 100%; max-height: 300px; object-fit: contain; }
+        .geo-data-card { background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%); }
+        .highlight-coordinate { background-color: #fbbf24; color: #1f2937; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        .highlight-distance { background-color: #34d399; color: #1f2937; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        .highlight-bearing { background-color: #60a5fa; color: #1f2937; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        .highlight-area { background-color: #f472b6; color: #1f2937; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        .typing-indicator { display: flex; align-items: center; }
+        .typing-dot { width: 8px; height: 8px; background-color: #93c5fd; border-radius: 50%; margin: 0 2px; animation: typing 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-10px); } }
+        .chat-container { height: 400px; overflow-y: auto; scroll-behavior: smooth; }
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-track { background: #374151; }
+        .chat-container::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 3px; }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Survey plan specific styles */
+        .survey-data-card { background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); }
+        .confidence-high { background-color: #10b981; }
+        .confidence-medium { background-color: #f59e0b; }
+        .confidence-low { background-color: #ef4444; }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1f2937;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 600px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between py-4">
+                <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition">
+                    <span class="text-2xl">🌍</span>
+                    <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX AI</h1>
+                </a>
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <nav id="desktop-menu" class="hidden md:flex items-center space-x-2">
+                    <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                    <a href="survdraft.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Survey Draft</a>
+                    <a href="survey-ocr.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Geo AI Tool</a>
+                    <a href="alli-bazeet-damola-profile.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
+                </nav>
+            </div>
+            <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
+                <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
+                <a href="survdraft.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Survey Draft</a>
+                <a href="survey-ocr.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition bg-white/20">Geo AI Tool</a>
+                <a href="alli-bazeet-damola-profile.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-6 sm:py-10">
+        <div class="max-w-6xl mx-auto">
+            <!-- Main Title -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-xl shadow-2xl mb-8 text-center">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Advanced Geo AI Tool</h1>
+                <p class="text-sm sm:text-base text-blue-100 max-w-3xl mx-auto">Upload survey plans to extract coordinates, calculate distances, bearings, areas, and interact with your data through AI chat.</p>
+                <div id="usage-tracker-display" class="mb-4 mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: File Upload & Preview -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- File Upload -->
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-upload mr-2 text-blue-400"></i> Upload Survey File
+                        </h2>
+                        <label class="file-label block">
+                            <input id="fileInput" type="file" accept="image/*,application/pdf" class="hidden">
+                            <div class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 transition cursor-pointer bg-gray-900/50">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <div class="text-lg font-medium text-gray-300 mb-2">Click to upload image or PDF</div>
+                                <div class="text-sm text-gray-400">Supports JPG, PNG, TIFF, PDF</div>
+                            </div>
+                        </label>
+                        
+                        <!-- File Preview -->
+                        <div id="filePreview" class="mt-6 hidden">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">File Preview</h3>
+                            <div class="preview-container bg-gray-900 rounded-lg p-4">
+                                <img id="previewImage" class="preview-image mx-auto" src="" alt="File Preview">
+                                <div id="pdfPreview" class="text-center p-4">
+                                    <i class="fas fa-file-pdf text-4xl text-red-400 mb-2"></i>
+                                    <div id="pdfInfo" class="text-gray-300"></div>
+                                </div>
+                            </div>
+                            <div id="fileInfo" class="text-sm text-gray-400 mt-2"></div>
+                            <div class="flex space-x-2 mt-3">
+                                <button id="annotateBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-sm">Annotate</button>
+                                <button id="saveExampleBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">Save Example</button>
+                                <button id="syncTrainerBtn" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm">Sync Trainer (save)</button>
+                                <button id="manageTrainerBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm">Manage Trainer</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="mt-6 grid grid-cols-1 gap-3" id="actionButtons">
+                            <button id="surveyAnalyzeBtn" class="bg-gradient-to-r from-green-500 to-teal-600 text-white py-3 rounded-lg font-semibold hover:from-green-600 hover:to-teal-700 transition flex items-center justify-center">
+                                <i class="fas fa-map mr-2"></i> Analyze Survey Plan
+                            </button>
+                        </div>
+                        
+                        <div id="status" class="mt-4 text-sm text-gray-300 p-3 bg-gray-900/50 rounded-lg"></div>
+                    </div>
+                    
+                    <!-- Extracted Geo Data -->
+                    <div id="geoDataPanel" class="bg-gray-800 rounded-xl p-6 shadow-lg hidden">
+                        <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-map-marked-alt mr-2 text-green-400"></i> Extracted Geo Data
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="geo-data-card p-4 rounded-lg">
+                                <h3 class="font-semibold text-white mb-2">Coordinates Found</h3>
+                                <div id="coordinatesList" class="text-sm"></div>
+                            </div>
+                            <div class="geo-data-card p-4 rounded-lg">
+                                <h3 class="font-semibold text-white mb-2">Calculations</h3>
+                                <div id="calculationsList" class="text-sm space-y-2">
+                                    <div>Distance: <span id="distanceValue" class="font-bold">--</span></div>
+                                    <div>Bearing: <span id="bearingValue" class="font-bold">--</span></div>
+                                    <div>Area: <span id="areaValue" class="font-bold">--</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Survey Plan Analysis Panel (Will be added dynamically) -->
+                    <div id="surveyAnalysisPanel" class="bg-gray-800 rounded-xl p-6 shadow-lg hidden">
+                        <!-- Content will be added by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Middle Column: OCR Output & Actions -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- OCR Output -->
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-white flex items-center">
+                                <i class="fas fa-file-alt mr-2 text-yellow-400"></i> Extracted Text
+                            </h2>
+                            <div class="flex space-x-2">
+                                <button id="copyBtn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-sm transition flex items-center">
+                                    <i class="fas fa-copy mr-2"></i> Copy
+                                </button>
+                                <button id="exportBtn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-sm transition flex items-center">
+                                    <i class="fas fa-download mr-2"></i> Export
+                                </button>
+                                <button id="clearBtn" class="bg-red-700 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm transition flex items-center">
+                                    <i class="fas fa-trash-alt mr-2"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="output" class="ocr-output max-h-96 overflow-y-auto"></div>
+                        <div class="mt-4 text-sm text-gray-400">
+                            <i class="fas fa-info-circle mr-1"></i> 
+                            <span id="statsInfo">No text extracted yet.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat with Geo Data -->
+                    <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-robot mr-2 text-purple-400"></i> Chat with Geo AI
+                        </h2>
+                        <div class="chat-container mb-4 p-4 bg-gray-900/50 rounded-lg" id="chatContainer">
+                            <div class="chat-message bg-blue-900/30 p-4 rounded-lg mb-3">
+                                <div class="font-semibold text-blue-300 mb-1">Geo AI Assistant</div>
+                                <div class="text-gray-200">Hello! I'm your Geo AI assistant. Upload a survey plan and I'll help you analyze coordinates, calculate distances and bearings, compute areas, and answer questions about your geo-data. I can also recognize Nigerian survey plan formats!</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <input type="text" id="chatInput" placeholder="Ask about coordinates, distances, bearings, survey plan details..." 
+                                   class="flex-grow bg-gray-700 border border-gray-600 rounded-l-lg p-3 text-white focus:outline-none focus:border-blue-500">
+                            <button id="sendChatBtn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 rounded-r-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div id="chatStatus" class="mt-2 text-sm text-gray-400 hidden">
+                            <div class="typing-indicator">
+                                <span class="mr-2">Geo AI is thinking</span>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-8 border-t border-gray-700 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-white">GeoTechieX AI</h3>
+                <p class="text-sm text-gray-400">Advanced geospatial analysis with AI-powered OCR and chat assistance.</p>
+            </div>
+            <div class="text-xs text-gray-500">© 2025 GeoTechieX. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="../js/usage-tracker.js"></script>
+    <!-- IMPORTANT: Make sure these files exist in your js/ folder -->
+    <script src="js/survey-plan-parser.js"></script>
+    <script src="js/geo-ai-base.js"></script>
+    <script src="js/geo-ai-tool.js"></script>
+    <script src="js/advanced-trainer.js"></script>
+    
+    <!-- Initialize the application -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Initialize file label click handlers
+            document.querySelectorAll('.file-label').forEach(el => {
+                el.addEventListener('click', () => {
+                    document.getElementById('fileInput').click();
+                });
+            });
+
+            // Show file preview when a file is selected
+            const fileInputEl = document.getElementById('fileInput');
+            if (fileInputEl) {
+                fileInputEl.addEventListener('change', (e) => {
+                    const file = fileInputEl.files && fileInputEl.files[0];
+                    const preview = document.getElementById('filePreview');
+                    const previewImg = document.getElementById('previewImage');
+                    const pdfPreview = document.getElementById('pdfPreview');
+                    const pdfInfo = document.getElementById('pdfInfo');
+                    const fileInfo = document.getElementById('fileInfo');
+                    if (!file) {
+                        if (preview) preview.classList.add('hidden');
+                        return;
+                    }
+
+                    // Image preview
+                    if (file.type && file.type.startsWith('image/')) {
+                        if (previewImg) {
+                            const url = URL.createObjectURL(file);
+                            previewImg.src = url;
+                            previewImg.style.display = 'block';
+                            previewImg.onload = () => { URL.revokeObjectURL(url); };
+                        }
+                        if (pdfPreview) pdfPreview.style.display = 'none';
+                    } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                        // PDF preview: show icon and basic info
+                        if (previewImg) previewImg.style.display = 'none';
+                        if (pdfPreview) {
+                            pdfPreview.style.display = 'block';
+                            if (pdfInfo) pdfInfo.textContent = `${file.name} — ${Math.round(file.size/1024)} KB`;
+                        }
+                    } else {
+                        if (previewImg) previewImg.style.display = 'none';
+                        if (pdfPreview) pdfPreview.style.display = 'none';
+                    }
+
+                    if (fileInfo) fileInfo.textContent = `${file.name} • ${file.type || 'unknown'} • ${Math.round(file.size/1024)} KB`;
+                    if (preview) preview.classList.remove('hidden');
+                    // reset any drawn annotations when a new file loads
+                    if (window._currentAnnotation) { window._currentAnnotation = null; removeAnnotationOverlay(); }
+                });
+            }
+
+            // Annotation helpers: draw bounding box over previewImage
+            function removeAnnotationOverlay(){
+                const existing = document.getElementById('annotOverlay');
+                if (existing) existing.remove();
+            }
+
+            const annotateBtn = document.getElementById('annotateBtn');
+            const saveExampleBtn = document.getElementById('saveExampleBtn');
+            const syncTrainerBtn = document.getElementById('syncTrainerBtn');
+
+            if (annotateBtn) {
+                let drawing = false, startX=0, startY=0, overlay=null;
+                annotateBtn.addEventListener('click', () => {
+                    const img = document.getElementById('previewImage');
+                    if (!img || img.style.display === 'none') { alert('Open an image in the preview to annotate'); return; }
+                    // toggle drawing mode
+                    if (annotateBtn.dataset.mode === 'on') {
+                        annotateBtn.dataset.mode = 'off';
+                        annotateBtn.textContent = 'Annotate';
+                        img.style.cursor = '';
+                        removeAnnotationOverlay();
+                        return;
+                    }
+                    annotateBtn.dataset.mode = 'on';
+                    annotateBtn.textContent = 'Cancel Annotate';
+                    img.style.cursor = 'crosshair';
+
+                    overlay = document.createElement('div');
+                    overlay.id = 'annotOverlay';
+                    overlay.style.position = 'absolute';
+                    overlay.style.left = img.offsetLeft + 'px';
+                    overlay.style.top = img.offsetTop + 'px';
+                    overlay.style.width = img.clientWidth + 'px';
+                    overlay.style.height = img.clientHeight + 'px';
+                    overlay.style.pointerEvents = 'auto';
+                    overlay.style.zIndex = 40;
+                    overlay.style.border = '0px';
+                    overlay.style.boxSizing = 'border-box';
+                    overlay.style.cursor = 'crosshair';
+                    overlay.addEventListener('mousedown', (ev) => {
+                        drawing = true;
+                        const rect = img.getBoundingClientRect();
+                        startX = ev.clientX - rect.left;
+                        startY = ev.clientY - rect.top;
+                        // create box
+                        const box = document.createElement('div');
+                        box.id = 'annotBox';
+                        box.style.position = 'absolute';
+                        box.style.left = startX + 'px';
+                        box.style.top = startY + 'px';
+                        box.style.border = '2px dashed #60a5fa';
+                        box.style.background = 'rgba(96,165,250,0.08)';
+                        overlay.appendChild(box);
+                        img._annotBox = box;
+                    });
+                    overlay.addEventListener('mousemove', (ev) => {
+                        if (!drawing) return;
+                        const rect = img.getBoundingClientRect();
+                        const curX = ev.clientX - rect.left;
+                        const curY = ev.clientY - rect.top;
+                        const box = img._annotBox;
+                        if (!box) return;
+                        const x = Math.min(startX, curX);
+                        const y = Math.min(startY, curY);
+                        const w = Math.abs(curX - startX);
+                        const h = Math.abs(curY - startY);
+                        box.style.left = x + 'px'; box.style.top = y + 'px'; box.style.width = w + 'px'; box.style.height = h + 'px';
+                    });
+                    overlay.addEventListener('mouseup', (ev) => {
+                        drawing = false;
+                        annotateBtn.dataset.mode = 'off';
+                        annotateBtn.textContent = 'Annotate';
+                        img.style.cursor = '';
+                        // capture bbox normalized
+                        const box = img._annotBox;
+                        if (box) {
+                            const rect = img.getBoundingClientRect();
+                            const bx = parseFloat(box.style.left);
+                            const by = parseFloat(box.style.top);
+                            const bw = parseFloat(box.style.width);
+                            const bh = parseFloat(box.style.height);
+                            window._currentAnnotation = {
+                                x: +(bx/rect.width).toFixed(4),
+                                y: +(by/rect.height).toFixed(4),
+                                w: +(bw/rect.width).toFixed(4),
+                                h: +(bh/rect.height).toFixed(4)
+                            };
+                        }
+                    });
+
+                    // position overlay relative to preview container
+                    const previewContainer = document.querySelector('.preview-container');
+                    if (previewContainer) {
+                        previewContainer.style.position = 'relative';
+                        previewContainer.appendChild(overlay);
+                    }
+                });
+            }
+
+            if (saveExampleBtn) {
+                saveExampleBtn.addEventListener('click', async () => {
+                    const text = document.getElementById('output')?.textContent || '';
+                    const parsed = window.geoAI?.parsedSurveyData || {};
+                    const labels = Object.assign({}, parsed);
+                    // include bbox if present
+                    if (window._currentAnnotation) labels.boundingBoxes = [ window._currentAnnotation ];
+
+                    try {
+                        if (window.AdvancedSurveyTrainer) {
+                            window.AdvancedSurveyTrainer.addExample(text, labels);
+                            const res = await window.AdvancedSurveyTrainer.saveToServer();
+                            console.log('Saved example locally and to server', res);
+                            alert('Example saved to trainer (local + server).');
+                        } else {
+                            alert('Trainer not available');
+                        }
+                    } catch (e) { console.warn(e); alert('Failed to save example'); }
+                });
+            }
+
+            if (syncTrainerBtn) {
+                syncTrainerBtn.addEventListener('click', async () => {
+                    if (!window.AdvancedSurveyTrainer) return alert('Trainer not available');
+                    const token = window.TRAINER_TOKEN || prompt('Trainer token (leave blank if not required)');
+                    const res = await window.AdvancedSurveyTrainer.saveToServer('/api/trainer.php', token || '');
+                    if (res && res.ok) alert('Trainer synced to server'); else alert('Sync response: ' + JSON.stringify(res));
+                });
+            }
+
+            // Manage Trainer UI
+            const manageTrainerBtn = document.getElementById('manageTrainerBtn');
+            function createTrainerModal() {
+                removeTrainerModal();
+                const modal = document.createElement('div');
+                modal.id = 'trainerModal';
+                modal.className = 'modal-backdrop';
+                modal.innerHTML = `
+                    <div class="modal-content max-w-3xl">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-bold text-white">Trainer Examples</h3>
+                                    <div class="space-x-2">
+                                        <input id="trainerTokenInput" placeholder="Trainer token (optional)" class="bg-gray-700 text-sm px-2 py-1 rounded text-white mr-2" />
+                                        <button id="trainerLoadServer" class="bg-blue-600 px-3 py-1 rounded text-sm text-white">Load From Server</button>
+                                        <button id="trainerExport" class="bg-gray-700 px-3 py-1 rounded text-sm text-white">Export</button>
+                                        <button id="trainerImport" class="bg-green-600 px-3 py-1 rounded text-sm text-white">Import</button>
+                                        <button id="trainerClose" class="bg-red-600 px-3 py-1 rounded text-sm text-white">Close</button>
+                                    </div>
+                                </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div id="trainerList" style="max-height:60vh;overflow:auto" class="space-y-2 col-span-1"></div>
+                            <div id="trainerEditor" class="col-span-1 p-2" style="max-height:60vh;overflow:auto"></div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                document.getElementById('trainerClose').addEventListener('click', removeTrainerModal);
+                document.getElementById('trainerLoadServer').addEventListener('click', async () => {
+                    if (!window.AdvancedSurveyTrainer) return alert('Trainer not available');
+                    const token = (document.getElementById('trainerTokenInput')||{}).value || '';
+                    const r = await window.AdvancedSurveyTrainer.loadFromServer('/api/trainer.php', token);
+                    if (r && r.ok) { alert('Loaded ' + r.count + ' examples'); renderTrainerList(); } else alert('Load error: ' + JSON.stringify(r));
+                });
+
+                document.getElementById('trainerExport').addEventListener('click', () => {
+                    if (!window.AdvancedSurveyTrainer) return alert('Trainer not available');
+                    const data = window.AdvancedSurveyTrainer.exportModel();
+                    const blob = new Blob([data], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = 'trainer_export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+                });
+
+                document.getElementById('trainerImport').addEventListener('click', () => {
+                    const input = document.createElement('input'); input.type = 'file'; input.accept = '.json,application/json';
+                    input.addEventListener('change', async (e) => {
+                        const f = e.target.files[0]; if (!f) return;
+                        const txt = await f.text();
+                        const ok = window.AdvancedSurveyTrainer.importModel(txt);
+                        if (ok) { alert('Imported.'); renderTrainerList(); }
+                        else alert('Import failed');
+                    });
+                    input.click();
+                });
+
+                renderTrainerList();
+            }
+
+            function removeTrainerModal(){ const m = document.getElementById('trainerModal'); if (m) m.remove(); }
+
+            function renderTrainerList(){
+                const list = document.getElementById('trainerList'); if(!list) return;
+                list.innerHTML = '';
+                const examples = (window.AdvancedSurveyTrainer && window.AdvancedSurveyTrainer.examples) ? window.AdvancedSurveyTrainer.examples : [];
+                if(!examples.length) { list.innerHTML = '<div class="text-sm text-gray-300">No examples available.</div>'; return; }
+                examples.slice().reverse().forEach((ex, idxRev) => {
+                    const idx = examples.length - 1 - idxRev;
+                    const card = document.createElement('div');
+                    card.className = 'p-3 bg-gray-800 rounded';
+                    const snippet = (ex.text || '').substring(0,300).replace(/\n/g,' ');
+                    card.innerHTML = `<div class="flex justify-between items-start"><div class="text-sm text-gray-200 font-medium">Example ${idx}</div><div class="space-x-2"><button data-idx="${idx}" class="trainerLoad bg-blue-600 px-2 py-1 rounded text-xs">Load</button><button data-idx="${idx}" class="trainerEdit bg-yellow-600 px-2 py-1 rounded text-xs">Edit</button><button data-idx="${idx}" class="trainerDelete bg-red-600 px-2 py-1 rounded text-xs">Delete</button><button data-idx="${idx}" class="trainerUse bg-green-600 px-2 py-1 rounded text-xs">Use</button></div></div><div class="text-xs text-gray-400 mt-2">${snippet}</div>`;
+                    list.appendChild(card);
+                });
+
+                // Attach handlers
+                list.querySelectorAll('.trainerDelete').forEach(btn => btn.addEventListener('click', async (e) => {
+                    const i = parseInt(btn.dataset.idx);
+                    if (!confirm('Delete example ' + i + '?')) return;
+                    // attempt server delete first (preferred) then update local state
+                    const token = (document.getElementById('trainerTokenInput')||{}).value || window.TRAINER_TOKEN || '';
+                    let resp = { ok: false };
+                    try {
+                        if (window.AdvancedSurveyTrainer && typeof window.AdvancedSurveyTrainer.deleteOnServer === 'function') {
+                            resp = await window.AdvancedSurveyTrainer.deleteOnServer('/api/trainer.php', i, null, token);
+                        }
+                    } catch (err) { console.warn('remote delete failed', err); }
+                    // remove locally regardless to keep UI responsive
+                    window.AdvancedSurveyTrainer.examples.splice(i,1);
+                    window.AdvancedSurveyTrainer.save();
+                    // if server didn't report ok, fallback to saving full copy to server
+                    if (!(resp && resp.ok)) {
+                        try {
+                            const r2 = await window.AdvancedSurveyTrainer.saveToServer('/api/trainer.php', token);
+                            console.log('Fallback save result', r2);
+                        } catch (e) { console.warn('fallback save failed', e); }
+                    }
+                    renderTrainerList();
+                }));
+
+                list.querySelectorAll('.trainerLoad').forEach(btn => btn.addEventListener('click', (e) => {
+                    const i = parseInt(btn.dataset.idx);
+                    const ex = window.AdvancedSurveyTrainer.examples[i];
+                    if (!ex) return alert('Example not found');
+                    document.getElementById('output').textContent = ex.text || '';
+                    if (ex.labels) { window.geoAI.parsedSurveyData = ex.labels; if (typeof window.geoAI.displaySurveyAnalysis === 'function') window.geoAI.displaySurveyAnalysis(); }
+                    alert('Loaded example into UI');
+                }));
+
+                // Edit button: open guided editor in the right panel
+                list.querySelectorAll('.trainerEdit').forEach(btn => btn.addEventListener('click', (e) => {
+                    const i = parseInt(btn.dataset.idx);
+                    const ex = window.AdvancedSurveyTrainer.examples[i];
+                    if (!ex) return alert('Example not found');
+                    openExampleEditor(i, ex);
+                }));
+
+                list.querySelectorAll('.trainerUse').forEach(btn => btn.addEventListener('click', (e) => {
+                    const i = parseInt(btn.dataset.idx);
+                    const ex = window.AdvancedSurveyTrainer.examples[i];
+                    if (!ex) return alert('Example not found');
+                    // add this example to top as correction and retrain
+                    window.AdvancedSurveyTrainer.examples.push(ex);
+                    window.AdvancedSurveyTrainer.save();
+                    window.AdvancedSurveyTrainer.train();
+                    alert('Example appended and trainer retrained');
+                    renderTrainerList();
+                }));
+
+                // clear editor when list re-renders
+                const editor = document.getElementById('trainerEditor'); if (editor) editor.innerHTML = '<div class="text-sm text-gray-400">Select an example and click Edit to modify labels and bounding boxes.</div>';
+            }
+
+            if (manageTrainerBtn) manageTrainerBtn.addEventListener('click', createTrainerModal);
+            
+            // Example editor: open in the right-hand panel of the modal
+            function openExampleEditor(index, example) {
+                const editor = document.getElementById('trainerEditor');
+                if (!editor) return alert('Editor not found');
+                editor.innerHTML = '';
+
+                const title = document.createElement('div');
+                title.className = 'text-white font-semibold mb-2';
+                title.textContent = 'Editing Example ' + index;
+                editor.appendChild(title);
+
+                const textareaLabel = document.createElement('div');
+                textareaLabel.className = 'text-xs text-gray-300 mb-1';
+                textareaLabel.textContent = 'Raw OCR Text';
+                editor.appendChild(textareaLabel);
+
+                const ta = document.createElement('textarea');
+                ta.className = 'w-full bg-gray-900 text-gray-100 p-2 rounded mb-2';
+                ta.style.minHeight = '120px';
+                ta.value = example.text || '';
+                editor.appendChild(ta);
+
+                const labelsDiv = document.createElement('div');
+                labelsDiv.className = 'space-y-2 mb-2';
+                editor.appendChild(labelsDiv);
+
+                const labels = example.labels || {};
+                const labelKeys = Object.keys(labels).length ? Object.keys(labels) : ['title','owner','fullAddress','scale','area','planNumber','surveyor','date'];
+                labelKeys.forEach(k => {
+                    const wrapper = document.createElement('div'); wrapper.className = 'space-y-1';
+                    const lab = document.createElement('div'); lab.className = 'text-xs text-gray-300'; lab.textContent = k;
+                    const inp = document.createElement('input'); inp.className = 'w-full bg-gray-800 text-gray-100 p-2 rounded'; inp.value = labels[k] || '';
+                    inp.dataset.key = k;
+                    wrapper.appendChild(lab); wrapper.appendChild(inp);
+                    labelsDiv.appendChild(wrapper);
+                });
+
+                // Bounding boxes
+                const bboxLabel = document.createElement('div'); bboxLabel.className = 'text-xs text-gray-300 mt-2'; bboxLabel.textContent = 'Bounding Boxes (normalized x,y,w,h)';
+                editor.appendChild(bboxLabel);
+                const bboxList = document.createElement('div'); bboxList.className = 'space-y-2 mb-2';
+                editor.appendChild(bboxList);
+
+                const bboxes = (labels.boundingBoxes && Array.isArray(labels.boundingBoxes)) ? labels.boundingBoxes.slice() : [];
+                function renderBBoxes() {
+                    bboxList.innerHTML = '';
+                    if (!bboxes.length) bboxList.innerHTML = '<div class="text-sm text-gray-400">No bounding boxes.</div>';
+                    bboxes.forEach((b, bi) => {
+                        const row = document.createElement('div'); row.className = 'bg-gray-800 p-2 rounded';
+                        const inputs = ['x','y','w','h'].map(k => {
+                            const i = document.createElement('input'); i.className='w-20 bg-gray-700 text-gray-100 p-1 rounded mr-2 text-xs'; i.value = (b[k]!==undefined?b[k]:''); i.dataset.key=k; return i;
+                        });
+                        const del = document.createElement('button'); del.className='bg-red-600 text-xs text-white px-2 py-1 rounded'; del.textContent='Delete';
+                        del.addEventListener('click', ()=>{ bboxes.splice(bi,1); renderBBoxes(); });
+                        row.appendChild(inputs[0]); row.appendChild(inputs[1]); row.appendChild(inputs[2]); row.appendChild(inputs[3]); row.appendChild(del);
+                        bboxList.appendChild(row);
+                    });
+                }
+                renderBBoxes();
+
+                const addBox = document.createElement('button'); addBox.className='bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2'; addBox.textContent='Add Box';
+                addBox.addEventListener('click', ()=>{ bboxes.push({x:0,y:0,w:0.2,h:0.2}); renderBBoxes(); });
+                editor.appendChild(addBox);
+
+                const saveBtn2 = document.createElement('button'); saveBtn2.className='bg-green-600 text-white px-3 py-1 rounded text-sm'; saveBtn2.textContent='Save Changes';
+                saveBtn2.addEventListener('click', async () => {
+                    // update example text and labels
+                    example.text = ta.value;
+                    example.labels = example.labels || {};
+                    labelsDiv.querySelectorAll('input').forEach(inp => { example.labels[inp.dataset.key] = inp.value; });
+                    // collect bbox inputs from DOM
+                    const newB = [];
+                    bboxList.querySelectorAll('div').forEach((row) => {
+                        const ins = row.querySelectorAll('input');
+                        if (ins && ins.length >=4) {
+                            newB.push({ x: parseFloat(ins[0].value)||0, y: parseFloat(ins[1].value)||0, w: parseFloat(ins[2].value)||0, h: parseFloat(ins[3].value)||0 });
+                        }
+                    });
+                    example.labels.boundingBoxes = newB;
+                    // persist locally
+                    window.AdvancedSurveyTrainer.examples[index] = example;
+                    window.AdvancedSurveyTrainer.save();
+                    // update server copy if desired
+                    const token = (document.getElementById('trainerTokenInput')||{}).value || window.TRAINER_TOKEN || '';
+                    const push = confirm('Push changes to server?');
+                    if (push) {
+                        const res = await window.AdvancedSurveyTrainer.saveToServer('/api/trainer.php', token);
+                        console.log('push result', res);
+                        if (res && res.ok) alert('Saved to server'); else alert('Server save returned: ' + JSON.stringify(res));
+                    }
+                    renderTrainerList();
+                    editor.innerHTML = '<div class="text-sm text-gray-400">Changes saved.</div>';
+                });
+                editor.appendChild(saveBtn2);
+
+                const previewBtn = document.createElement('button'); previewBtn.className='bg-gray-700 text-white px-3 py-1 rounded text-sm ml-2'; previewBtn.textContent='Preview Labels';
+                previewBtn.addEventListener('click', ()=>{
+                    window.geoAI.parsedSurveyData = example.labels || {};
+                    if (typeof window.geoAI.displaySurveyAnalysis === 'function') window.geoAI.displaySurveyAnalysis();
+                    alert('Labels loaded into analysis panel.');
+                });
+                editor.appendChild(previewBtn);
+            }
+            // Initialize the Enhanced Geo AI Tool
+            try {
+                window.geoAI = new GeoAIToolEnhanced();
+                console.log('Geo AI Tool Enhanced initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize Geo AI Tool Enhanced:', error);
+                // Fallback to basic version if enhanced fails
+                if (typeof GeoAITool !== 'undefined') {
+                    window.geoAI = new GeoAITool();
+                    console.log('Fell back to basic Geo AI Tool');
+                } else {
+                    console.error('No Geo AI Tool class found');
+                }
+            }
+
+            // Seed AdvancedSurveyTrainer with a labeled example for images/53-Model-1.jpg
+            try {
+                if (window.AdvancedSurveyTrainer && Array.isArray(window.AdvancedSurveyTrainer.examples) && window.AdvancedSurveyTrainer.examples.length === 0) {
+                    const sampleText = `- PLAN SHEWING PROPERTY -\r\n- SAID TO BELONG TO -\r\n- PATIENCE OBEHI ADUDU -\r\n- OF FAGBAMIYE SEUN STREET ORINYANRIN VIA MOWE-\r\n- OBAFEMI/OWODE LOCAL GOVERNMENT AREA-\r\n- OGUN - STATE -\r\n- SCALE :- 1:500 -\r\n- ORIGIN:- U.T.M (ZONE 31) -\r\n- AREA:- 462.151 SO.MTS -\r\nFM565AHX\r\n74955.594mN\r\nFM568AHX\r\nOG/5093/2025/O53\r\nCertified true copy of original plan\r\nALLI BAZEET D., mnis\r\nSURVEYOR\r\nDATE:- 17 - 09 - 2025\r\n`;
+
+                    const labels = {
+                        title: 'PLAN SHEWING PROPERTY',
+                        owner: 'PATIENCE OBEHI ADUDU',
+                        fullAddress: 'FAGBAMIYE SEUN STREET ORINYANRIN,MOWE,OBAFEMI/OWODE LOCAL GOVERNMENT AREA, OGUN STATE',
+                        street: 'FAGBAMIYE SEUN STREET ORINYANRIN',
+                        via: 'MOWE',
+                        LGA: 'OBAFEMI/OWODE',
+                        State: 'OGUN',
+                        scale: '1:500',
+                        area: '462.151 SQ.MTS',
+                        system: 'UTM',
+                        zone: '31',
+                        easting: '542540.622',
+                        northing: '74955.594',
+                        pointIDs: 'FM565AHX,FM566AHX,FM567AHX,FM568AHX',
+                        planNumber: 'OG/5093/2025/O53',
+                        surveyor: 'ALLI BAZEET D., mnis',
+                        date: '2025-09-17'
+                    };
+
+                    window.AdvancedSurveyTrainer.addExample(sampleText, labels);
+                    window.AdvancedSurveyTrainer.train();
+                    console.log('Seeded AdvancedSurveyTrainer with images/53-Model-1 example');
+                }
+            } catch (e) {
+                console.warn('Seeding trainer failed', e);
+            }
+            
+            // Initialize usage tracker if available
+            if (typeof UsageTracker !== 'undefined') {
+                try {
+                    const usageTracker = new UsageTracker('survey_ocr');
+                    const displayDiv = document.getElementById('usage-tracker-display');
+                    if (displayDiv) {
+                        displayDiv.innerHTML = usageTracker.showUsageInfo();
+                    }
+                } catch (e) {
+                    console.warn('UsageTracker initialization error', e);
+                }
+            }
+            
+            // Removed dynamic creation of a second survey button — unified single `surveyAnalyzeBtn` exists in the markup.
+
+            // Legacy extract/analyze helpers removed — `surveyAnalyzeBtn` and `advancedAnalyzeFlow`
+            // provide the unified workflow now.
+
+            // Chat handlers: send button and Enter key
+            (function wireChat() {
+                const sendBtn = document.getElementById('sendChatBtn');
+                const input = document.getElementById('chatInput');
+                const chatContainer = document.getElementById('chatContainer');
+                const chatStatus = document.getElementById('chatStatus');
+
+                function appendUserMessage(text) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'chat-message bg-gray-700/40 p-3 rounded-lg mb-3 self-end';
+                    wrapper.innerHTML = `<div class="font-semibold text-white mb-1">You</div><div class="text-gray-200">${text}</div>`;
+                    chatContainer.appendChild(wrapper);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+
+                async function sendMessage() {
+                    const text = input?.value?.trim();
+                    if (!text) return;
+                    appendUserMessage(text);
+                    input.value = '';
+
+                    if (chatStatus) chatStatus.classList.remove('hidden');
+
+                    try {
+                        let response = 'Sorry, Geo AI is not available.';
+
+                        // If parsed survey data exists, answer common questions directly
+                        const parsed = window.geoAI && window.geoAI.parsedSurveyData ? window.geoAI.parsedSurveyData : null;
+                        if (parsed) {
+                            const q = text.toLowerCase();
+                            const get = (path, alt) => {
+                                try { return path.split('.').reduce((o,k)=>o && o[k]!==undefined?o[k]:null, parsed) || alt || null; } catch(e){return alt||null}
+                            };
+
+                            if (q.includes('full address') || q.includes('address')) {
+                                response = get('address.full') || 'Full address not found.';
+                            } else if (q === 'title' || q.includes('plan title') || q.includes('title of')) {
+                                response = parsed.title || 'Title not found.';
+                            } else if (q.includes('plan no') || q.includes('plan number') || q.includes('plan no.')) {
+                                response = parsed.planNumber || 'Plan number not found.';
+                            } else if (q.includes('date')) {
+                                response = parsed.date || 'Date not found.';
+                            } else if (q.includes('scale')) {
+                                response = parsed.scale || 'Scale not found.';
+                            } else if (q.includes('area')) {
+                                response = parsed.area && parsed.area.value ? `${parsed.area.value} ${parsed.area.unit || ''}` : 'Area not found.';
+                            } else if (q.includes('easting') || q.includes('northing') || q.includes('coordinates')) {
+                                const e = parsed.coordinates?.easting; const n = parsed.coordinates?.northing;
+                                response = (e && n) ? `${e}mE, ${n}mN` : (parsed.coordinates?.combined || 'Coordinates not found.');
+                            } else if (q.includes('system') || q.includes('origin')) {
+                                response = parsed.coordinates?.origin || 'Coordinate system not found.';
+                            } else if (q.includes('datum')) {
+                                response = parsed.coordinates?.datum || 'Datum not found.';
+                            } else if (q.includes('zone')) {
+                                response = parsed.coordinates?.zone || 'Zone not found.';
+                            } else if (q.includes('surveyor')) {
+                                response = parsed.surveyor || 'Surveyor not found.';
+                            } else {
+                                // Not a direct-field question — fall back to geoAI.generateAIResponse
+                                if (window.geoAI && typeof window.geoAI.generateAIResponse === 'function') {
+                                    const maybe = window.geoAI.generateAIResponse(text);
+                                    response = (maybe && typeof maybe.then === 'function') ? await maybe : maybe;
+                                }
+                            }
+                        } else {
+                            if (window.geoAI && typeof window.geoAI.generateAIResponse === 'function') {
+                                const maybe = window.geoAI.generateAIResponse(text);
+                                response = (maybe && typeof maybe.then === 'function') ? await maybe : maybe;
+                            }
+                        }
+
+                        if (window.geoAI && typeof window.geoAI.addAIMessage === 'function') {
+                            window.geoAI.addAIMessage(response);
+                        } else {
+                            // fallback: append directly
+                            const bot = document.createElement('div');
+                            bot.className = 'chat-message bg-blue-900/30 p-4 rounded-lg mb-3';
+                            bot.innerHTML = `<div class="font-semibold text-blue-300 mb-1">Geo AI Assistant</div><div class="text-gray-200">${response}</div>`;
+                            chatContainer.appendChild(bot);
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        }
+                    } catch (err) {
+                        console.error('Chat send error', err);
+                        const bot = document.createElement('div');
+                        bot.className = 'chat-message bg-red-800/40 p-3 rounded-lg mb-3';
+                        bot.innerHTML = `<div class="font-semibold text-red-300 mb-1">Error</div><div class="text-gray-200">${err.message || err}</div>`;
+                        chatContainer.appendChild(bot);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    } finally {
+                        if (chatStatus) chatStatus.classList.add('hidden');
+                    }
+                }
+
+                if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+                if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
+            })();
+
+            // Advanced analyze: use OCR.space (optional) + Hugging Face image captioning
+            (function advancedIntegration() {
+                const hfInput = document.getElementById('hfToken');
+                const ocrInput = document.getElementById('ocrSpaceToken');
+                const saveBtn = document.getElementById('saveApiKeys');
+                const clearBtn = document.getElementById('clearApiKeys');
+                const advBtn = document.getElementById('surveyAnalyzeBtn');
+
+                function loadKeys() {
+                    const hf = localStorage.getItem('hf_token') || '';
+                    const ocr = localStorage.getItem('ocr_token') || '';
+                    if (hfInput) hfInput.value = hf;
+                    if (ocrInput) ocrInput.value = ocr;
+                }
+
+                function saveKeys() {
+                    if (hfInput) localStorage.setItem('hf_token', hfInput.value.trim());
+                    if (ocrInput) localStorage.setItem('ocr_token', ocrInput.value.trim());
+                    alert('API keys saved locally.');
+                }
+
+                function clearKeys() {
+                    localStorage.removeItem('hf_token');
+                    localStorage.removeItem('ocr_token');
+                    loadKeys();
+                    alert('API keys cleared from local storage.');
+                }
+
+                async function callOcrSpace(file) {
+                    const key = localStorage.getItem('ocr_token');
+                    if (!key) return null;
+                    try {
+                        const fd = new FormData();
+                        fd.append('apikey', key);
+                        fd.append('file', file);
+                        fd.append('language', 'eng');
+                        const res = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd });
+                        const j = await res.json();
+                        if (j && j.ParsedResults && j.ParsedResults.length) {
+                            return j.ParsedResults.map(p=>p.ParsedText).join('\n');
+                        }
+                        return null;
+                    } catch (e) {
+                        console.warn('OCR.space error', e);
+                        return null;
+                    }
+                }
+
+                async function callHfCaption(dataUrl) {
+                    const token = localStorage.getItem('hf_token');
+                    if (!token) return null;
+                    try {
+                        const endpoint = 'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large';
+                        const res = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ inputs: dataUrl })
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            console.warn('HF caption error', res.status, txt);
+                            return null;
+                        }
+                        const j = await res.json();
+                        // HF caption models often return an array of {generated_text}
+                        if (Array.isArray(j) && j.length) return j[0].generated_text || (j[0].caption || null);
+                        if (j.generated_text) return j.generated_text;
+                        return null;
+                    } catch (e) {
+                        console.warn('Hugging Face call error', e);
+                        return null;
+                    }
+                }
+
+                async function advancedAnalyzeFlow() {
+                    try {
+                        const fileInput = document.getElementById('fileInput');
+                        let file = fileInput?.files?.[0];
+                        if (!file) { fileInput?.click(); await new Promise(resolve => { const onChange=()=>{file=fileInput.files[0];fileInput.removeEventListener('change',onChange);resolve();};fileInput.addEventListener('change',onChange); }); }
+                        if (!file) { alert('No file selected'); return; }
+
+                        const status = document.getElementById('status'); if (status) status.textContent = 'Advanced analyze: contacting server proxy...';
+
+                        // First try the server proxy to keep API keys secret
+                        let ocrText = null;
+                        let hfCaption = null;
+                        try {
+                            const fd = new FormData();
+                            fd.append('file', file);
+                            const res = await fetch('/api/analyze-image.php', { method: 'POST', body: fd });
+                            if (res.ok) {
+                                const j = await res.json();
+                                if (j) {
+                                    // Prefer structured server-side parse if available
+                                    if (j.parsedSurveyData) {
+                                        if (window.geoAI) {
+                                            window.geoAI.parsedSurveyData = j.parsedSurveyData;
+                                            // keep extractedText in sync if OCR text provided
+                                            window.geoAI.extractedText = (j.ocrText || j.ocr_text || j.hfCaption || j.hf_caption || '') || window.geoAI.extractedText || '';
+                                            if (typeof window.geoAI.displaySurveyAnalysis === 'function') window.geoAI.displaySurveyAnalysis();
+                                            if (typeof window.geoAI.addSurveyAnalysisToChat === 'function') window.geoAI.addSurveyAnalysisToChat();
+                                        }
+                                        if (status) status.textContent = 'Advanced analyze complete (server parsed data).';
+                                        // server already provided parsed data — we can stop here
+                                        return;
+                                    }
+
+                                    ocrText = j.ocrText || j.ocr_text || null;
+                                    hfCaption = j.hfCaption || j.hf_caption || null;
+                                }
+                            } else {
+                                console.warn('Analyze proxy returned', res.status);
+                            }
+                        } catch (err) {
+                            console.warn('Analyze proxy error:', err);
+                        }
+
+                        // If proxy didn't return useful data, fall back to client-side calls
+                        if (!ocrText && !hfCaption) {
+                            if (status) status.textContent = 'Proxy unavailable — running local OCR + HF (client-side)';
+
+                            // Try OCR.space first (if key provided)
+                            ocrText = await callOcrSpace(file);
+                            if (!ocrText) {
+                                // Fallback to Tesseract for images or render first PDF page
+                                if (file.type && file.type.startsWith('image/')) {
+                                    const url = URL.createObjectURL(file);
+                                    const { data: { text } } = await Tesseract.recognize(url, 'eng');
+                                    ocrText = text;
+                                    URL.revokeObjectURL(url);
+                                } else {
+                                    // Render first page of PDF and OCR
+                                    if (typeof window.pdfjsLib !== 'undefined') {
+                                        const ab = await file.arrayBuffer();
+                                        const pdf = await window.pdfjsLib.getDocument({ data: ab }).promise;
+                                        const page = await pdf.getPage(1);
+                                        const viewport = page.getViewport({ scale: 2 });
+                                        const canvas = document.createElement('canvas');
+                                        canvas.width = Math.floor(viewport.width); canvas.height = Math.floor(viewport.height);
+                                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                                        const dataUrl = canvas.toDataURL('image/png');
+                                        const { data: { text } } = await Tesseract.recognize(dataUrl, 'eng');
+                                        ocrText = text;
+                                    }
+                                }
+                            }
+
+                            // Prepare image data for HF caption
+                            let dataUrl = null;
+                            if (file.type && file.type.startsWith('image/')) {
+                                dataUrl = await new Promise(resolve=>{ const r=new FileReader(); r.onload=()=>resolve(r.result); r.readAsDataURL(file); });
+                            } else {
+                                if (typeof window.pdfjsLib !== 'undefined') {
+                                    const ab = await file.arrayBuffer();
+                                    const pdf = await window.pdfjsLib.getDocument({ data: ab }).promise;
+                                    const page = await pdf.getPage(1);
+                                    const viewport = page.getViewport({ scale: 2 });
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = Math.floor(viewport.width); canvas.height = Math.floor(viewport.height);
+                                    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                                    dataUrl = canvas.toDataURL('image/png');
+                                }
+                            }
+
+                            if (dataUrl) hfCaption = await callHfCaption(dataUrl);
+                        }
+
+                        // Merge results and set for analysis
+                        const merged = [hfCaption, ocrText].filter(Boolean).join('\n\n');
+                        if (merged) {
+                            document.getElementById('output').textContent = merged;
+                            if (window.geoAI) {
+                                // Try to parse OCR text locally into structured survey data first
+                                try {
+                                    if (ocrText) {
+                                        const parsed = window.geoAI.surveyParser.parseSurveyPlan(ocrText);
+                                        if (parsed) {
+                                            window.geoAI.parsedSurveyData = parsed;
+                                            window.geoAI.extractedText = merged;
+                                            if (typeof window.geoAI.displaySurveyAnalysis === 'function') window.geoAI.displaySurveyAnalysis();
+                                            if (typeof window.geoAI.addSurveyAnalysisToChat === 'function') window.geoAI.addSurveyAnalysisToChat();
+                                            if (status) status.textContent = 'Advanced analyze complete (local parse from OCR).';
+                                            return;
+                                        }
+                                    }
+                                } catch (pe) {
+                                    console.warn('Local parse failure, falling back to analyzeSurveyPlan()', pe);
+                                }
+
+                                // Fallback: set extractedText and let analyzeSurveyPlan run its parser/display
+                                window.geoAI.extractedText = merged;
+                                if (typeof window.geoAI.analyzeSurveyPlan === 'function') await window.geoAI.analyzeSurveyPlan();
+                            }
+                        } else {
+                            alert('Advanced analyze did not return any text. Check server proxy, API keys, and console.');
+                        }
+
+                        if (status) status.textContent = 'Advanced analyze complete.';
+                    } catch (e) {
+                        console.error('Advanced analyze error', e);
+                        const status = document.getElementById('status'); if (status) status.textContent = 'Advanced analyze error: ' + (e.message||e);
+                    }
+                }
+
+                // wire UI
+                loadKeys();
+                if (saveBtn) saveBtn.addEventListener('click', saveKeys);
+                if (clearBtn) clearBtn.addEventListener('click', clearKeys);
+                if (advBtn) advBtn.addEventListener('click', advancedAnalyzeFlow);
+            })();
+        });
+        
+        // Helper function to create modal for data correction
+        function createCorrectionModal(title, fields, onSave) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-backdrop';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white">${title}</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4" id="modalFields">
+                        ${fields.map(field => `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">${field.label}</label>
+                                <input type="${field.type || 'text'}" 
+                                       id="${field.id}" 
+                                       value="${field.value || ''}" 
+                                       class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white"
+                                       ${field.step ? `step="${field.step}"` : ''}
+                                       ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button id="saveModal" class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg">
+                            Save Changes
+                        </button>
+                        <button id="cancelModal" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 rounded-lg">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add event listeners
+            document.getElementById('closeModal').addEventListener('click', () => modal.remove());
+            document.getElementById('cancelModal').addEventListener('click', () => modal.remove());
+            document.getElementById('saveModal').addEventListener('click', () => {
+                if (onSave) {
+                    const values = {};
+                    fields.forEach(field => {
+                        const input = document.getElementById(field.id);
+                        values[field.id] = input.value;
+                    });
+                    onSave(values);
+                }
+                modal.remove();
+            });
+            
+            return modal;
+        }
+        
+        // Make helper function available globally
+        window.createCorrectionModal = createCorrectionModal;
+    </script>
+</body>
+</html>

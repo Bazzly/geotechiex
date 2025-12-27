@@ -3,323 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Drafting Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .input-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .input-section h2 {
-            margin-bottom: 15px;
-            color: #3498db;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 10px;
-            resize: vertical;
-        }
-        
-        .instructions {
-            background-color: #e8f4fc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #2980b9;
-        }
-        
-        .instructions ul {
-            margin-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 5px;
-        }
-        
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: #2ecc71;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
-        .btn-warning {
-            background-color: #f39c12;
-            color: white;
-        }
-        
-        .btn-warning:hover {
-            background-color: #e67e22;
-        }
-        
-        .output-section {
-            background-color: #f0f8ff;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border-left: 4px solid #2ecc71;
-        }
-        
-        .output-section h2 {
-            margin-bottom: 15px;
-            color: #27ae60;
-        }
-        
-        .output-content {
-            background-color: white;
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-family: monospace;
-            white-space: pre-wrap;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .example-section {
-            background-color: #fff8e1;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border-left: 4px solid #f39c12;
-        }
-        
-        .example-section h3 {
-            margin-bottom: 10px;
-            color: #e67e22;
-        }
-        
-        .example-content {
-            font-family: monospace;
-            background-color: white;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        .id-section {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .id-section h3 {
-            margin-bottom: 10px;
-            color: #e67e22;
-        }
-        
-        .id-input {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .id-input input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            flex: 1;
-        }
-        
-        .validation-message {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-        
-        .validation-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .validation-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .file-upload {
-            margin-bottom: 15px;
-        }
-        
-        .file-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px dashed #3498db;
-            border-radius: 5px;
-            background-color: #f8fafc;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        
-        .file-input:hover {
-            background-color: #e8f4fc;
-            border-color: #2980b9;
-        }
-
-        .auto-extract-section {
-            background-color: #e8f5e9;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-            border-left: 4px solid #4caf50;
-        }
-
-        .auto-extract-section p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #2e7d32;
-        }
-    </style>
+    <title>Survey Drafting | GeoTechieX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/usage-tracker.js"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Survey Drafting Calculator</h1>
-        
-        <div class="input-section">
-            <h2>Input Points Data</h2>
-            
-            <div class="id-section">
-                <h3>Project ID Verification</h3>
-                <div class="id-input">
-                    <input type="text" id="project-id" placeholder="Enter your unique project ID">
-                    <button id="verify-id" class="btn-warning">Verify ID</button>
-                </div>
-                <div id="validation-message" class="validation-message"></div>
-                <div id="auto-extract-message" class="auto-extract-section" style="display: none;">
-                    <p>✓ Project ID automatically extracted from file</p>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white shadow-2xl sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">✏️</span>
+                <div>
+                    <h1 class="text-2xl font-bold">Survey Drafting AI</h1>
+                    <p class="text-xs text-indigo-200">Polygon & Annotation Tool</p>
                 </div>
             </div>
-            
-            <div class="file-upload">
-                <div class="file-input" id="file-drop-area">
-                    <p>Drag & drop your points file here or click to browse</p>
+            <div class="flex gap-2">
+                <a href="index.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition text-sm">⬅️ Back to Polygon Tool</a>
+                <a href="../index.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition text-sm">🏠 Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow max-w-3xl">
+            <!-- Usage Tracker Display -->
+            <div id="usage-tracker-display" class="mb-6"></div>
+        <!-- Input Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center">📝 Input Points Data</h2>
+            <div class="mb-4">
+                <label for="project-id" class="block text-sm font-semibold text-gray-700 mb-2">Project ID</label>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" id="project-id" placeholder="Enter your unique project ID" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono">
+                    <button id="verify-id" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold">Verify ID</button>
+                </div>
+                <div id="validation-message" class="text-xs"></div>
+                <div id="auto-extract-message" class="hidden text-green-700 text-xs mt-1">✓ Project ID automatically extracted from file</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Points File</label>
+                <div id="file-drop-area" class="border-2 border-dashed border-indigo-400 rounded-lg p-4 text-center cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition">
+                    <p class="text-xs text-indigo-700">Drag & drop your points file here or click to browse</p>
                     <input type="file" id="points-file" accept=".txt,.csv" style="display: none;">
                 </div>
             </div>
-            
-            <div class="instructions">
-                <h3>Input Format Instructions:</h3>
-                <ul>
-                    <li>Format: <code>point PointNumber-East-North</code></li>
-                    <li>One point per line</li>
-                    <li>Example: <code>point 1-547407.120-742340.095</code> or <code>point 01-547407.120-742340.095</code></li>
-                    <li>The points should form a closed loop (first and last point will be connected)</li>
-                    <li>File must include a valid project ID in the first line (format: PROJECT_ID: your-id)</li>
-                    <li>Project IDs from the main app are automatically accepted (format: PROJ-1001-1m3k5j7-abc123)</li>
-                </ul>
+            <div class="mb-4">
+                <label for="points-input" class="block text-sm font-semibold text-gray-700 mb-2">Points Input</label>
+                <textarea id="points-input" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg font-mono focus:ring-2 focus:ring-indigo-500" placeholder="PROJECT_ID: PROJ-1001-1m3k5j7-abc123\npoint 1-547407.120-742340.095\npoint 2-547455.883-742335.678\npoint 3-547460.245-742380.112\npoint 4-547412.567-742385.429"></textarea>
             </div>
-            <textarea id="points-input" placeholder="PROJECT_ID: PROJ-1001-1m3k5j7-abc123
+            <button id="calculate-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition">Calculate Distances & Azimuths</button>
+        </div>
+
+        <!-- Instructions Card -->
+        <div class="bg-indigo-50 rounded-xl shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-bold text-indigo-700 mb-2">Input Format Instructions</h3>
+            <ul class="list-disc pl-6 text-sm text-gray-700 mb-2">
+                <li>Format: <span class="font-mono bg-gray-100 px-1 rounded">point PointNumber-East-North</span></li>
+                <li>One point per line</li>
+                <li>Example: <span class="font-mono bg-gray-100 px-1 rounded">point 1-547407.120-742340.095</span></li>
+                <li>The points should form a closed loop (first and last point will be connected)</li>
+                <li>File must include a valid project ID in the first line (format: <span class="font-mono bg-gray-100 px-1 rounded">PROJECT_ID: your-id</span>)</li>
+                <li>Project IDs from the main app are automatically accepted (format: <span class="font-mono bg-gray-100 px-1 rounded">PROJ-1001-1m3k5j7-abc123</span>)</li>
+            </ul>
+        </div>
+
+        <!-- Example Card -->
+        <div class="bg-yellow-50 rounded-xl shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-bold text-yellow-700 mb-2">Example Input Format</h3>
+            <pre class="bg-white border border-yellow-200 rounded-lg p-3 font-mono text-xs">PROJECT_ID: PROJ-1001-1m3k5j7-abc123
 point 1-547407.120-742340.095
 point 2-547455.883-742335.678
 point 3-547460.245-742380.112
-point 4-547412.567-742385.429"></textarea>
-            <button id="calculate-btn" class="btn-primary">Calculate Distances & Azimuths</button>
+point 4-547412.567-742385.429</pre>
         </div>
-        
-        <div class="example-section">
-            <h3>Example Input Format:</h3>
-            <div class="example-content">
-PROJECT_ID: PROJ-1001-1m3k5j7-abc123
-point 1-547407.120-742340.095
-point 2-547455.883-742335.678
-point 3-547460.245-742380.112
-point 4-547412.567-742385.429
+
+        <!-- Output Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center">📊 Calculation Results</h2>
+            <div id="output-content" class="bg-gray-50 border border-gray-200 rounded-lg p-4 font-mono text-xs mb-4">Results will appear here...</div>
+            <div class="flex gap-2">
+                <button id="copy-btn" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg">Copy Results</button>
+                <button id="export-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg">Export Results</button>
+                <button id="clear-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-lg">Clear All</button>
             </div>
         </div>
-        
-        <div class="output-section">
-            <h2>Calculation Results</h2>
-            <div id="output-content" class="output-content">
-                Results will appear here...
-            </div>
-            <div class="action-buttons">
-                <button id="copy-btn" class="btn-success">Copy Results</button>
-                <button id="export-btn" class="btn-primary">Export Results</button>
-                <button id="clear-btn" class="btn-warning">Clear All</button>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-populate Project ID from localStorage if available (shared with Polygon tool)
+            const storedProjectId = localStorage.getItem('currentProjectId');
+            if (storedProjectId) {
+                const projectIdInput = document.getElementById('project-id');
+                if (projectIdInput) {
+                    projectIdInput.value = storedProjectId;
+                    // Optionally, auto-verify if valid
+                    if (typeof verifyProjectId === 'function' && verifyProjectId(storedProjectId)) {
+                        const validationMessage = document.getElementById('validation-message');
+                        validationMessage.textContent = '✓ Project ID loaded from Polygon tool';
+                        validationMessage.className = 'text-xs';
+                        isValidProjectId = true;
+                        currentProjectId = storedProjectId;
+                    }
+                }
+            }
+            // Initialize usage tracker for Survey Drafting tool
+            const usageTracker = new UsageTracker('survey_drafting');
+            const usageDiv = document.getElementById('usage-tracker-display');
+            if (usageDiv && typeof usageTracker !== 'undefined') {
+                usageDiv.innerHTML = usageTracker.showUsageInfo();
+            }
             const pointsInput = document.getElementById('points-input');
             const calculateBtn = document.getElementById('calculate-btn');
             const outputContent = document.getElementById('output-content');
@@ -559,13 +352,13 @@ point 4-547412.567-742385.429
                 const id = projectIdInput.value.trim();
                 if (verifyProjectId(id)) {
                     validationMessage.textContent = '✓ Project ID is valid';
-                    validationMessage.className = 'validation-message validation-success';
+                    validationMessage.className = 'text-xs';
                     isValidProjectId = true;
                     currentProjectId = id;
                     autoExtractMessage.style.display = 'none';
                 } else {
                     validationMessage.textContent = '✗ Invalid Project ID. Must start with "PROJ-" or be from approved list.';
-                    validationMessage.className = 'validation-message validation-error';
+                    validationMessage.className = 'text-xs';
                     isValidProjectId = false;
                     autoExtractMessage.style.display = 'none';
                 }
@@ -604,7 +397,7 @@ point 4-547412.567-742385.429
                 outputContent.textContent = 'Results will appear here...';
                 projectIdInput.value = '';
                 validationMessage.textContent = '';
-                validationMessage.className = 'validation-message';
+                validationMessage.className = 'text-xs';
                 autoExtractMessage.style.display = 'none';
                 isValidProjectId = false;
                 currentProjectId = '';
@@ -652,19 +445,19 @@ point 4-547412.567-742385.429
                         projectIdInput.value = extractedId;
                         if (verifyProjectId(extractedId)) {
                             validationMessage.textContent = '✓ Project ID is valid';
-                            validationMessage.className = 'validation-message validation-success';
+                            validationMessage.className = 'text-xs';
                             autoExtractMessage.style.display = 'block';
                             isValidProjectId = true;
                             currentProjectId = extractedId;
                         } else {
                             validationMessage.textContent = '✗ Invalid Project ID in file';
-                            validationMessage.className = 'validation-message validation-error';
+                            validationMessage.className = 'text-xs';
                             autoExtractMessage.style.display = 'none';
                             isValidProjectId = false;
                         }
                     } else {
                         validationMessage.textContent = '✗ No PROJECT_ID found in file';
-                        validationMessage.className = 'validation-message validation-error';
+                        validationMessage.className = 'text-xs';
                         autoExtractMessage.style.display = 'none';
                         isValidProjectId = false;
                     }
@@ -684,7 +477,7 @@ point 4-547412.567-742385.429`;
             if (exampleId && verifyProjectId(exampleId)) {
                 projectIdInput.value = exampleId;
                 validationMessage.textContent = '✓ Example Project ID is valid';
-                validationMessage.className = 'validation-message validation-success';
+                validationMessage.className = 'text-xs';
                 autoExtractMessage.style.display = 'block';
                 isValidProjectId = true;
                 currentProjectId = exampleId;

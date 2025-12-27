@@ -7,7 +7,7 @@
 class PaymentAPI {
     constructor() {
         // Your PHP API endpoint
-        this.apiEndpoint = 'https://www.bazzlylinks.com/geotechiex.php';
+        this.apiEndpoint = '/api/index.php';
         this.paystackPublicKey = null; // Will be loaded dynamically
         this.storageKey = 'geotechiex_payment_data';
         this.init();

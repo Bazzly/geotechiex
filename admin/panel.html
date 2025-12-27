@@ -259,6 +259,79 @@
             </div>
         </div>
 
+        <!-- Survey Fee Estimator Admin Panel (from valuemap/admin.html) -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8" id="surveyFeeAdminPanel">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">⚙️ Survey Fee Estimator Settings</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold mb-2">💰 Base Fee Rates (per sq.m)</h4>
+                    <label class="block text-sm font-semibold mb-1">🏙️ Urban Area (₦/sq.m)</label>
+                    <input type="number" id="urbanFee" placeholder="85" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">🏘️ Suburban Area (₦/sq.m)</label>
+                    <input type="number" id="suburbanFee" placeholder="55" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">🌾 Rural Area (₦/sq.m)</label>
+                    <input type="number" id="ruralFee" placeholder="35" class="w-full px-3 py-2 border rounded mb-2">
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">🏗️ Survey Type Multipliers</h4>
+                    <label class="block text-sm font-semibold mb-1">Topographic</label>
+                    <input type="number" id="topoMultiplier" step="0.1" placeholder="1.2" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Cadastral</label>
+                    <input type="number" id="cadastralMultiplier" step="0.1" placeholder="1.0" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Engineering</label>
+                    <input type="number" id="engineeringMultiplier" step="0.1" placeholder="1.3" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Control</label>
+                    <input type="number" id="controlMultiplier" step="0.1" placeholder="1.5" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Subdivision</label>
+                    <input type="number" id="subdivisionMultiplier" step="0.1" placeholder="0.9" class="w-full px-3 py-2 border rounded mb-2">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                <div>
+                    <h4 class="font-semibold mb-2">🎯 Accuracy Level Multipliers</h4>
+                    <label class="block text-sm font-semibold mb-1">Standard (±5cm)</label>
+                    <input type="number" id="standardAccuracy" step="0.1" placeholder="1.0" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">High Precision (±2cm)</label>
+                    <input type="number" id="highAccuracy" step="0.1" placeholder="1.3" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Ultra-High (±1cm)</label>
+                    <input type="number" id="ultraAccuracy" step="0.1" placeholder="1.6" class="w-full px-3 py-2 border rounded mb-2">
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">⏱️ Urgency Multipliers</h4>
+                    <label class="block text-sm font-semibold mb-1">Normal (7-14 days)</label>
+                    <input type="number" id="normalUrgency" step="0.1" placeholder="1.0" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Express (3-5 days)</label>
+                    <input type="number" id="expressUrgency" step="0.1" placeholder="1.4" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Urgent (1-2 days)</label>
+                    <input type="number" id="urgentUrgency" step="0.1" placeholder="1.8" class="w-full px-3 py-2 border rounded mb-2">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                <div>
+                    <h4 class="font-semibold mb-2">💼 Additional Fees</h4>
+                    <label class="block text-sm font-semibold mb-1">Equipment Fee (Standard)</label>
+                    <input type="number" id="equipmentFeeStandard" placeholder="15000" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Equipment Fee (Advanced)</label>
+                    <input type="number" id="equipmentFeeAdvanced" placeholder="25000" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Transport Fee (Urban)</label>
+                    <input type="number" id="transportUrban" placeholder="10000" class="w-full px-3 py-2 border rounded mb-2">
+                    <label class="block text-sm font-semibold mb-1">Transport Fee (Rural)</label>
+                    <input type="number" id="transportRural" placeholder="20000" class="w-full px-3 py-2 border rounded mb-2">
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">🔐 Security Settings</h4>
+                    <label class="block text-sm font-semibold mb-1">Change Admin Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" class="w-full px-3 py-2 border rounded mb-2">
+                    <p class="text-xs text-gray-500 mb-2">Current: geosurvey123</p>
+                </div>
+            </div>
+            <div class="flex gap-4 mt-6">
+                <button onclick="saveSurveyFeeSettings()" class="flex-1 px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white rounded-lg font-bold shadow-xl transition">💾 Save All Settings</button>
+                <button onclick="resetSurveyFeeDefaults()" class="px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-bold shadow-xl transition">🔄 Reset to Defaults</button>
+            </div>
+            <div id="surveyFeeStatusMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg text-center font-semibold mt-4">✅ Settings saved successfully!</div>
+        </div>
+
         <!-- User Management & Usage Log -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
             <div class="flex items-center justify-between mb-4">
@@ -457,18 +530,135 @@
         window.addEventListener('DOMContentLoaded', setupPagination);
         </script>
     <script>
+    // --- Survey Fee Estimator Admin Panel Logic (from valuemap/admin.html) ---
+    let surveyFeeCorrectPassword = localStorage.getItem("adminPassword") || "geosurvey123";
+
+    function loadSurveyFeeSettings() {
+        document.getElementById("urbanFee").value = localStorage.getItem("baseFeeUrban") || "85";
+        document.getElementById("suburbanFee").value = localStorage.getItem("baseFeeSuburban") || "55";
+        document.getElementById("ruralFee").value = localStorage.getItem("baseFeeRural") || "35";
+        document.getElementById("topoMultiplier").value = localStorage.getItem("multiplierTopographic") || "1.2";
+        document.getElementById("cadastralMultiplier").value = localStorage.getItem("multiplierCadastral") || "1.0";
+        document.getElementById("engineeringMultiplier").value = localStorage.getItem("multiplierEngineering") || "1.3";
+        document.getElementById("controlMultiplier").value = localStorage.getItem("multiplierControl") || "1.5";
+        document.getElementById("subdivisionMultiplier").value = localStorage.getItem("multiplierSubdivision") || "0.9";
+        document.getElementById("standardAccuracy").value = localStorage.getItem("accuracyStandard") || "1.0";
+        document.getElementById("highAccuracy").value = localStorage.getItem("accuracyHigh") || "1.3";
+        document.getElementById("ultraAccuracy").value = localStorage.getItem("accuracyUltra") || "1.6";
+        document.getElementById("normalUrgency").value = localStorage.getItem("urgencyNormal") || "1.0";
+        document.getElementById("expressUrgency").value = localStorage.getItem("urgencyExpress") || "1.4";
+        document.getElementById("urgentUrgency").value = localStorage.getItem("urgencyUrgent") || "1.8";
+        document.getElementById("equipmentFeeStandard").value = localStorage.getItem("equipmentStandard") || "15000";
+        document.getElementById("equipmentFeeAdvanced").value = localStorage.getItem("equipmentAdvanced") || "25000";
+        document.getElementById("transportUrban").value = localStorage.getItem("transportUrban") || "10000";
+        document.getElementById("transportRural").value = localStorage.getItem("transportRural") || "20000";
+    }
+
+    function saveSurveyFeeSettings() {
+        localStorage.setItem("baseFeeUrban", document.getElementById("urbanFee").value);
+        localStorage.setItem("baseFeeSuburban", document.getElementById("suburbanFee").value);
+        localStorage.setItem("baseFeeRural", document.getElementById("ruralFee").value);
+        localStorage.setItem("multiplierTopographic", document.getElementById("topoMultiplier").value);
+        localStorage.setItem("multiplierCadastral", document.getElementById("cadastralMultiplier").value);
+        localStorage.setItem("multiplierEngineering", document.getElementById("engineeringMultiplier").value);
+        localStorage.setItem("multiplierControl", document.getElementById("controlMultiplier").value);
+        localStorage.setItem("multiplierSubdivision", document.getElementById("subdivisionMultiplier").value);
+        localStorage.setItem("accuracyStandard", document.getElementById("standardAccuracy").value);
+        localStorage.setItem("accuracyHigh", document.getElementById("highAccuracy").value);
+        localStorage.setItem("accuracyUltra", document.getElementById("ultraAccuracy").value);
+        localStorage.setItem("urgencyNormal", document.getElementById("normalUrgency").value);
+        localStorage.setItem("urgencyExpress", document.getElementById("expressUrgency").value);
+        localStorage.setItem("urgencyUrgent", document.getElementById("urgentUrgency").value);
+        localStorage.setItem("equipmentStandard", document.getElementById("equipmentFeeStandard").value);
+        localStorage.setItem("equipmentAdvanced", document.getElementById("equipmentFeeAdvanced").value);
+        localStorage.setItem("transportUrban", document.getElementById("transportUrban").value);
+        localStorage.setItem("transportRural", document.getElementById("transportRural").value);
+        const newPassword = document.getElementById("newPassword").value;
+        if (newPassword && newPassword.length >= 6) {
+            localStorage.setItem("adminPassword", newPassword);
+            surveyFeeCorrectPassword = newPassword;
+            document.getElementById("newPassword").value = "";
+        }
+        showSurveyFeeStatus("✅ All settings saved successfully! Changes will apply to new calculations.");
+    }
+
+    function resetSurveyFeeDefaults() {
+        if (confirm("⚠️ Reset all survey fee settings to default values?")) {
+            const keysToRemove = [
+                "baseFeeUrban", "baseFeeSuburban", "baseFeeRural",
+                "multiplierTopographic", "multiplierCadastral", "multiplierEngineering", "multiplierControl", "multiplierSubdivision",
+                "accuracyStandard", "accuracyHigh", "accuracyUltra",
+                "urgencyNormal", "urgencyExpress", "urgencyUrgent",
+                "equipmentStandard", "equipmentAdvanced", "transportUrban", "transportRural"
+            ];
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            loadSurveyFeeSettings();
+            showSurveyFeeStatus("🔄 All settings reset to default values!");
+        }
+    }
+
+    function showSurveyFeeStatus(message) {
+        const statusDiv = document.getElementById("surveyFeeStatusMessage");
+        statusDiv.textContent = message;
+        statusDiv.classList.remove("hidden");
+        setTimeout(() => {
+            statusDiv.classList.add("hidden");
+        }, 5000);
+    }
+
+    // Load settings on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('surveyFeeAdminPanel')) {
+            loadSurveyFeeSettings();
+        }
+    });
 
         let revenueChart, toolChart;
         // Check authentication (token-based)
-        if (!localStorage.getItem('admin_token') || new Date(localStorage.getItem('admin_expiry')) < new Date()) {
-            // Hide body to prevent flash
-            document.body.style.display = 'none';
-            window.location.href = 'index.html';
-        } else {
-            document.body.style.display = '';
+        // Validate admin token and expiry
+        (function validateAdminSession(){
+            const token = localStorage.getItem('admin_token');
+            const rawExpiry = localStorage.getItem('admin_expiry') || '';
+            const parsed = Date.parse(rawExpiry);
+            const now = Date.now();
+            if (!token || isNaN(parsed) || parsed < now) {
+                // Hide body to prevent flash
+                document.body.style.display = 'none';
+                // clear stale values
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_user');
+                localStorage.removeItem('admin_expiry');
+                window.location.href = 'index.html';
+            } else {
+                document.body.style.display = '';
+            }
+        })();
+
+        // Resolve API base from server config (get_config). Falls back to same-origin.
+        let API_URL = '/api/index.php';
+        async function resolveApiBase() {
+            try {
+                const r = await fetch('/api/index.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'get_config' }) });
+                const j = await r.json();
+                if (j && j.api_base) {
+                    API_URL = j.api_base.replace(/\/$/, '') + '/index.php';
+                }
+            } catch (e) { /* ignore and use fallback */ }
+            return API_URL;
         }
 
-        const API_URL = 'https://www.bazzlylinks.com/geotechiex.php';
+        // Helper to POST to API including admin token automatically
+        async function apiPost(payload) {
+            const token = localStorage.getItem('admin_token') || '';
+            const body = Object.assign({}, payload);
+            if (token && !body.admin_token && !body.token) body.admin_token = token;
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            return res;
+        }
         let generatedCodes = [];
 
         // Logout function
@@ -481,8 +671,9 @@
             }
         }
 
-        // Load data on page load
-        window.addEventListener('DOMContentLoaded', () => {
+        // Load data on page load (resolve API base first)
+        window.addEventListener('DOMContentLoaded', async () => {
+            await resolveApiBase();
             loadAllData();
             renderCharts();
             loadGeoFiles();
@@ -507,11 +698,7 @@
         // --- USER MANAGEMENT ---
         async function loadUsers() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'admin_users', limit: 50 })
-                });
+                const response = await apiPost({ action: 'admin_users', limit: 50 });
                 const data = await response.json();
                 if (data.success && data.users.length > 0) {
                     const html = data.users.map(u => `
@@ -546,11 +733,7 @@
             const confirmMsg = isBlocked ? 'Unblock this user?' : 'Block this user?';
             if (!confirm(confirmMsg)) return;
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: isBlocked ? 'admin_unblock_user' : 'admin_block_user', user_id: userId })
-                });
+                const response = await apiPost({ action: isBlocked ? 'admin_unblock_user' : 'admin_block_user', user_id: userId });
                 const data = await response.json();
                 if (data.success) {
                     alert('User status updated!');
@@ -566,11 +749,7 @@
         // --- USAGE LOG ---
         async function loadUsageLog() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'admin_usage_log', limit: 50 })
-                });
+                const response = await apiPost({ action: 'admin_usage_log', limit: 50 });
                 const data = await response.json();
                 if (data.success && data.usage_log.length > 0) {
                     // Group by email
@@ -642,11 +821,7 @@
 
         async function loadStats() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'admin_stats' })
-                });
+                const response = await apiPost({ action: 'admin_stats' });
                 const data = await response.json();
                 
                 if (data.success) {
@@ -662,11 +837,7 @@
 
         async function loadPayments() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'admin_payments', limit: 20 })
-                });
+                const response = await apiPost({ action: 'admin_payments', limit: 20 });
                 const data = await response.json();
                 
                 if (data.success && data.payments.length > 0) {
@@ -693,11 +864,7 @@
 
         async function loadActivations() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'admin_activations', limit: 20 })
-                });
+                const response = await apiPost({ action: 'admin_activations', limit: 20 });
                 const data = await response.json();
                 if (data.success && data.activations.length > 0) {
                     // Normalize backend fields to code/created_at
@@ -739,11 +906,7 @@
 
         async function checkStatus() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'test' })
-                });
+                const response = await apiPost({ action: 'test' });
                 const data = await response.json();
                 
                 if (data.success) {
@@ -772,14 +935,7 @@
             generatedCodes = [];
             try {
                 for (let i = 0; i < quantity; i++) {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'generate_code',
-                            credits: credits
-                        })
-                    });
+                    const response = await apiPost({ action: 'generate_code', credits: credits });
                     const data = await response.json();
                     if (data.success) {
                         generatedCodes.push(data.code);
@@ -837,11 +993,7 @@
             // --- PAYSTACK KEY CONFIG ---
             async function loadPaystackKey() {
                 try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'get_config' })
-                    });
+                    const response = await apiPost({ action: 'get_config' });
                     const data = await response.json();
                     if (data.success && data.paystack_public_key) {
                         document.getElementById('paystackKeyInput').value = data.paystack_public_key;
@@ -857,11 +1009,7 @@
                 const statusDiv = document.getElementById('paystackKeyStatus');
                 statusDiv.textContent = '⏳ Updating...';
                 try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'update_config', paystack_public_key: key })
-                    });
+                    const response = await apiPost({ action: 'update_config', paystack_public_key: key });
                     const data = await response.json();
                     if (data.success) {
                         statusDiv.textContent = '✅ Key updated!';

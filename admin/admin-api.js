@@ -5,7 +5,9 @@
 
 class AdminDashboard {
     constructor() {
-        this.apiEndpoint = 'https://www.bazzlylinks.com/geotechiex.php';
+        // Default endpoint uses the API router path. This will resolve to
+        // the same host as the admin UI when served (works for local dev).
+        this.apiEndpoint = '/api/index.php';
         this.data = {
             payments: [],
             activations: [],

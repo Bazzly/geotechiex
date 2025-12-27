@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Explore the intersection of geospatial technology and web development with GeoTechieX.">
+    <!-- Set this meta when deploying to change API base, leave empty to use same origin + /api -->
+    <meta name="api-base" content="">
     <meta name="google-site-verification" content="xpH_xpr4t3xGt67BHzKOuXOdwZd0LNTz7wuBeLbBup4" />
     <title>GeoTechieX | Geospatial Tech & Web Programming</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,7 +106,7 @@
 
             <!-- AI Tools -->
             <div class="mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">🤖 AI Tools</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">🤖 Top Tools</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     <!-- Area Delineation AI -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
@@ -120,16 +122,46 @@
                         </div>
                     </div>
 
-                    <!-- Survey Drafting AI (if available) -->
+                        <!-- Existing user confirmation modal -->
+                        <div id="existing-user-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
+                            <div class="absolute inset-0 bg-black/50"></div>
+                            <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 z-10">
+                                <h3 class="text-xl font-bold mb-2">Welcome back</h3>
+                                <p class="text-sm text-gray-600 mb-4">We found an account for this email. Current usage summary:</p>
+                                <div class="mb-4">
+                                    <div class="text-gray-700">Credits available: <span id="existing-credits" class="font-semibold">0</span></div>
+                                    <div class="text-gray-700">Free uses: <span id="existing-usage" class="font-semibold">0</span></div>
+                                </div>
+                                <div class="flex gap-2 justify-end">
+                                    <button id="existing-cancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                                    <button id="existing-continue" class="px-4 py-2 bg-blue-600 text-white rounded">Continue to tool</button>
+                                </div>
+                            </div>
+                        </div>
+
+                                   <!-- Survey Fee Estimator -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">✏️</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Drafting AI</h4>
+                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h4>
                         </div>
                         <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">AI-assisted survey drafting to speed up polygon creation and annotations.</p>
-                            <a href="Polygon/survdraft.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Open Drafting AI
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
+                            <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Estimate Fees
+                            </a>
+                        </div>
+                    </div>
+
+                              <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Plan Extractor (OCR)</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Extract survey plan details using Optical Character Recognition (OCR) technology. and interact with your data seamlessly.</p>
+                            <a href="PlanOcr/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                               Survey Plan Extractor(OCR)
                             </a>
                         </div>
                     </div>
@@ -170,7 +202,7 @@
                     </div>
 
                     <!-- Nigeria Ward Checker -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                    <!-- <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
                         <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4 sm:p-6">
                             <div class="text-3xl sm:text-4xl mb-2">🇳🇬</div>
                             <h4 class="text-lg sm:text-xl font-bold text-white">Nigeria Ward Checker</h4>
@@ -181,7 +213,7 @@
                                 Check Location
                             </a>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Compass & Distance -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
@@ -197,16 +229,18 @@
                         </div>
                     </div>
 
-                    <!-- Survey Fee Estimator -->
+
+
+                              <!-- Survey Drafting AI (if available) -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h4>
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">✏️</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Drafting AI</h4>
                         </div>
                         <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
-                            <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Estimate Fees
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">AI-assisted survey drafting to speed up polygon creation and annotations.</p>
+                            <a href="Polygon/survdraft.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Open Drafting AI
                             </a>
                         </div>
                     </div>
@@ -278,6 +312,355 @@
             </div>
         </div>
     </footer>
+
+    <!-- Promo modal: ask for email to grant free credits when users open a tool -->
+    <div id="promo-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 z-10">
+            <h3 class="text-xl font-bold mb-2">Get Free Credits</h3>
+            <p class="text-sm text-gray-600 mb-4">Enter your email to get <strong>20 credits</strong> free. Or choose to cancel and receive <strong>10 credits</strong> and continue to the tool.</p>
+            <input id="promo-email" type="email" placeholder="you@example.com" class="w-full px-3 py-2 border rounded mb-4" />
+            <div class="flex gap-2 justify-end">
+                <button id="promo-cancel" class="px-4 py-2 bg-gray-200 rounded">Get 10 credits &amp; Continue</button>
+                <button id="promo-submit" class="px-4 py-2 bg-blue-600 text-white rounded">Get 20 credits</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="promo-toast" class="hidden"></div>
+
+    <script>
+    (function(){
+        const modal = document.getElementById('promo-modal');
+        const emailInput = document.getElementById('promo-email');
+        const submitBtn = document.getElementById('promo-submit');
+        const cancelBtn = document.getElementById('promo-cancel');
+        const toast = document.getElementById('promo-toast');
+        let pendingHref = null;
+        // initial api base: meta -> fallback to origin + /api
+        let GEOTECH_API_BASE = (document.querySelector('meta[name="api-base"]') && document.querySelector('meta[name="api-base"]').getAttribute('content')) || (location.origin + '/api');
+
+        // Try to refresh server config (get_config) to allow server to override api_base
+        (async function(){
+            try{
+                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'get_config' })
+                });
+                if(!res.ok) return;
+                const json = await res.json();
+                if(json && json.api_base){
+                    GEOTECH_API_BASE = json.api_base || GEOTECH_API_BASE;
+                }
+            }catch(err){
+                console.warn('Could not fetch server config', err);
+            }
+        })();
+
+        function showModal(href){
+            pendingHref = href || null;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            emailInput.value = localStorage.getItem('geotechiex_email') || '';
+            setTimeout(()=> emailInput.focus(), 50);
+        }
+        function hideModal(){
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingHref = null;
+        }
+        function getCredits(){
+            return parseInt(localStorage.getItem('geotechiex_credits') || '0', 10);
+        }
+        function setCredits(n){
+            localStorage.setItem('geotechiex_credits', String(n));
+        }
+        function getDeviceId(){
+            let id = localStorage.getItem('geotechiex_device');
+            if(!id){
+                // simple random id
+                id = 'dev-' + Math.random().toString(36).slice(2, 12);
+                localStorage.setItem('geotechiex_device', id);
+            }
+            return id;
+        }
+
+        // Try to register the email on the backend; return server JSON or null on error
+        async function persistEmailToBackend(email){
+            try{
+                const device_id = getDeviceId();
+                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'register_user', email: email, device_id: device_id })
+                });
+                if(!res.ok) throw new Error('Network response not ok');
+                const json = await res.json();
+                return json;
+            }catch(err){
+                console.warn('Persist email failed:', err);
+                return null;
+            }
+        }
+
+        // Call server to create a promo grant (non-blocking)
+        async function grantPromoToBackend(email, credits){
+            try{
+                if(!email) return false;
+                const device_id = getDeviceId();
+                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'grant_promo', email: email, device_id: device_id, credits: credits })
+                });
+                if(!res.ok) throw new Error('Network response not ok');
+                const json = await res.json();
+                if(json && json.success){
+                    // store last promo activation for reference
+                    localStorage.setItem('geotechiex_last_promo', JSON.stringify({ activation: json.activation_code, credits: json.credits, reference: json.reference }));
+                    return true;
+                }
+                return false;
+            }catch(err){
+                console.warn('Grant promo failed:', err);
+                return false;
+            }
+        }
+
+        async function addCredits(amount, email){
+            const prev = getCredits();
+            setCredits(prev + amount);
+            if(email){
+                localStorage.setItem('geotechiex_email', email);
+                // attempt to persist to backend, but don't block navigation on failure
+                persistEmailToBackend(email).then(json=>{
+                    if(json && json.success) console.log('Email saved to backend');
+                });
+            }
+            showToast(amount + ' credits added');
+        }
+        function showToast(msg){
+            toast.textContent = msg;
+            toast.className = 'fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow';
+            setTimeout(()=>{ toast.className = 'hidden'; }, 3000);
+        }
+
+        // Sync session with backend: refresh local credits from server
+        async function syncSession(){
+            const email = localStorage.getItem('geotechiex_email') || '';
+            const device_id = getDeviceId();
+            try{
+                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
+                });
+                if(!res.ok) return false;
+                const json = await res.json();
+                if(json && (json.total_credits !== undefined)){
+                    localStorage.setItem('geotechiex_credits', String(json.total_credits || 0));
+                    return true;
+                }
+            }catch(err){
+                // network may be offline — ignore
+            }
+            return false;
+        }
+
+        // Consume one local credit, log the usage server-side (best-effort), then navigate
+        async function consumeCreditAndNavigate(href){
+            let credits = getCredits();
+            if(credits > 0){
+                credits = Math.max(0, credits - 1);
+                setCredits(credits);
+            }
+
+            // best-effort: notify server about the tool use so usage and credits are consistent
+            try{
+                const email = localStorage.getItem('geotechiex_email') || '';
+                const device_id = getDeviceId();
+                // derive a simple tool name from the href
+                let toolName = href || '';
+                try{ toolName = new URL(href, location.href).pathname.replace(/^\//, ''); }catch(e){}
+
+                fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'log_usage', email: email, device_id: device_id, tool_name: toolName, credits_used: 1 })
+                }).then(async res=>{
+                    if(res.ok){
+                        const j = await res.json();
+                        // after logging, refresh credits from server
+                        fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
+                        }).then(async sres=>{
+                            if(sres.ok){
+                                const sj = await sres.json();
+                                if(sj && sj.total_credits !== undefined) localStorage.setItem('geotechiex_credits', String(sj.total_credits || 0));
+                            }
+                        }).catch(()=>{});
+                    }
+                }).catch(()=>{});
+            }catch(e){
+                // ignore network/log errors — user can still proceed
+            }
+
+            // navigate after a tiny delay so UI updates (and any toasts) are visible
+            setTimeout(()=>{ if(href) window.location.href = href; }, 120);
+        }
+
+        // Delegate clicks on tool links inside #projects
+        document.addEventListener('click', function(e){
+            const a = e.target.closest('a');
+            if(!a) return;
+            // Only intercept links inside the projects/tools section
+            if(!a.closest('#projects')) return;
+            const href = a.getAttribute('href');
+            if(!href) return;
+            // Only intercept links to local html tools
+            if(!href.endsWith('.html') && !href.startsWith('/') && !href.includes('.html')) return;
+
+            e.preventDefault();
+            // If user already has credits, skip promo modal and navigate —
+            // actual credit deduction and logging happens inside the tool page.
+            if(getCredits() > 0){
+                window.location.href = href;
+                return;
+            }
+
+            // Otherwise show promo modal
+            showModal(href);
+        });
+
+        // Keep session in sync: on focus, periodically, and across tabs
+        window.addEventListener('focus', ()=>{ syncSession(); });
+        // every 30s try to refresh from server
+        setInterval(()=>{ syncSession(); }, 30000);
+        // reflect cross-tab localStorage changes immediately
+        window.addEventListener('storage', function(e){
+            if(!e.key) return;
+            if(e.key === 'geotechiex_credits'){
+                // update any UI if needed; we currently just ensure modal logic sees updated credits
+            }
+            if(e.key === 'geotechiex_email'){
+                // email changed in another tab — re-sync with server
+                syncSession();
+            }
+        });
+
+        submitBtn.addEventListener('click', async function(){
+            const email = (emailInput.value || '').trim();
+            if(!email || !/^\S+@\S+\.\S+$/.test(email)){
+                alert('Please enter a valid email address');
+                emailInput.focus();
+                return;
+            }
+
+            // First try to register the user or detect existing registration
+            const reg = await persistEmailToBackend(email);
+            if(reg && reg.success){
+                // If already registered, show current usage and ask to continue
+                if(reg.message && reg.message.toLowerCase().includes('already registered')){
+                    try{
+                        const device_id = getDeviceId();
+                        const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
+                        });
+                            if(res.ok){
+                                const sync = await res.json();
+                                const credits = sync.total_credits ?? 0;
+                                const usage = sync.total_usage ?? 0;
+                                // show styled modal instead of native confirm
+                                const proceed = await askExistingUserContinue(credits, usage);
+                                if(proceed){
+                                    hideModal();
+                                    if(pendingHref) window.location.href = pendingHref;
+                                    return;
+                                } else {
+                                    return; // keep modal open
+                                }
+                            }
+                    }catch(e){ console.warn('sync_user_data failed', e); }
+                    // If sync fails, fall back to allowing the user to continue
+                    hideModal();
+                    if(pendingHref) window.location.href = pendingHref;
+                    return;
+                }
+
+                // New registration path - grant promo and local credits
+                addCredits(20, email);
+                grantPromoToBackend(email, 20).then(ok=>{ if(ok) console.log('Server promo granted'); });
+                hideModal();
+                if(pendingHref) window.location.href = pendingHref;
+                return;
+            }
+
+            // If registration failed (network), still grant local credits and continue
+            addCredits(20, email);
+            grantPromoToBackend(email, 20).then(ok=>{ if(ok) console.log('Server promo granted'); });
+            hideModal();
+            if(pendingHref) window.location.href = pendingHref;
+        });
+
+        cancelBtn.addEventListener('click', function(){
+            // Try to use stored email for server promo; otherwise just local credits
+            const storedEmail = localStorage.getItem('geotechiex_email') || '';
+            addCredits(10, storedEmail || undefined);
+            if(storedEmail){
+                grantPromoToBackend(storedEmail, 10).then(ok=>{ if(ok) console.log('Server promo (cancel) granted'); });
+            }
+            hideModal();
+            if(pendingHref) window.location.href = pendingHref;
+        });
+
+        // Close modal on outside click or ESC
+        modal.addEventListener('click', function(e){
+            if(e.target === modal) hideModal();
+        });
+        document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hideModal(); });
+        
+        // Existing-user modal helpers
+        const existingModal = document.getElementById('existing-user-modal');
+        const existingCredits = document.getElementById('existing-credits');
+        const existingUsage = document.getElementById('existing-usage');
+        const existingContinue = document.getElementById('existing-continue');
+        const existingCancel = document.getElementById('existing-cancel');
+
+        function showExistingModal(credits, usage){
+            existingCredits.textContent = credits;
+            existingUsage.textContent = usage;
+            existingModal.classList.remove('hidden');
+            existingModal.classList.add('flex');
+        }
+        function hideExistingModal(){
+            existingModal.classList.add('hidden');
+            existingModal.classList.remove('flex');
+        }
+
+        function askExistingUserContinue(credits, usage){
+            return new Promise((resolve)=>{
+                showExistingModal(credits, usage);
+                function onContinue(){ cleanup(); resolve(true); }
+                function onCancel(){ cleanup(); resolve(false); }
+                function cleanup(){
+                    existingContinue.removeEventListener('click', onContinue);
+                    existingCancel.removeEventListener('click', onCancel);
+                    existingModal.removeEventListener('click', onOutside);
+                    hideExistingModal();
+                }
+                function onOutside(e){ if(e.target === existingModal) onCancel(); }
+                existingContinue.addEventListener('click', onContinue);
+                existingCancel.addEventListener('click', onCancel);
+                existingModal.addEventListener('click', onOutside);
+            });
+        }
+    })();
+    </script>
 
     <script src="js/navigation.js"></script>
 </body>
