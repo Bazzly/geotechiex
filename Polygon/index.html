@@ -880,6 +880,7 @@
                     <a href="../index.html#projects" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
                     <a href="../index.html#contact" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
                     <a href="../alli-bazeet-damola-profile.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
+                    <a href="survey-ocr.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">OCR Tool</a>
                 </nav>
             </div>
             
@@ -890,68 +891,37 @@
                 <a href="../index.html#projects" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
                 <a href="../index.html#contact" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
                 <a href="../alli-bazeet-damola-profile.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
+                <a href="survey-ocr.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">OCR Tool</a>
             </nav>
         </div>
     </header>
 
     <div class="container">
         <header>
-            <h1>🎯 Professional Survey Workflow Suite</h1>
-            <p class="app-description">Complete field-to-office surveying solution with data collection, QC validation, analysis, and reporting</p>
-            <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs">
-                <span class="bg-blue-600 text-white px-3 py-1 rounded-full">📱 Field Ready</span>
-                <span class="bg-green-600 text-white px-3 py-1 rounded-full">✅ QC Validation</span>
-                <span class="bg-purple-600 text-white px-3 py-1 rounded-full">📊 Analysis</span>
-                <span class="bg-yellow-600 text-white px-3 py-1 rounded-full">📄 Reporting</span>
-                <span class="bg-red-600 text-white px-3 py-1 rounded-full">🔄 Real-time Sync</span>
+            <h1>🎯 Polygon Creator</h1>
+            <p class="app-description">Upload your survey points, create a polygon, and export data for Survey Drafting.</p>
+            <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full">1. Upload CSV</span>
+                <span class="bg-green-600 text-white px-3 py-1 rounded-full">2. Select Points</span>
+                <span class="bg-purple-600 text-white px-3 py-1 rounded-full">3. Create Polygon</span>
+                <span class="bg-yellow-600 text-white px-3 py-1 rounded-full">4. Export for Survey Draft</span>
             </div>
         </header>
 
-        <div class="nav-buttons">
+            <div class="nav-buttons">
             <button class="nav-btn active" data-page="main">📊 Data Manager</button>
-            <button class="nav-btn" data-page="field-mode">📱 Field Mode</button>
-            <button class="nav-btn" data-page="qc-validation">✅ QC Validation</button>
             <button class="nav-btn" data-page="site-analysis">🗺️ Site Analysis</button>
-            <button class="nav-btn" data-page="transformation-info">🔄 Coordinates</button>
+            <button class="nav-btn" data-page="transformation-info">🔄 Transformation Parameters</button>
             <button class="nav-btn" data-page="reporting">📄 Reports</button>
+                <a href="survdraft.html" class="nav-btn bg-indigo-600 text-white hover:bg-indigo-700" style="margin-left:10px;">✏️ Survey Drafting AI</a>
+                <a href="survey-ocr.html" class="nav-btn bg-emerald-600 text-white hover:bg-emerald-700" style="margin-left:10px;">📄 OCR Tool</a>
         </div>
 
         <div class="page active" id="main-page">
             <!-- Usage Tracker Display -->
             <div id="usage-tracker-display"></div>
             
-            <div class="instructions">
-                <h3>🚀 Professional Survey Workflow:</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-                    <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500">
-                        <h4 class="font-bold text-blue-900 mb-2">📱 1. Field Collection</h4>
-                        <ul class="text-sm text-gray-700 space-y-1">
-                            <li>• Use Field Mode for live data capture</li>
-                            <li>• GPS auto-location support</li>
-                            <li>• Add photos & field notes</li>
-                            <li>• Offline capability enabled</li>
-                        </ul>
-                    </div>
-                    <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-500">
-                        <h4 class="font-bold text-green-900 mb-2">✅ 2. QC Validation</h4>
-                        <ul class="text-sm text-gray-700 space-y-1">
-                            <li>• Automatic quality checks</li>
-                            <li>• Closure error analysis</li>
-                            <li>• Point accuracy validation</li>
-                            <li>• Flagged issues report</li>
-                        </ul>
-                    </div>
-                    <div class="bg-purple-50 p-3 rounded-lg border-l-4 border-purple-500">
-                        <h4 class="font-bold text-purple-900 mb-2">📊 3. Office Processing</h4>
-                        <ul class="text-sm text-gray-700 space-y-1">
-                            <li>• Upload CSV or import field data</li>
-                            <li>• Create polygons & analyze</li>
-                            <li>• Transform coordinates</li>
-                            <li>• Generate professional reports</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <!-- Removed repeated workflow instructions for clarity -->
 
             <div class="app-container">
                 <div class="panel">
@@ -1221,179 +1191,7 @@
             </div>
         </div>
 
-        <!-- Field Mode Page -->
-        <div class="page" id="field-mode-page">
-            <div class="panel">
-                <h2>📱 Field Data Collection Mode</h2>
-                <p class="text-gray-600 mb-4">Capture survey points directly in the field with GPS integration</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <h3 class="font-bold text-blue-900 mb-3 flex items-center">
-                            <span class="text-2xl mr-2">📍</span>
-                            Quick Point Capture
-                        </h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-semibold mb-1">Point Name/ID</label>
-                                <input type="text" id="field-point-name" placeholder="e.g., CP1, BM1" 
-                                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-sm font-semibold mb-1">Latitude</label>
-                                    <input type="number" id="field-lat" step="0.000001" 
-                                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-1">Longitude</label>
-                                    <input type="number" id="field-lng" step="0.000001" 
-                                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-sm font-semibold mb-1">Height (m)</label>
-                                    <input type="number" id="field-height" step="0.001" 
-                                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-1">Solution Type</label>
-                                    <select id="field-solution" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <option value="Fixed">Fixed</option>
-                                        <option value="Float">Float</option>
-                                        <option value="Single">Single</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button onclick="captureGPS()" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold transition">
-                                🛰️ Get GPS Location
-                            </button>
-                            <button onclick="addFieldPoint()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition">
-                                ➕ Add Point to Survey
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <h3 class="font-bold text-green-900 mb-3 flex items-center">
-                            <span class="text-2xl mr-2">📸</span>
-                            Field Notes & Media
-                        </h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-semibold mb-1">Field Notes</label>
-                                <textarea id="field-notes" rows="4" placeholder="Weather conditions, observations, issues..."
-                                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-1">Photo Attachment</label>
-                                <input type="file" id="field-photo" accept="image/*" capture="environment"
-                                    class="w-full px-3 py-2 border rounded-lg bg-white">
-                                <p class="text-xs text-gray-500 mt-1">📷 Use camera to capture site photos</p>
-                            </div>
-                            <div id="field-status" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
-                                <span class="font-bold">Status:</span> <span id="field-status-text">Ready for data collection</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white border rounded-lg p-4">
-                    <h3 class="font-bold mb-3">📊 Field Session Summary</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div class="p-3 bg-blue-50 rounded-lg">
-                            <div class="text-2xl font-bold text-blue-600" id="field-points-count">0</div>
-                            <div class="text-xs text-gray-600">Points Captured</div>
-                        </div>
-                        <div class="p-3 bg-green-50 rounded-lg">
-                            <div class="text-2xl font-bold text-green-600" id="field-fixed-count">0</div>
-                            <div class="text-xs text-gray-600">Fixed Solutions</div>
-                        </div>
-                        <div class="p-3 bg-yellow-50 rounded-lg">
-                            <div class="text-2xl font-bold text-yellow-600" id="field-session-time">0:00</div>
-                            <div class="text-xs text-gray-600">Session Time</div>
-                        </div>
-                        <div class="p-3 bg-purple-50 rounded-lg">
-                            <div class="text-2xl font-bold text-purple-600" id="field-accuracy">±0.0m</div>
-                            <div class="text-xs text-gray-600">Avg Accuracy</div>
-                        </div>
-                    </div>
-                    <button onclick="exportFieldData()" class="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition">
-                        💾 Save Field Session
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- QC Validation Page -->
-        <div class="page" id="qc-validation-page">
-            <div class="panel">
-                <h2>✅ Quality Control & Validation</h2>
-                <p class="text-gray-600 mb-4">Automated quality checks and validation reports</p>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                    <div class="bg-white border rounded-lg p-4">
-                        <h3 class="font-bold mb-3 flex items-center">
-                            <span class="text-xl mr-2">🔍</span>
-                            Run Quality Checks
-                        </h3>
-                        <div class="space-y-3">
-                            <button onclick="runQCChecks()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition">
-                                🚀 Run All QC Checks
-                            </button>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="checkClosureError()" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-semibold border border-green-200 transition">
-                                    ↩️ Closure Error
-                                </button>
-                                <button onclick="checkDuplicates()" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-2 rounded-lg text-sm font-semibold border border-yellow-200 transition">
-                                    🔁 Duplicates
-                                </button>
-                                <button onclick="checkAccuracy()" class="bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm font-semibold border border-purple-200 transition">
-                                    🎯 Accuracy
-                                </button>
-                                <button onclick="checkOutliers()" class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-semibold border border-red-200 transition">
-                                    ⚠️ Outliers
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-green-50 to-blue-50 border rounded-lg p-4">
-                        <h3 class="font-bold mb-3">📈 QC Results Summary</h3>
-                        <div id="qc-results" class="space-y-2">
-                            <div class="flex justify-between items-center p-2 bg-white rounded">
-                                <span class="text-sm font-semibold">Overall Status:</span>
-                                <span id="qc-overall" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs font-bold">Not Run</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2 bg-white rounded">
-                                <span class="text-sm">Closure Error:</span>
-                                <span id="qc-closure" class="text-gray-600 text-sm">-</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2 bg-white rounded">
-                                <span class="text-sm">Duplicate Points:</span>
-                                <span id="qc-duplicates" class="text-gray-600 text-sm">-</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2 bg-white rounded">
-                                <span class="text-sm">Accuracy Score:</span>
-                                <span id="qc-accuracy-score" class="text-gray-600 text-sm">-</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2 bg-white rounded">
-                                <span class="text-sm">Flagged Issues:</span>
-                                <span id="qc-issues" class="text-red-600 text-sm font-bold">0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white border rounded-lg p-4">
-                    <h3 class="font-bold mb-3">⚠️ Flagged Issues</h3>
-                    <div id="qc-issues-list" class="space-y-2 max-h-64 overflow-y-auto">
-                        <p class="text-gray-500 text-center py-8">No issues found. Run QC checks to validate your data.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Reporting Page -->
         <div class="page" id="reporting-page">

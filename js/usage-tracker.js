@@ -6,24 +6,28 @@
 class UsageTracker {
     constructor(toolName) {
         this.toolName = toolName;
-        this.apiEndpoint = 'https://www.bazzlylinks.com/geotechiex.php';
+        this.apiEndpoint = '/api/index.php';
         this.storageKey = `geotechiex_usage_${toolName}`;
         this.globalStorageKey = 'geotechiex_global_credits';
+        // Prefer the site-wide email key set by index.html; fall back to local tool key
+        this.siteEmailKey = 'geotechiex_email';
         this.userEmailKey = 'geotechiex_user_email';
+        // Simple legacy/simple credit key used by index.html
+        this.simpleCreditsKey = 'geotechiex_credits';
         this.freeLimit = 10;
-        this.init();
+        // Keep a ready promise so callers can await initialization if needed
+        this.ready = this.init();
     }
 
     async init() {
-        // Check if user email exists
-        const userEmail = localStorage.getItem(this.userEmailKey);
-        
-        if (!userEmail) {
-            // First time user - show email collection modal
-            await this.showEmailModal();
-        } else {
+        // Check for an email stored by index (preferred) or the tool-specific key
+        const userEmail = localStorage.getItem(this.userEmailKey) || localStorage.getItem(this.siteEmailKey);
+        if (userEmail) {
             // Existing user - sync with server
             await this.syncUserData();
+        } else {
+            // Do NOT show a modal here; index.html handles email collection centrally.
+            // Keep local usage data initialized so the tool can function offline.
         }
         
         // Initialize local usage data if not exists
@@ -43,102 +47,11 @@ class UsageTracker {
         }
     }
 
+    // Email collection modal intentionally disabled here because index.html
+    // handles centralized email collection and promo granting.
     async showEmailModal() {
-        return new Promise((resolve) => {
-            const modalHTML = `
-                <div id="email-collection-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[10000] p-4">
-                    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 relative animate-fadeIn">
-                        <div class="text-center mb-6">
-                            <div class="text-5xl mb-3">🌍</div>
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to GeoTechieX!</h2>
-                            <p class="text-gray-600">To get started with your 10 free uses, please enter your email address.</p>
-                        </div>
-                        
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                            <h3 class="font-bold text-blue-900 mb-2 text-sm">Why we need your email:</h3>
-                            <ul class="text-xs text-blue-800 space-y-1">
-                                <li>✓ Track your usage across all tools</li>
-                                <li>✓ Prevent abuse of free credits</li>
-                                <li>✓ Sync your credits across devices</li>
-                                <li>✓ Send payment receipts & activation codes</li>
-                            </ul>
-                        </div>
-                        
-                        <form id="email-collection-form" class="space-y-4">
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2 text-sm">Email Address *</label>
-                                <input type="email" id="user-email-input" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="your.email@example.com">
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <input type="checkbox" id="privacy-checkbox" required class="mt-1 mr-2">
-                                <label for="privacy-checkbox" class="text-xs text-gray-600">
-                                    I agree to store my email for usage tracking and accept the 
-                                    <a href="#" class="text-blue-600 hover:underline">privacy policy</a>
-                                </label>
-                            </div>
-                            
-                            <button type="submit"
-                                class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition transform hover:scale-105 shadow-lg">
-                                🚀 Start Using Tools (10 Free Uses)
-                            </button>
-                        </form>
-                        
-                        <p class="text-xs text-gray-500 text-center mt-4">
-                            🔒 Your email is secure and will never be shared
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            const modalDiv = document.createElement('div');
-            modalDiv.innerHTML = modalHTML;
-            document.body.appendChild(modalDiv);
-            document.body.style.overflow = 'hidden';
-            
-            const form = document.getElementById('email-collection-form');
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const emailInput = document.getElementById('user-email-input');
-                const email = emailInput.value.trim();
-                
-                if (!email) {
-                    alert('Please enter a valid email address');
-                    return;
-                }
-                
-                // Show loading
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '⏳ Registering...';
-                submitBtn.disabled = true;
-                
-                // Register user with server
-                const registered = await this.registerUser(email);
-                
-                if (registered) {
-                    localStorage.setItem(this.userEmailKey, email);
-                    
-                    // Update global credits with email
-                    const credits = this.getGlobalCredits();
-                    credits.email = email;
-                    localStorage.setItem(this.globalStorageKey, JSON.stringify(credits));
-                    
-                    // Close modal
-                    document.getElementById('email-collection-modal').remove();
-                    document.body.style.overflow = '';
-                    
-                    resolve(email);
-                } else {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    alert('Registration failed. Please try again.');
-                }
-            });
-        });
+        console.info('showEmailModal called but disabled; index.html manages email collection.');
+        return null;
     }
 
     async registerUser(email) {
@@ -163,7 +76,7 @@ class UsageTracker {
     }
 
     async syncUserData() {
-        const email = localStorage.getItem(this.userEmailKey);
+        const email = localStorage.getItem(this.userEmailKey) || localStorage.getItem(this.siteEmailKey);
         if (!email) return;
 
         try {
@@ -210,11 +123,26 @@ class UsageTracker {
     }
 
     getUsageData() {
-        return JSON.parse(localStorage.getItem(this.storageKey));
+        const raw = localStorage.getItem(this.storageKey);
+        if (!raw) {
+            // return a safe default usage object
+            return { count: 0, firstUsed: null, lastUsed: null };
+        }
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            // If parsing fails, reset usage and return default
+            this.resetUsage();
+            return { count: 0, firstUsed: null, lastUsed: null };
+        }
     }
 
     getGlobalCredits() {
-        return JSON.parse(localStorage.getItem(this.globalStorageKey));
+        // Prefer structured global storage; fall back to simple credits key used by index.html
+        const structured = localStorage.getItem(this.globalStorageKey);
+        if (structured) return JSON.parse(structured);
+        const simple = localStorage.getItem(this.simpleCreditsKey);
+        return { credits: parseInt(simple || '0', 10), donated: false, donationDate: null, totalDonations: 0, email: localStorage.getItem(this.siteEmailKey) || null };
     }
 
     async incrementUsage() {
@@ -230,8 +158,8 @@ class UsageTracker {
     }
 
     async logUsageToServer() {
-        const email = localStorage.getItem(this.userEmailKey);
-        if (!email) return;
+        const email = localStorage.getItem(this.userEmailKey) || localStorage.getItem(this.siteEmailKey);
+            if (!email) return;
 
         try {
             await fetch(this.apiEndpoint, {
@@ -242,7 +170,7 @@ class UsageTracker {
                     email: email,
                     device_id: this.getDeviceId(),
                     tool_name: this.toolName,
-                    credits_used: 0,
+                    credits_used: 1,
                     timestamp: new Date().toISOString()
                 })
             });
@@ -309,6 +237,8 @@ class UsageTracker {
             
             // Log credit usage to server
             await this.logUsageToServer();
+            // Reflect the simple credits key used by index.html
+            try{ localStorage.setItem(this.simpleCreditsKey, String(credits.credits)); }catch(e){}
             
             return true;
         }

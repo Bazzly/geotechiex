@@ -130,11 +130,52 @@
             </svg>
             Chat Assistant
           </h3>
+          <div class="ml-auto">
+            <button id="faqBtn" title="How to use" class="ml-3 p-2 rounded-md bg-white/10 hover:bg-white/20 text-sm">❓ How to use</button>
+          </div>
         </div>
         
         <div id="chatBox" class="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-900">
           <div class="text-gray-400 text-sm text-center p-4 bg-gray-800/50 rounded-lg">
             👋 Chat started. Ask me about any coordinates!
+          </div>
+        </div>
+
+        <!-- FAQ / How-to Modal -->
+        <div id="faqModal" role="dialog" aria-modal="true" aria-labelledby="faqTitle" style="z-index:100000;" class="fixed inset-0 hidden items-center justify-center bg-black/60">
+          <div class="bg-gray-800 text-gray-100 rounded-lg max-w-2xl w-full mx-4 overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-gray-700 flex items-start justify-between">
+              <div>
+                <h4 class="text-lg font-bold">Getting Started — GeoTechieX AI</h4>
+                <p class="text-sm text-gray-400">Quick guide to Area Delineation & Ward Assistant</p>
+              </div>
+              <div>
+                <button id="closeFaqBtn" class="px-3 py-1 bg-gray-700 text-sm rounded-md hover:bg-gray-600">Close</button>
+              </div>
+            </div>
+            <div class="p-4 text-sm space-y-3">
+              <p><strong>What this assistant does</strong>: It checks whether a coordinate falls inside Prime, Special Prime or General areas and Nigerian wards; converts between WGS84 and the Minna datum (UTM Zone 31N); finds distances to boundaries; and helps share your location.</p>
+              <p><strong>How to use</strong>:
+                <ul class="list-disc list-inside mt-2 text-xs text-gray-300">
+                  <li>Type coordinates: <code>538156, 787954</code> (Minna UTM) or <code>7.15, 3.35</code> (Lat,Lon).</li>
+                  <li>Try natural language: <em>"Which area is 538156, 787954?"</em> or <em>"Convert 7.15, 3.35 to UTM"</em>.</li>
+                  <li>Ask location: type <em>"my location"</em> to start live tracking, or <em>"where am I now"</em> for a single snapshot.</li>
+                  <li>Share location: type <em>"send my location"</em> and follow the chat prompts to send via WhatsApp.</li>
+                  <li>Distance to a place: ask <em>"How far is my location to Olumo Rock?"</em></li>
+                </ul>
+              </p>
+              <p><strong>Privacy & Safety</strong>: Geolocation runs in your browser and requires permission. Sharing to WhatsApp opens WhatsApp with a prefilled message — you must press Send. Use the emergency option only for real emergencies.</p>
+              <p><strong>Examples you can click to run</strong>:</p>
+              <div class="flex flex-wrap gap-2">
+                <button class="faqExample px-3 py-1 bg-gray-700 rounded text-xs" data-text="Which area is 538156, 787954?">Which area is 538156, 787954?</button>
+                <button class="faqExample px-3 py-1 bg-gray-700 rounded text-xs" data-text="Convert 7.15, 3.35 to UTM">Convert 7.15, 3.35 to UTM</button>
+                <button class="faqExample px-3 py-1 bg-gray-700 rounded text-xs" data-text="How far is my location to Olumo Rock?">Distance to Olumo Rock</button>
+                <button class="faqExample px-3 py-1 bg-gray-700 rounded text-xs" data-text="Send my location">Send my location (share)</button>
+              </div>
+            </div>
+            <div class="p-3 border-t border-gray-700 text-right">
+              <button id="faqGotIt" class="px-4 py-2 bg-blue-600 rounded text-white">Got it</button>
+            </div>
           </div>
         </div>
 
@@ -239,8 +280,268 @@
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
+
+    // === Simple Click-to-Measure Tool ===
+    let measurePoints = [];
+    let measureLine = null;
+    let measureMarkerA = null;
+    let measureMarkerB = null;
+    let measureLabel = null;
+
+    function clearMeasure() {
+      if (measureLine) { map.removeLayer(measureLine); measureLine = null; }
+      if (measureMarkerA) { map.removeLayer(measureMarkerA); measureMarkerA = null; }
+      if (measureMarkerB) { map.removeLayer(measureMarkerB); measureMarkerB = null; }
+      if (measureLabel) { map.removeLayer(measureLabel); measureLabel = null; }
+      measurePoints = [];
+    }
+
+    map.on('click', function(e) {
+      if (measurePoints.length === 2) clearMeasure();
+      measurePoints.push([e.latlng.lat, e.latlng.lng]);
+      if (measurePoints.length === 1) {
+        measureMarkerA = L.marker(measurePoints[0], {icon: L.divIcon({className:'', html:'<span style="color:#00f;font-size:2em;">A</span>'})}).addTo(map);
+      } else if (measurePoints.length === 2) {
+        measureMarkerB = L.marker(measurePoints[1], {icon: L.divIcon({className:'', html:'<span style="color:#d00;font-size:2em;">B</span>'})}).addTo(map);
+        measureLine = L.polyline(measurePoints, {color: 'yellow', weight: 3, dashArray: '5,10'}).addTo(map);
+        // Calculate distance in meters
+        const dist = map.distance(measurePoints[0], measurePoints[1]);
+        const midLat = (measurePoints[0][0] + measurePoints[1][0]) / 2;
+        const midLng = (measurePoints[0][1] + measurePoints[1][1]) / 2;
+        measureLabel = L.marker([midLat, midLng], {
+          icon: L.divIcon({className:'', html:`<div style='background:#222;color:#fff;padding:4px 8px;border-radius:6px;font-size:1em;'>${dist.toFixed(2)} m</div>`})
+        }).addTo(map);
+      }
+    });
+
+    // Add a button to clear measurement
+    const measureBtn = L.control({position:'topright'});
+    measureBtn.onAdd = function(map) {
+      const div = L.DomUtil.create('div','leaflet-bar');
+      div.innerHTML = '<button id="clearMeasureBtn" title="Clear measurement" style="font-size:1.2em;padding:7px 16px;margin:4px 4px 2px 4px;background:#007bff;color:#fff;border:none;border-radius:7px;box-shadow:0 2px 6px #0002;cursor:pointer;font-weight:bold;">🧮 Clear Measure</button>';
+      return div;
+    };
+    measureBtn.addTo(map);
+    setTimeout(()=>{
+      const btn = document.getElementById('clearMeasureBtn');
+      if(btn) btn.onclick = clearMeasure;
+    }, 500);
+
+    // === Copy Coordinate Tool ===
+    function copyToClipboard(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+    }
+
+    const copyCoordBtn = L.control({position:'topright'});
+    copyCoordBtn.onAdd = function(map) {
+      const div = L.DomUtil.create('div','leaflet-bar');
+      div.innerHTML = `<button id="copyCoordBtn" title="Copy coordinate from map" style="font-size:1.1em;padding:7px 16px;margin:4px 4px 2px 4px;background:#17a2b8;color:#fff;border:none;border-radius:7px;box-shadow:0 2px 6px #0002;cursor:pointer;font-weight:bold;">📋 Copy Coordinate</button>`;
+      return div;
+    };
+    copyCoordBtn.addTo(map);
+    setTimeout(()=>{
+      const btn = document.getElementById('copyCoordBtn');
+      if(btn) {
+        btn.onclick = function() {
+          btn.innerHTML = 'Click map...';
+          btn.style.background = '#138496';
+          let tempHandler = function(e) {
+            const lat = e.latlng.lat.toFixed(7);
+            const lng = e.latlng.lng.toFixed(7);
+            copyToClipboard(`${lat}, ${lng}`);
+            btn.innerHTML = '📋 Copied!';
+            btn.style.background = '#28a745';
+            setTimeout(()=>{
+              btn.innerHTML = '📋 Copy Coordinate';
+              btn.style.background = '#17a2b8';
+            }, 1200);
+            map.off('click', tempHandler);
+          };
+          map.on('click', tempHandler);
+        };
+      }
+    }, 500);
+
     // Define projection (EPSG:26331 — Minna / UTM Zone 31N)
     proj4.defs("EPSG:26331","+proj=utm +zone=31 +ellps=clrk80 +towgs84=-92,-93,122,0,0,0,0 +units=m +no_defs");
+
+    // === Geolocation (watch) & Minna conversion ===
+    let geoWatchId = null;
+
+    async function analyzeCoordsObject(coords, labelPrefix = '') {
+      // coords: { x, y, format:'LatLon'|'UTM', originalLat, originalLon }
+      if (!allLayers.length) await loadGeoData();
+
+      const point = turf.point([coords.x, coords.y]);
+      let foundArea = null;
+      let foundWard = null;
+      let foundFeature = null;
+
+      // Clear previous markers for clarity
+      clearMarkers();
+
+      let areaChecked = false;
+      for (const layer of allLayers) {
+        for (const feature of layer.data.features) {
+          if (!feature.properties) continue;
+          try {
+            let geometryToCheck = feature.geometry;
+            if (layer.name === 'DATA_AREA_DEL') {
+              if (coords.format === 'UTM' && feature.properties.box_mina31) {
+                geometryToCheck = feature.geometry;
+              } else if (coords.format === 'LatLon' && feature.properties.box) {
+                geometryToCheck = feature.geometry;
+              }
+            }
+            if (turf.booleanPointInPolygon(point, { ...feature, geometry: geometryToCheck })) {
+              areaChecked = true;
+              let areaType = feature.properties.area_del;
+              if (typeof areaType === 'undefined' || areaType === null) areaType = 'GENERAL';
+              if (!foundArea) {
+                foundArea = areaType;
+                foundFeature = feature;
+              }
+              if (feature.properties.wardname && !foundWard) foundWard = feature.properties;
+              const geoJsonLayer = L.geoJSON(feature, { style: { color: 'lime', weight: 3, fillOpacity: 0.2 } }).addTo(map);
+              currentMarkers.push(geoJsonLayer);
+            }
+          } catch (e) {
+            console.error('Point-in-polygon check error (geolocate):', e);
+          }
+        }
+      }
+
+      // Convert UTM -> WGS84 for map display
+      let lat, lon;
+      try {
+        [lon, lat] = proj4("EPSG:26331", "EPSG:4326", [coords.x, coords.y]);
+      } catch (err) {
+        console.error('Projection error:', err);
+        addMessage('bot', `${labelPrefix}⚠️ Could not transform coordinates.`);
+        return;
+      }
+
+      // Reverse geocode (best-effort)
+      const geocoded = await reverseGeocode(lat, lon).catch(() => null);
+
+      // Build output message
+      let msg = `${labelPrefix}<strong>📡 Live Location Update</strong><br>`;
+      msg += `🌍 WGS84: ${coords.originalLat.toFixed(6)}°, ${coords.originalLon.toFixed(6)}°<br>`;
+      msg += `📐 Minna UTM (Zone 31N): ${coords.x.toFixed(2)}, ${coords.y.toFixed(2)}<br>`;
+      if (geocoded && geocoded.address) msg += `🏠 Address: ${geocoded.address}<br>`;
+      if (areaChecked && foundArea) {
+        msg += `🎯 Area Delineation: <strong class="text-green-400">${foundArea}</strong><br>`;
+      } else {
+        msg += `⚪ Area Delineation: <strong>Out of range / Not in defined area</strong><br>`;
+      }
+      if (foundWard) {
+        msg += `🏛️ Ward: <strong>${foundWard.wardname}</strong> — ${foundWard.lganame}, ${foundWard.statename}<br>`;
+      }
+
+      // Prepare WhatsApp share link (includes google maps link)
+      try {
+        const shareText = `${labelPrefix}Live location update:\nLat/Lon: ${coords.originalLat.toFixed(6)}, ${coords.originalLon.toFixed(6)}; Minna UTM: ${coords.x.toFixed(2)}, ${coords.y.toFixed(2)}${foundArea ? '; Area: ' + foundArea : ''}${foundWard ? '; Ward: ' + foundWard.wardname + ', ' + foundWard.statename : ''}`;
+        const mapsLink = `https://www.google.com/maps/search/?api=1&query=${coords.originalLat},${coords.originalLon}`;
+        const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText + '\n' + mapsLink);
+        msg += `<br><a href="${waUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;padding:6px 10px;background:#25D366;color:#fff;border-radius:6px;text-decoration:none;box-shadow:0 2px 6px rgba(0,0,0,0.2);">📩 Send to WhatsApp</a>`;
+      } catch (e) {
+        console.error('WhatsApp share link build error:', e);
+      }
+
+      addMessage('bot', msg);
+
+      // Show on map
+      map.setView([lat, lon], 16);
+      const marker = L.marker([lat, lon], {
+        icon: L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        })
+      }).addTo(map);
+      marker.bindPopup(`<strong>Live Location</strong><br>UTM: ${coords.x.toFixed(2)}, ${coords.y.toFixed(2)}<br>Lat/Lon: ${lat.toFixed(6)}°, ${lon.toFixed(6)}°`).openPopup();
+      currentMarkers.push(marker);
+    }
+
+    function startGeolocationWatch() {
+      if (!navigator.geolocation) {
+        addMessage('bot', '⚠️ Geolocation not supported by your browser.');
+        return;
+      }
+      if (geoWatchId) {
+        addMessage('bot', '📡 Geolocation already running.');
+        return;
+      }
+
+      const geoBtn = document.getElementById('geoBtn');
+      if (geoBtn) { geoBtn.innerHTML = '📡 Geolocate ON'; geoBtn.style.background = '#28a745'; }
+
+      geoWatchId = navigator.geolocation.watchPosition(async function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        let x, y;
+        try {
+          [x, y] = proj4('EPSG:4326', 'EPSG:26331', [lon, lat]);
+        } catch (e) {
+          console.error('Projection conversion error in watchPosition:', e);
+          return;
+        }
+        const coordsObj = { x, y, format: 'LatLon', system: 'WGS84', originalLat: lat, originalLon: lon };
+        await analyzeCoordsObject(coordsObj, '');
+      }, function(err) {
+        addMessage('bot', `⚠️ Geolocation error: ${err.message}`);
+      }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 });
+
+      addMessage('bot', '📡 Geolocation started. Sending live updates...');
+    }
+
+    function stopGeolocationWatch() {
+      if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+      geoWatchId = null;
+      const geoBtn = document.getElementById('geoBtn');
+      if (geoBtn) { geoBtn.innerHTML = '📡 Geolocate OFF'; geoBtn.style.background = '#6c757d'; }
+      addMessage('bot', '📡 Geolocation stopped.');
+    }
+
+    // Add geolocate control
+    const geoControl = L.control({ position: 'topright' });
+    geoControl.onAdd = function(map) {
+      const div = L.DomUtil.create('div', 'leaflet-bar');
+      div.innerHTML = `<button id="geoBtn" title="Start/Stop geolocation" style="font-size:1.05em;padding:7px 12px;margin:4px 4px;background:#6c757d;color:#fff;border:none;border-radius:7px;box-shadow:0 2px 6px #0002;cursor:pointer;font-weight:bold;">📡 Geolocate OFF</button>`;
+      return div;
+    };
+    geoControl.addTo(map);
+    setTimeout(()=>{
+      const btn = document.getElementById('geoBtn');
+      if (btn) btn.onclick = function() { if (geoWatchId) stopGeolocationWatch(); else startGeolocationWatch(); };
+    }, 500);
+
+    // Robust getCurrentPosition with fallback on timeout
+    function getCurrentPositionWithFallback(primaryOptions = { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }, fallbackOptions = { enableHighAccuracy: false, maximumAge: 0, timeout: 20000 }) {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) return reject(new Error('Geolocation not supported'));
+        navigator.geolocation.getCurrentPosition(resolve, function(err) {
+          // If primary timed out (code 3), try fallback with lower accuracy
+          if (err && err.code === 3) {
+            console.warn('Primary geolocation timed out, trying fallback...');
+            navigator.geolocation.getCurrentPosition(resolve, function(err2) {
+              reject(err2);
+            }, fallbackOptions);
+          } else {
+            reject(err);
+          }
+        }, primaryOptions);
+      });
+    }
 
     let allLayers = [];
     let currentMarkers = [];
@@ -250,17 +551,18 @@
 
     async function loadGeoData() {
       const files = [
-        "data/PRIME_AREA.geojson", 
-        "data/SPECIAL_PRIME_AREA.geojson",
+        "data/DATA_AREA_DEL.geojson",
         "data/ngn_wards_fix_js.geojson"
       ];
       
       for (const file of files) {
         try {
+          console.debug('GeoAI: loading', file);
           const res = await fetch(file);
           const data = await res.json();
           const layerName = data.name || file.split('/').pop().replace('.geojson', '');
           allLayers.push({ name: layerName, data, file });
+          console.debug(`GeoAI: loaded ${file} - features: ${data.features.length}`);
           
           // Index features for faster search
           data.features.forEach(feature => {
@@ -300,6 +602,10 @@
         convert: /convert|transform|change|lat|lon|latitude|longitude|wgs84/i,
         distance: /distance|nearest|closest|how far|near|proximity/i,
         address: /address|location|place|where is|reverse/i,
+        geolocate: /\b(my location|where am i|geolocate|locate me|my location)\b/i,
+        sendLocation: /\b(send my location|send location|share my location|text my location|message my location|send to whatsapp)\b/i,
+        oneShotGeolocate: /\b(where am i now|my location now|send my location|current location|my current location)\b/i,
+        stopGeolocate: /\b(stop geolocate|stop location|stop tracking|stop geolocation)\b/i,
         info: /info|details|about|tell me|statistics|stats/i,
         help: /help|how|what can|capabilities/i
       };
@@ -317,8 +623,9 @@
 
     // Enhanced coordinate parsing - supports multiple formats
     function parseCoordinates(input) {
-      // UTM format: 538156, 787954 or 538156 787954
-      const utmRegex = /(\d{5,7})[,\s]+(\d{6,8})/;
+      // UTM format examples: 538156, 787954 or 538733.809,790226.310 (supports decimals)
+      // Accepts 5-7 digits for easting and 6-8 digits for northing, with optional decimal fraction
+      const utmRegex = /(\d{5,7}(?:\.\d+)?)[,\s]+(\d{6,8}(?:\.\d+)?)/;
       const utmMatch = input.match(utmRegex);
       if (utmMatch) {
         return { 
@@ -375,6 +682,23 @@
         };
       } catch (error) {
         console.error("Reverse geocoding error:", error);
+        return null;
+      }
+    }
+
+    // Search a place name using Nominatim (returns first match lat/lon and display name)
+    async function searchPlace(name) {
+      try {
+        const q = encodeURIComponent(name);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+          headers: { 'User-Agent': 'GeoTechieX-AI/1.0' }
+        });
+        if (!res.ok) throw new Error('Place search failed');
+        const data = await res.json();
+        if (!data || !data.length) return null;
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display_name: data[0].display_name };
+      } catch (e) {
+        console.error('Place search error:', e);
         return null;
       }
     }
@@ -456,6 +780,63 @@
       
       // Parse natural language
       const nlp = parseNaturalLanguage(query);
+
+      // --- Handle pending chat-driven WhatsApp flow ---
+      if (window.pendingShare && window.pendingShare.phase) {
+        // expecting phone number
+        if (window.pendingShare.phase === 'askNumber') {
+          const phoneInput = query.trim();
+          // normalize phone: remove spaces, dashes, parentheses, plus
+          const cleaned = phoneInput.replace(/[^0-9+]/g, '');
+          const cleanedDigits = cleaned.replace(/^\+/, '');
+          if (cleanedDigits.length < 10) {
+            addMessage('bot', '⚠️ Phone number too short. Please include country code (e.g. +234...)');
+            return;
+          }
+          window.pendingShare.phone = cleanedDigits;
+          window.pendingShare.phase = 'confirmEmergency';
+          addMessage('bot', `Is this an emergency message to <strong>${phoneInput}</strong>? Reply <strong>yes</strong> or <strong>no</strong>.`);
+          return;
+        }
+        // expecting emergency confirmation
+        if (window.pendingShare.phase === 'confirmEmergency') {
+          const lower = query.trim().toLowerCase();
+          const yes = /^(y|yes|yeah|yep|true)$/i.test(lower);
+          const no = /^(n|no|nah|nope|false)$/i.test(lower);
+          if (!yes && !no) {
+            addMessage('bot', 'Please reply with "yes" or "no". Is this an emergency?');
+            return;
+          }
+          const isEmergency = yes;
+          const phone = window.pendingShare.phone;
+          // perform one-shot geolocation and send WhatsApp link to number
+          try {
+            addMessage('bot', '📍 Getting your current location to prepare the message...');
+            const position = await getCurrentPositionWithFallback();
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            let [x, y] = [null, null];
+            try { [x, y] = proj4('EPSG:4326', 'EPSG:26331', [lon, lat]); } catch(e){}
+            const mapsLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+            let messageText = isEmergency ? `EMERGENCY! My live location: ${mapsLink}` : `My location: ${lat.toFixed(6)}, ${lon.toFixed(6)} - ${mapsLink}`;
+            if (x && y) messageText += ` \nMinna UTM: ${x.toFixed(2)}, ${y.toFixed(2)}`;
+            // Build WhatsApp URL to send to a specific number (phone must be in international format digits only)
+            const waUrl = 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(phone) + '&text=' + encodeURIComponent(messageText);
+            addMessage('bot', `✅ Prepared message for <strong>${phone}</strong>. <a href="${waUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;padding:6px 10px;background:#25D366;color:#fff;border-radius:6px;text-decoration:none;box-shadow:0 2px 6px rgba(0,0,0,0.2);">📩 Send via WhatsApp</a>`);
+          } catch (err) {
+            addMessage('bot', `⚠️ Could not get your location: ${err && err.message ? err.message : 'unknown error'}`);
+          }
+          window.pendingShare = null;
+          return;
+        }
+      }
+
+      // Start send-location flow when user asks to send/share location
+      if (nlp.intent === 'sendLocation') {
+        window.pendingShare = { phase: 'askNumber' };
+        addMessage('bot', '📩 Sure — please enter the recipient phone number (include country code, e.g. +2348012345678).');
+        return;
+      }
       
       // Handle help intent
       if (nlp.intent === 'help') {
@@ -475,6 +856,86 @@
           • "Address for 538156, 787954"<br>
           • "Info about SPECIAL_PRIME"
         `);
+        return;
+      }
+
+      // Handle geolocate intent from chat: start live watch
+      if (nlp.intent === 'geolocate') {
+        addMessage('bot', '📡 Received geolocate command from chat — starting live geolocation.');
+        startGeolocationWatch();
+        return;
+      }
+
+      // Handle one-shot geolocate (get current position once)
+      if (nlp.intent === 'oneShotGeolocate') {
+        addMessage('bot', '📍 Received one-shot geolocate command — fetching current location...');
+        if (!navigator.geolocation) {
+          addMessage('bot', '⚠️ Geolocation not supported by your browser.');
+          return;
+        }
+        try {
+          const position = await getCurrentPositionWithFallback();
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          let x, y;
+          try {
+            [x, y] = proj4('EPSG:4326', 'EPSG:26331', [lon, lat]);
+          } catch (e) {
+            addMessage('bot', '⚠️ Could not convert coordinates to Minna datum.');
+            return;
+          }
+          const coordsObj = { x, y, format: 'LatLon', system: 'WGS84', originalLat: lat, originalLon: lon };
+          await analyzeCoordsObject(coordsObj, '');
+        } catch (err) {
+          addMessage('bot', `⚠️ Geolocation error: ${err && err.message ? err.message : 'Failed to get location'}`);
+        }
+        return;
+      }
+
+      // Special distance query: 'how far is my location to <place>' or similar
+      if (nlp.intent === 'distance') {
+        const myLocPattern = /\b(my location|where am i|where am I|me|my current location)\b/i;
+        const toPlaceMatch = query.match(/to\s+(.+)$/i);
+        if (myLocPattern.test(query) && toPlaceMatch) {
+          const placeName = toPlaceMatch[1].trim();
+          addMessage('bot', `📏 Calculating distance from your current location to <strong>${placeName}</strong>...`);
+          if (!navigator.geolocation) {
+            addMessage('bot', '⚠️ Geolocation not supported by your browser.');
+            return;
+          }
+          try {
+            const position = await getCurrentPositionWithFallback();
+            const lat1 = position.coords.latitude;
+            const lon1 = position.coords.longitude;
+            const place = await searchPlace(placeName);
+            if (!place) {
+              addMessage('bot', `❌ Could not find place: <strong>${placeName}</strong>`);
+              return;
+            }
+            const lat2 = place.lat;
+            const lon2 = place.lon;
+            // distance in meters using Leaflet's distance
+            const dist = map.distance([lat1, lon1], [lat2, lon2]);
+            addMessage('bot', `📍 Distance to <strong>${place.display_name}</strong>: <strong>${dist.toFixed(2)} meters</strong><br>From: ${lat1.toFixed(6)}, ${lon1.toFixed(6)}<br>To: ${lat2.toFixed(6)}, ${lon2.toFixed(6)}`);
+            // show markers
+            clearMarkers();
+            const m1 = L.marker([lat1, lon1]).addTo(map);
+            const m2 = L.marker([lat2, lon2]).addTo(map);
+            currentMarkers.push(m1, m2);
+            const line = L.polyline([[lat1, lon1], [lat2, lon2]], { color: 'orange', weight: 2, dashArray: '5,5' }).addTo(map);
+            currentMarkers.push(line);
+            map.fitBounds([[lat1, lon1], [lat2, lon2]], { padding: [50, 50] });
+          } catch (err) {
+            addMessage('bot', `⚠️ Geolocation error: ${err && err.message ? err.message : 'Failed to get location'}`);
+          }
+          return;
+        }
+      }
+
+      // Handle stop geolocate intent
+      if (nlp.intent === 'stopGeolocate') {
+        stopGeolocationWatch();
+        addMessage('bot', '📡 Stopped geolocation as requested.');
         return;
       }
 
@@ -510,7 +971,7 @@
       if (!coords) {
         loadingMsg.remove();
         addMessage("bot", `⚠️ Please include valid coordinates:<br>
-          • UTM format: <code class='bg-gray-600 px-2 py-1 rounded'>538156, 787954</code><br>
+          • UTM format: <code class='bg-gray-600 px-2 py-1 rounded'>538156, 787954</code> or <code class='bg-gray-600 px-2 py-1 rounded'>538733.809,790226.310</code><br>
           • Lat/Lon format: <code class='bg-gray-600 px-2 py-1 rounded'>7.15, 3.35</code>
         `);
         return;
@@ -546,29 +1007,45 @@
       // Clear previous markers
       clearMarkers();
 
-      // Check if point is in any polygon (both area delineations and wards)
+      // Check if point is in any polygon (area delineations and wards)
+      let areaChecked = false;
       for (const layer of allLayers) {
         for (const feature of layer.data.features) {
+          // Skip features with missing or undefined properties
+          if (!feature.properties) continue;
           try {
-            if (turf.booleanPointInPolygon(point, feature)) {
-              // Area delineation
-              if (feature.properties.AREA_DEL) {
-                foundArea = feature.properties.AREA_DEL;
+            // Use correct geometry for UTM or geographic input
+            let geometryToCheck = feature.geometry;
+            if (layer.name === 'DATA_AREA_DEL') {
+              if (coords.format === 'UTM' && feature.properties.box_mina31) {
+                geometryToCheck = feature.geometry;
+              } else if (coords.format === 'LatLon' && feature.properties.box) {
+                geometryToCheck = feature.geometry;
+              }
+            }
+            if (turf.booleanPointInPolygon(point, { ...feature, geometry: geometryToCheck })) {
+              areaChecked = true;
+              let areaType = feature.properties.area_del;
+              if (typeof areaType === 'undefined' || areaType === null) areaType = 'GENERAL';
+              // Only set foundArea/foundFeature if not already set (first valid match wins)
+              if (!foundArea) {
+                foundArea = areaType;
                 foundFeature = feature;
-                const geoJsonLayer = L.geoJSON(feature, {
-                  style: { color: 'lime', weight: 3, fillOpacity: 0.2 }
-                }).addTo(map);
-                currentMarkers.push(geoJsonLayer);
               }
-              
-              // Nigerian ward
-              if (feature.properties.wardname) {
+              // Always capture ward and other info if present
+              if (feature.properties.wardname && !foundWard) {
                 foundWard = feature.properties;
-                const wardLayer = L.geoJSON(feature, {
-                  style: { color: 'cyan', weight: 2, fillOpacity: 0.15 }
-                }).addTo(map);
-                currentMarkers.push(wardLayer);
               }
+              console.debug('Matched polygon:', {
+                id: feature.properties.id,
+                NAME: feature.properties.NAME,
+                area_del: feature.properties.area_del,
+                AREA_DEL: feature.properties.AREA_DEL
+              });
+              const geoJsonLayer = L.geoJSON(feature, {
+                style: { color: 'lime', weight: 3, fillOpacity: 0.2 }
+              }).addTo(map);
+              currentMarkers.push(geoJsonLayer);
             }
           } catch (e) {
             console.error("Point-in-polygon check error:", e);
@@ -655,41 +1132,39 @@
       // Default: check area
       else {
         loadingMsg.remove();
-        
-        if (foundArea || foundWard) {
-          let resultMsg = `📍 <strong>Location Analysis:</strong><br>📍 Coordinate: (${coords.x.toFixed(0)}, ${coords.y.toFixed(0)})<br>`;
-          
-          if (foundArea) {
-            const stats = getAreaStatistics(foundArea);
-            resultMsg += `🎯 Area Delineation: <strong class="text-green-400">${foundArea}</strong><br>`;
-            if (stats) resultMsg += `📊 ${stats.count} polygon(s), ${stats.totalArea} sq km<br>`;
+        if (areaChecked && foundArea) {
+          let areaLabel = '';
+          if (foundArea === 'PRIME') {
+            areaLabel = 'Prime area';
+          } else if (foundArea === 'SPECIAL PRIME') {
+            areaLabel = 'Special prime area';
+          } else if (!foundArea || foundArea === 'GENERAL' || foundArea === null) {
+            areaLabel = 'General area';
+          } else {
+            areaLabel = foundArea;
           }
-          
+          let resultMsg = `📍 <strong>Location Analysis:</strong><br>📍 Coordinate: (${coords.x.toFixed(3)}, ${coords.y.toFixed(3)})<br>`;
+          resultMsg += `🎯 Area Delineation: <strong class="text-green-400">${areaLabel}</strong><br>`;
           if (foundWard) {
             resultMsg += `🏛️ Ward: <strong class="text-blue-400">${foundWard.wardname}</strong><br>`;
             resultMsg += `📍 LGA: ${foundWard.lganame}<br>`;
             resultMsg += `🇳🇬 State: <strong class="text-green-400">${foundWard.statename}</strong><br>`;
             resultMsg += foundWard.urban === 'Yes' ? '🏙️ Urban area' : '🌾 Rural area';
           }
-          
           if (coords.format === 'LatLon') {
             resultMsg += `<br>🌍 WGS84: ${coords.originalLat.toFixed(6)}°, ${coords.originalLon.toFixed(6)}°`;
           }
-          
           addMessage("bot", `✅ ${resultMsg}`);
-          
           const displayInfo = [];
-          if (foundArea) displayInfo.push(foundArea);
+          if (foundArea) displayInfo.push(areaLabel);
           if (foundWard) displayInfo.push(`${foundWard.wardname}, ${foundWard.statename}`);
-          mapInfo.innerHTML = `📍 ${displayInfo.join(' | ')} | Coordinates: ${coords.x.toFixed(0)}, ${coords.y.toFixed(0)}`;
+          mapInfo.innerHTML = `📍 ${displayInfo.join(' | ')} | Coordinates: ${coords.x.toFixed(3)}, ${coords.y.toFixed(3)}`;
         } else {
-          const nearest = findNearestBoundary(coords);
-          addMessage("bot", `❌ <strong>Not in Defined Areas</strong><br>
-            📍 Coordinate: (${coords.x.toFixed(0)}, ${coords.y.toFixed(0)})<br>
-            ⚪ Not found in database<br>
-            ${nearest.distance < Infinity ? `📏 Nearest boundary: ${nearest.area} (${nearest.distance.toFixed(0)}m away)` : ''}
-          `);
-          mapInfo.innerHTML = `📍 Not in database | Coordinates: ${coords.x.toFixed(0)}, ${coords.y.toFixed(0)}`;
+          addMessage("bot", `❌ <strong>Out of Range</strong><br>
+            📍 Coordinate: (${coords.x.toFixed(3)}, ${coords.y.toFixed(3)})<br>
+            ⚪ This location does not fall within any defined area (PRIME, SPECIAL PRIME, GENERAL).<br>
+            Please check your coordinates or try another location.`);
+          mapInfo.innerHTML = `📍 Out of range | Coordinates: ${coords.x.toFixed(3)}, ${coords.y.toFixed(3)}`;
         }
       }
 
@@ -726,6 +1201,28 @@
       console.log("✅ GeoAI: Data loaded successfully");
       aiStatus.innerHTML = '<span class="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>AI Ready';
     });
+
+    // FAQ modal handlers
+    setTimeout(() => {
+      const faqBtn = document.getElementById('faqBtn');
+      const faqModal = document.getElementById('faqModal');
+      const closeFaqBtn = document.getElementById('closeFaqBtn');
+      const faqGotIt = document.getElementById('faqGotIt');
+      if (faqBtn && faqModal) {
+        faqBtn.onclick = () => { faqModal.classList.remove('hidden'); faqModal.classList.add('flex'); };
+      }
+      if (closeFaqBtn) closeFaqBtn.onclick = () => { faqModal.classList.add('hidden'); faqModal.classList.remove('flex'); };
+      if (faqGotIt) faqGotIt.onclick = () => { faqModal.classList.add('hidden'); faqModal.classList.remove('flex'); };
+
+      document.querySelectorAll('.faqExample').forEach(btn => {
+        btn.onclick = () => {
+          const text = btn.getAttribute('data-text');
+          userInput.value = text;
+          sendBtn.click();
+          faqModal.classList.add('hidden'); faqModal.classList.remove('flex');
+        };
+      });
+    }, 800);
 
     // Add smart example queries
     setTimeout(() => {
