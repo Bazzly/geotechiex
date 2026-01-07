@@ -1,2 +1,5 @@
 # Ignore the entire api directory (not in use)
 api/
+
+# Local/private planning files
+tools.md

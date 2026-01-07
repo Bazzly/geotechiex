@@ -23,6 +23,52 @@
 
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900">
 
+    <!-- Banner removed per request: we no longer surface a missing-files message -->
+
+    <style>
+    /* simple style for disabled/missing tool links */
+    a.missing-link{ pointer-events: none; opacity: 0.5; cursor: not-allowed; }
+    </style>
+
+    <script>
+    (function(){
+        // Remove any tool cards whose linked .html page is missing locally.
+        async function removeMissingTools(){
+            try{
+                const anchors = Array.from(document.querySelectorAll('a[href$=".html"]'));
+                if(!anchors.length) return;
+                let removedAny = false;
+                await Promise.all(anchors.map(async a=>{
+                    const href = a.getAttribute('href');
+                    if(!href) return;
+                    // only check relative links (skip external and anchors)
+                    if(href.startsWith('http') || href.startsWith('#')) return;
+                    try{
+                        const res = await fetch(href, { method: 'HEAD' });
+                        if(!res.ok) throw new Error('Not found');
+                    }catch(e){
+                        // find a sensible parent card and remove it
+                        let card = a.closest('.bg-white') || a.closest('.rounded-xl') || a.closest('[class*="shadow"]') || a.closest('div');
+                        if(card && card.parentElement){
+                            card.remove();
+                            removedAny = true;
+                        } else {
+                            a.remove();
+                            removedAny = true;
+                        }
+                    }
+                }));
+                if(removedAny){
+                    console.log('Removed missing tool cards');
+                }
+            }catch(err){
+                console.warn('Removing missing tools failed', err);
+            }
+        }
+        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', removeMissingTools); else removeMissingTools();
+    })();
+    </script>
+
     <!-- Header with Navigation -->
     <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,19 +104,142 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16 sm:py-24 overflow-hidden">
+    <!-- Hero Section (Redesigned for Live Builds) -->
+    <section class="relative bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-700 text-white py-16 sm:py-24 overflow-hidden">
         <div class="absolute inset-0 bg-black/10"></div>
-        <div class="container mx-auto px-4 text-center relative z-10 fade-in">
-            <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6">Welcome to GeoTechieX</h2>
-            <p class="text-base sm:text-xl lg:text-2xl text-blue-100 mb-6 sm:mb-8 max-w-3xl mx-auto">
-                Exploring the future of geospatial technology and web programming
-            </p>
-            <a href="#services" class="inline-block bg-white text-blue-600 hover:bg-blue-50 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg shadow-xl transition transform hover:scale-105">
-                Discover Our Tools
-            </a>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">GeoTechieX — Live GeoDeveloper Builds</h1>
+                    <p class="text-base sm:text-lg text-blue-100 mb-6 max-w-2xl">
+                        Building open-source geospatial tools live on TikTok. Watch the stream, suggest features, and contribute code — together we'll shape practical GIS tools for everyone.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-3 justify-center lg:justify-start">
+                        <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener" class="inline-block bg-white text-indigo-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold shadow-md transition">Watch Live on TikTok</a>
+                        <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener" class="inline-block bg-transparent ring-1 ring-white/30 hover:ring-white px-6 py-3 rounded-lg font-semibold">Contribute on GitHub</a>
+                    </div>
+
+                    <p class="text-sm text-blue-100 mt-4 max-w-2xl">Prefer to contribute during or after the stream? Open an issue or PR using the templates in this repo — small focused changes are easiest to review live.</p>
+                </div>
+
+                <div class="mx-auto lg:mx-0 w-full max-w-md bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                    <h3 class="text-white text-lg font-semibold mb-3">Repository Snapshot</h3>
+                    <div id="github-stats" class="text-sm text-blue-50 space-y-2">
+                        <p>Loading repository data…</p>
+                    </div>
+                    <div class="mt-4 text-xs text-blue-100">Data from GitHub API (read-only)</div>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- Live Builds / Contribute Section -->
+    <section class="py-10 bg-gradient-to-br from-white/5 to-white/3">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Live Builds — How to Participate</h2>
+            <p class="text-gray-700 max-w-3xl mx-auto mb-6">During streams we'll pick a small feature to implement. Viewers can suggest ideas, test previews, and open PRs after the session. Use the issue templates to make your contribution actionable.</p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="README.md" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold">See the Live Build Plan</a>
+                <a href="CONTRIBUTING.md" class="inline-block bg-white ring-1 ring-blue-600 text-blue-600 px-5 py-3 rounded-lg font-semibold">How to Contribute</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    (function(){
+        // Styled GitHub widget with caching to reduce API calls
+        const target = document.getElementById('github-stats');
+        if(!target) return;
+        const owner = 'Bazzly';
+        const repo = 'geotechiex';
+        const repoApi = `https://api.github.com/repos/${owner}/${repo}`;
+        const cacheKey = 'geotechiex_github_cache_v1';
+        const cacheTTL = 10 * 60 * 1000; // 10 minutes
+
+        function formatNumber(n){ return new Intl.NumberFormat().format(n || 0); }
+        function t(date){ try{ return new Date(date).toLocaleString(); }catch(e){ return date; } }
+
+        async function fetchRepo(){
+            // Allow optional GitHub token via meta[name="github-token"] for higher rate limit
+            const meta = document.querySelector('meta[name="github-token"]');
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if(meta && meta.content) headers['Authorization'] = 'token ' + meta.content;
+            const r = await fetch(repoApi, { headers });
+            if(!r.ok) throw new Error('GitHub API error: ' + r.status);
+            return await r.json();
+        }
+
+        function render(data, fromCache=false){
+            const pushed = data.pushed_at || data.updated_at || data.created_at || '';
+            target.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <img src="${data.owner && data.owner.avatar_url}" alt="owner" class="w-12 h-12 rounded-full ring-2 ring-white/30" />
+                    <div class="flex-1">
+                        <a href="${data.html_url}" target="_blank" rel="noopener" class="font-semibold text-white text-sm">${data.full_name}</a>
+                        <div class="text-xs text-blue-100">${data.description || ''}</div>
+                    </div>
+                    <div class="text-xs text-blue-100">${fromCache ? 'cached' : 'live'}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div class="p-3 rounded bg-white/10 text-center">
+                        <div class="text-xs">⭐ Stars</div>
+                        <div class="text-lg font-bold">${formatNumber(data.stargazers_count)}</div>
+                    </div>
+                    <div class="p-3 rounded bg-white/10 text-center">
+                        <div class="text-xs">🍴 Forks</div>
+                        <div class="text-lg font-bold">${formatNumber(data.forks_count)}</div>
+                    </div>
+                    <div class="p-3 rounded bg-white/10 text-center">
+                        <div class="text-xs">🐞 Open Issues</div>
+                        <div class="text-lg font-bold">${formatNumber(data.open_issues_count)}</div>
+                    </div>
+                    <div class="p-3 rounded bg-white/10 text-center">
+                        <div class="text-xs">🕒 Last Push</div>
+                        <div class="text-xs">${pushed ? t(pushed) : 'n/a'}</div>
+                    </div>
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <a href="https://github.com/${owner}/${repo}" target="_blank" rel="noopener" class="flex-1 bg-white text-indigo-600 py-2 rounded font-semibold text-sm text-center">View on GitHub</a>
+                    <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener" class="flex-1 bg-transparent ring-1 ring-white/20 text-white py-2 rounded font-semibold text-sm text-center">Watch Live</a>
+                </div>
+            `;
+        }
+
+        async function init(){
+            try{
+                // try cache first
+                const raw = localStorage.getItem(cacheKey);
+                if(raw){
+                    try{
+                        const parsed = JSON.parse(raw);
+                        if(parsed && parsed.ts && (Date.now() - parsed.ts) < cacheTTL && parsed.data){
+                            render(parsed.data, true);
+                        }
+                    }catch(e){ /* ignore parse errors */ }
+                }
+
+                // Fetch fresh data in background and update cache
+                try{
+                    const data = await fetchRepo();
+                    render(data, false);
+                    try{ localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); }catch(e){ /* ignore storage errors */ }
+                }catch(fetchErr){
+                    // If fetch fails and we already displayed cache, keep it; otherwise show error
+                    if(!raw){
+                        target.innerHTML = `<p class="text-sm text-yellow-100">Could not fetch GitHub data — network or rate limit.</p>`;
+                    }
+                    console.warn('GitHub widget fetch failed', fetchErr);
+                }
+            }catch(err){
+                console.warn('GitHub widget init failed', err);
+            }
+        }
+
+        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    })();
+    </script>
 
     <!-- Services Section -->
     <section id="services" class="py-12 sm:py-20">
@@ -122,6 +291,20 @@
                         </div>
                     </div>
 
+                    <!-- GeoAI Chat -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🤖</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">GeoAI Chat</h4>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Chat-based geospatial assistant. Create polygons, transform coordinates, calculate areas, and more using conversational commands.</p>
+                            <a href="chat.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
+                                Open Chat
+                            </a>
+                        </div>
+                    </div>
+
                         <!-- Existing user confirmation modal -->
                         <div id="existing-user-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
                             <div class="absolute inset-0 bg-black/50"></div>
@@ -168,97 +351,13 @@
                 </div>
             </div>
 
-            <!-- Other Tools -->
+            <!-- Other Tools (temporarily hidden) -->
             <div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">🧰 Other Tools</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-
-                    <!-- Standard Area Checker -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-green-500 to-blue-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">📍</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Area Delineation</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Check if coordinates fall within Prime, Special Prime, or General areas.</p>
-                            <a href="checkPoint.html" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Standard Checker
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Coordinate Transformation -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🔄</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Coordinate Transform</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Convert coordinates between NNO, Minna Datum, and WGS84 lat/long systems.</p>
-                            <a href="coordTrans.html" class="block bg-purple-600 hover:bg-purple-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Transform Now
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Nigeria Ward Checker -->
-                    <!-- <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🇳🇬</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Nigeria Ward Checker</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Identify State, LGA, and Ward from coordinates across Nigeria.</p>
-                            <a href="ngn_wards.html" class="block bg-orange-600 hover:bg-orange-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Check Location
-                            </a>
-                        </div>
-                    </div> -->
-
-                    <!-- Compass & Distance -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🧭</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Compass & Distance</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Real-time compass bearing and distance calculator for field work.</p>
-                            <a href="compass.html" class="block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Launch Compass
-                            </a>
-                        </div>
-                    </div>
-
-
-
-                              <!-- Survey Drafting AI (if available) -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">✏️</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Drafting AI</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">AI-assisted survey drafting to speed up polygon creation and annotations.</p>
-                            <a href="Polygon/survdraft.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Open Drafting AI
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Polygon Tools -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">📐</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Polygon Creator</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Professional survey data processor with coordinate transformation and polygon creation.</p>
-                            <a href="Polygon/index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Launch Tool
-                            </a>
-                        </div>
-                    </div>
-
+                <div class="bg-white rounded-xl p-8 text-center text-gray-700">
+                    <div class="text-4xl mb-2">⏳</div>
+                    <h4 class="text-lg font-semibold mb-2">Other Tools — Coming Soon</h4>
+                    <p class="text-sm">We're rebuilding these tools live. Check back during the stream or follow us on TikTok and GitHub to contribute.</p>
                 </div>
             </div>
         </div>
@@ -313,356 +412,9 @@
         </div>
     </footer>
 
-    <!-- Promo modal: ask for email to grant free credits when users open a tool -->
-    <div id="promo-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
-        <div class="absolute inset-0 bg-black/50"></div>
-        <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 z-10">
-            <h3 class="text-xl font-bold mb-2">Get Free Credits</h3>
-            <p class="text-sm text-gray-600 mb-4">Enter your email to get <strong>20 credits</strong> free. Or choose to cancel and receive <strong>10 credits</strong> and continue to the tool.</p>
-            <input id="promo-email" type="email" placeholder="you@example.com" class="w-full px-3 py-2 border rounded mb-4" />
-            <div class="flex gap-2 justify-end">
-                <button id="promo-cancel" class="px-4 py-2 bg-gray-200 rounded">Get 10 credits &amp; Continue</button>
-                <button id="promo-submit" class="px-4 py-2 bg-blue-600 text-white rounded">Get 20 credits</button>
-            </div>
-        </div>
-    </div>
+    <!-- Promo modal and server-sync removed for fresh live builds; no backend calls will be made. -->
 
-    <div id="promo-toast" class="hidden"></div>
-
-    <script>
-    (function(){
-        const modal = document.getElementById('promo-modal');
-        const emailInput = document.getElementById('promo-email');
-        const submitBtn = document.getElementById('promo-submit');
-        const cancelBtn = document.getElementById('promo-cancel');
-        const toast = document.getElementById('promo-toast');
-        let pendingHref = null;
-        // initial api base: meta -> fallback to origin + /api
-        let GEOTECH_API_BASE = (document.querySelector('meta[name="api-base"]') && document.querySelector('meta[name="api-base"]').getAttribute('content')) || (location.origin + '/api');
-
-        // Try to refresh server config (get_config) to allow server to override api_base
-        (async function(){
-            try{
-                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'get_config' })
-                });
-                if(!res.ok) return;
-                const json = await res.json();
-                if(json && json.api_base){
-                    GEOTECH_API_BASE = json.api_base || GEOTECH_API_BASE;
-                }
-            }catch(err){
-                console.warn('Could not fetch server config', err);
-            }
-        })();
-
-        function showModal(href){
-            pendingHref = href || null;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            emailInput.value = localStorage.getItem('geotechiex_email') || '';
-            setTimeout(()=> emailInput.focus(), 50);
-        }
-        function hideModal(){
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            pendingHref = null;
-        }
-        function getCredits(){
-            return parseInt(localStorage.getItem('geotechiex_credits') || '0', 10);
-        }
-        function setCredits(n){
-            localStorage.setItem('geotechiex_credits', String(n));
-        }
-        function getDeviceId(){
-            let id = localStorage.getItem('geotechiex_device');
-            if(!id){
-                // simple random id
-                id = 'dev-' + Math.random().toString(36).slice(2, 12);
-                localStorage.setItem('geotechiex_device', id);
-            }
-            return id;
-        }
-
-        // Try to register the email on the backend; return server JSON or null on error
-        async function persistEmailToBackend(email){
-            try{
-                const device_id = getDeviceId();
-                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'register_user', email: email, device_id: device_id })
-                });
-                if(!res.ok) throw new Error('Network response not ok');
-                const json = await res.json();
-                return json;
-            }catch(err){
-                console.warn('Persist email failed:', err);
-                return null;
-            }
-        }
-
-        // Call server to create a promo grant (non-blocking)
-        async function grantPromoToBackend(email, credits){
-            try{
-                if(!email) return false;
-                const device_id = getDeviceId();
-                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'grant_promo', email: email, device_id: device_id, credits: credits })
-                });
-                if(!res.ok) throw new Error('Network response not ok');
-                const json = await res.json();
-                if(json && json.success){
-                    // store last promo activation for reference
-                    localStorage.setItem('geotechiex_last_promo', JSON.stringify({ activation: json.activation_code, credits: json.credits, reference: json.reference }));
-                    return true;
-                }
-                return false;
-            }catch(err){
-                console.warn('Grant promo failed:', err);
-                return false;
-            }
-        }
-
-        async function addCredits(amount, email){
-            const prev = getCredits();
-            setCredits(prev + amount);
-            if(email){
-                localStorage.setItem('geotechiex_email', email);
-                // attempt to persist to backend, but don't block navigation on failure
-                persistEmailToBackend(email).then(json=>{
-                    if(json && json.success) console.log('Email saved to backend');
-                });
-            }
-            showToast(amount + ' credits added');
-        }
-        function showToast(msg){
-            toast.textContent = msg;
-            toast.className = 'fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow';
-            setTimeout(()=>{ toast.className = 'hidden'; }, 3000);
-        }
-
-        // Sync session with backend: refresh local credits from server
-        async function syncSession(){
-            const email = localStorage.getItem('geotechiex_email') || '';
-            const device_id = getDeviceId();
-            try{
-                const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
-                });
-                if(!res.ok) return false;
-                const json = await res.json();
-                if(json && (json.total_credits !== undefined)){
-                    localStorage.setItem('geotechiex_credits', String(json.total_credits || 0));
-                    return true;
-                }
-            }catch(err){
-                // network may be offline — ignore
-            }
-            return false;
-        }
-
-        // Consume one local credit, log the usage server-side (best-effort), then navigate
-        async function consumeCreditAndNavigate(href){
-            let credits = getCredits();
-            if(credits > 0){
-                credits = Math.max(0, credits - 1);
-                setCredits(credits);
-            }
-
-            // best-effort: notify server about the tool use so usage and credits are consistent
-            try{
-                const email = localStorage.getItem('geotechiex_email') || '';
-                const device_id = getDeviceId();
-                // derive a simple tool name from the href
-                let toolName = href || '';
-                try{ toolName = new URL(href, location.href).pathname.replace(/^\//, ''); }catch(e){}
-
-                fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'log_usage', email: email, device_id: device_id, tool_name: toolName, credits_used: 1 })
-                }).then(async res=>{
-                    if(res.ok){
-                        const j = await res.json();
-                        // after logging, refresh credits from server
-                        fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
-                        }).then(async sres=>{
-                            if(sres.ok){
-                                const sj = await sres.json();
-                                if(sj && sj.total_credits !== undefined) localStorage.setItem('geotechiex_credits', String(sj.total_credits || 0));
-                            }
-                        }).catch(()=>{});
-                    }
-                }).catch(()=>{});
-            }catch(e){
-                // ignore network/log errors — user can still proceed
-            }
-
-            // navigate after a tiny delay so UI updates (and any toasts) are visible
-            setTimeout(()=>{ if(href) window.location.href = href; }, 120);
-        }
-
-        // Delegate clicks on tool links inside #projects
-        document.addEventListener('click', function(e){
-            const a = e.target.closest('a');
-            if(!a) return;
-            // Only intercept links inside the projects/tools section
-            if(!a.closest('#projects')) return;
-            const href = a.getAttribute('href');
-            if(!href) return;
-            // Only intercept links to local html tools
-            if(!href.endsWith('.html') && !href.startsWith('/') && !href.includes('.html')) return;
-
-            e.preventDefault();
-            // If user already has credits, skip promo modal and navigate —
-            // actual credit deduction and logging happens inside the tool page.
-            if(getCredits() > 0){
-                window.location.href = href;
-                return;
-            }
-
-            // Otherwise show promo modal
-            showModal(href);
-        });
-
-        // Keep session in sync: on focus, periodically, and across tabs
-        window.addEventListener('focus', ()=>{ syncSession(); });
-        // every 30s try to refresh from server
-        setInterval(()=>{ syncSession(); }, 30000);
-        // reflect cross-tab localStorage changes immediately
-        window.addEventListener('storage', function(e){
-            if(!e.key) return;
-            if(e.key === 'geotechiex_credits'){
-                // update any UI if needed; we currently just ensure modal logic sees updated credits
-            }
-            if(e.key === 'geotechiex_email'){
-                // email changed in another tab — re-sync with server
-                syncSession();
-            }
-        });
-
-        submitBtn.addEventListener('click', async function(){
-            const email = (emailInput.value || '').trim();
-            if(!email || !/^\S+@\S+\.\S+$/.test(email)){
-                alert('Please enter a valid email address');
-                emailInput.focus();
-                return;
-            }
-
-            // First try to register the user or detect existing registration
-            const reg = await persistEmailToBackend(email);
-            if(reg && reg.success){
-                // If already registered, show current usage and ask to continue
-                if(reg.message && reg.message.toLowerCase().includes('already registered')){
-                    try{
-                        const device_id = getDeviceId();
-                        const res = await fetch(GEOTECH_API_BASE.replace(/\/$/, '') + '/index.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({ action: 'sync_user_data', email: email, device_id: device_id })
-                        });
-                            if(res.ok){
-                                const sync = await res.json();
-                                const credits = sync.total_credits ?? 0;
-                                const usage = sync.total_usage ?? 0;
-                                // show styled modal instead of native confirm
-                                const proceed = await askExistingUserContinue(credits, usage);
-                                if(proceed){
-                                    hideModal();
-                                    if(pendingHref) window.location.href = pendingHref;
-                                    return;
-                                } else {
-                                    return; // keep modal open
-                                }
-                            }
-                    }catch(e){ console.warn('sync_user_data failed', e); }
-                    // If sync fails, fall back to allowing the user to continue
-                    hideModal();
-                    if(pendingHref) window.location.href = pendingHref;
-                    return;
-                }
-
-                // New registration path - grant promo and local credits
-                addCredits(20, email);
-                grantPromoToBackend(email, 20).then(ok=>{ if(ok) console.log('Server promo granted'); });
-                hideModal();
-                if(pendingHref) window.location.href = pendingHref;
-                return;
-            }
-
-            // If registration failed (network), still grant local credits and continue
-            addCredits(20, email);
-            grantPromoToBackend(email, 20).then(ok=>{ if(ok) console.log('Server promo granted'); });
-            hideModal();
-            if(pendingHref) window.location.href = pendingHref;
-        });
-
-        cancelBtn.addEventListener('click', function(){
-            // Try to use stored email for server promo; otherwise just local credits
-            const storedEmail = localStorage.getItem('geotechiex_email') || '';
-            addCredits(10, storedEmail || undefined);
-            if(storedEmail){
-                grantPromoToBackend(storedEmail, 10).then(ok=>{ if(ok) console.log('Server promo (cancel) granted'); });
-            }
-            hideModal();
-            if(pendingHref) window.location.href = pendingHref;
-        });
-
-        // Close modal on outside click or ESC
-        modal.addEventListener('click', function(e){
-            if(e.target === modal) hideModal();
-        });
-        document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hideModal(); });
-        
-        // Existing-user modal helpers
-        const existingModal = document.getElementById('existing-user-modal');
-        const existingCredits = document.getElementById('existing-credits');
-        const existingUsage = document.getElementById('existing-usage');
-        const existingContinue = document.getElementById('existing-continue');
-        const existingCancel = document.getElementById('existing-cancel');
-
-        function showExistingModal(credits, usage){
-            existingCredits.textContent = credits;
-            existingUsage.textContent = usage;
-            existingModal.classList.remove('hidden');
-            existingModal.classList.add('flex');
-        }
-        function hideExistingModal(){
-            existingModal.classList.add('hidden');
-            existingModal.classList.remove('flex');
-        }
-
-        function askExistingUserContinue(credits, usage){
-            return new Promise((resolve)=>{
-                showExistingModal(credits, usage);
-                function onContinue(){ cleanup(); resolve(true); }
-                function onCancel(){ cleanup(); resolve(false); }
-                function cleanup(){
-                    existingContinue.removeEventListener('click', onContinue);
-                    existingCancel.removeEventListener('click', onCancel);
-                    existingModal.removeEventListener('click', onOutside);
-                    hideExistingModal();
-                }
-                function onOutside(e){ if(e.target === existingModal) onCancel(); }
-                existingContinue.addEventListener('click', onContinue);
-                existingCancel.addEventListener('click', onCancel);
-                existingModal.addEventListener('click', onOutside);
-            });
-        }
-    })();
-    </script>
-
-    <script src="js/navigation.js"></script>
+    <script src="js/index.js"></script>
 </body>
 
 </html>
