@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoAI Chat - Help & Documentation | Geotechiex</title>
+    <meta name="description" content="Complete guide to GeoAI Chat commands, coordinate systems, and geospatial tools">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .command-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .command-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre code {
+            display: block;
+            padding: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600">Geotechiex</a>
+                <div class="flex gap-4">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
+                    <a href="chat.html" class="text-gray-600 hover:text-blue-600">GeoAI Chat</a>
+                    <a href="help.html" class="text-blue-600 font-semibold">Help</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-800 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">GeoAI Chat Documentation</h1>
+            <p class="text-xl opacity-90">Complete guide to commands, coordinate systems, and geospatial tools</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+        <!-- Quick Start -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Quick Start</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-gray-700 mb-4">GeoAI Chat is a command-line interface for geospatial operations. All commands start with a forward slash <code>/</code>.</p>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                    <p class="text-sm text-gray-700"><strong>Tip:</strong> You can add multiple points at once and mix different coordinate systems!</p>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                    <p class="text-sm text-gray-700"><strong>New:</strong> Use the 🌍 Location button or <code>/location</code> command to access your device's GPS!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Geolocation Features -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Geolocation Features</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Get Location -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-3">Get Current Location</h3>
+                    <p class="text-gray-700 mb-3">Access your device's GPS coordinates</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Command:</p>
+                            <pre><code>/location</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Button:</p>
+                            <p class="text-sm text-gray-700">Click the 🌍 Location button in the chat interface</p>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600">
+                            Returns: Latitude, Longitude, and GPS accuracy
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mt-3">
+                            <p class="text-xs text-gray-700">
+                                <strong>⚠️ Requirements:</strong><br>
+                                • Browser location permission must be granted<br>
+                                • Device must have GPS or location services enabled<br>
+                                • Works best outdoors or near windows<br>
+                                • May not work on localhost (use HTTPS in production)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Location to Polygon -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-3">Add Current Location</h3>
+                    <p class="text-gray-700 mb-3">Add your GPS position as a polygon point</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Command:</p>
+                            <pre><code>/add-location</code></pre>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600">
+                            <strong>Note:</strong> Must use <code>/location</code> first to get GPS coordinates
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-3 rounded text-xs text-gray-700">
+                            Perfect for field surveys! Walk to each corner, use <code>/add-location</code>, then calculate area.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Polygon Tools -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Polygon Tools</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Add Points -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Add Points</h3>
+                    <p class="text-gray-700 mb-3">Add polygon vertices in any supported projection</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">WGS84 (default):</p>
+                            <pre><code>/polygon add 6.5 3.4 6.52 3.38</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">UTM:</p>
+                            <pre><code>/polygon add utm 31 N 500000 720000</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Nigeria Mid Belt:</p>
+                            <pre><code>/polygon add nigeria-mid 670000 1000000</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculate Area -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Calculate Area</h3>
+                    <p class="text-gray-700 mb-3">Get polygon area in multiple units</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Full command:</p>
+                            <pre><code>/polygon area</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Shortcut:</p>
+                            <pre><code>/total</code></pre>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600">
+                            Returns area in m², km², and hectares
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Export Polygon</h3>
+                    <p class="text-gray-700 mb-3">Export your polygon data</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">GeoJSON format:</p>
+                            <pre><code>/polygon export</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">CSV format:</p>
+                            <pre><code>/polygon csv</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Clear -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Manage Polygon</h3>
+                    <p class="text-gray-700 mb-3">Check status or reset</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Check status:</p>
+                            <pre><code>/polygon status</code></pre>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold text-sm text-gray-600 mb-1">Clear all points:</p>
+                            <pre><code>/polygon clear</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coordinate Transformation -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Coordinate Transformation</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- WGS84 to UTM -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-3">WGS84 → UTM</h3>
+                    <p class="text-gray-700 mb-3">Convert geographic coordinates to UTM</p>
+                    <pre><code>/utm 6.5244 3.3792</code></pre>
+                    <div class="mt-3 text-sm text-gray-600">
+                        Returns: Zone, Hemisphere, Easting, Northing
+                    </div>
+                </div>
+
+                <!-- UTM to WGS84 -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-3">UTM → WGS84</h3>
+                    <p class="text-gray-700 mb-3">Convert UTM to geographic coordinates</p>
+                    <pre><code>/geo 31 N 500000 720000</code></pre>
+                    <div class="mt-3 text-sm text-gray-600">
+                        Parameters: zone, hemisphere (N/S), easting, northing
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nigeria Systems -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Nigeria Coordinate Systems</h2>
+            <p class="text-gray-700 mb-6">All Nigeria systems use the Minna datum (Clarke 1880 RGS ellipsoid). Input coordinates should be in WGS84 for automatic conversion.</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- West Belt -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-purple-600 mb-2">Nigeria West Belt</h3>
+                    <p class="text-sm text-gray-500 mb-3">EPSG:26391</p>
+                    <pre><code>/nigeria west 6.5 3.4</code></pre>
+                    <div class="mt-3 text-xs text-gray-600">
+                        <strong>Central Meridian:</strong> 4°30'E<br>
+                        <strong>Coverage:</strong> Western Nigeria
+                    </div>
+                </div>
+
+                <!-- Mid Belt -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-purple-600 mb-2">Nigeria Mid Belt</h3>
+                    <p class="text-sm text-gray-500 mb-3">EPSG:26392</p>
+                    <pre><code>/nigeria mid 9.0 7.5</code></pre>
+                    <div class="mt-3 text-xs text-gray-600">
+                        <strong>Central Meridian:</strong> 8°30'E<br>
+                        <strong>Coverage:</strong> Central Nigeria
+                    </div>
+                </div>
+
+                <!-- East Belt -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-purple-600 mb-2">Nigeria East Belt</h3>
+                    <p class="text-sm text-gray-500 mb-3">EPSG:26393</p>
+                    <pre><code>/nigeria east 10.5 12.0</code></pre>
+                    <div class="mt-3 text-xs text-gray-600">
+                        <strong>Central Meridian:</strong> 12°30'E<br>
+                        <strong>Coverage:</strong> Eastern Nigeria
+                    </div>
+                </div>
+
+                <!-- Minna UTM 31N -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-purple-600 mb-2">Minna / UTM 31N</h3>
+                    <p class="text-sm text-gray-500 mb-3">EPSG:26331</p>
+                    <pre><code>/nigeria utm31 6.5 3.4</code></pre>
+                    <div class="mt-3 text-xs text-gray-600">
+                        <strong>Zone:</strong> 31N<br>
+                        <strong>Coverage:</strong> Western longitudes
+                    </div>
+                </div>
+
+                <!-- Minna UTM 32N -->
+                <div class="command-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-purple-600 mb-2">Minna / UTM 32N</h3>
+                    <p class="text-sm text-gray-500 mb-3">EPSG:26332</p>
+                    <pre><code>/nigeria utm32 9.0 7.5</code></pre>
+                    <div class="mt-3 text-xs text-gray-600">
+                        <strong>Zone:</strong> 32N<br>
+                        <strong>Coverage:</strong> Eastern longitudes
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Supported Projections Table -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Supported Projections for Polygon Add</h2>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Projection</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Command Format</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">EPSG</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 text-sm">WGS84 (default)</td>
+                            <td class="px-6 py-4"><code>/polygon add &lt;lat&gt; &lt;lon&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">4326</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 text-sm">UTM</td>
+                            <td class="px-6 py-4"><code>/polygon add utm &lt;zone&gt; &lt;hem&gt; &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">Varies</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-sm">Nigeria West Belt</td>
+                            <td class="px-6 py-4"><code>/polygon add nigeria-west &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">26391</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 text-sm">Nigeria Mid Belt</td>
+                            <td class="px-6 py-4"><code>/polygon add nigeria-mid &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">26392</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-sm">Nigeria East Belt</td>
+                            <td class="px-6 py-4"><code>/polygon add nigeria-east &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">26393</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 text-sm">Minna / UTM 31N</td>
+                            <td class="px-6 py-4"><code>/polygon add minna-utm31 &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">26331</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-sm">Minna / UTM 32N</td>
+                            <td class="px-6 py-4"><code>/polygon add minna-utm32 &lt;e&gt; &lt;n&gt;</code></td>
+                            <td class="px-6 py-4 text-sm">26332</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Examples -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Complete Examples</h2>
+            
+            <div class="space-y-6">
+                <!-- Example 1 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Example 1: Create Polygon in WGS84</h3>
+                    <div class="bg-gray-50 p-4 rounded space-y-2">
+                        <p class="text-sm"><code>/polygon add 6.5 3.4 6.52 3.38 6.54 3.36 6.52 3.34</code></p>
+                        <p class="text-sm"><code>/polygon status</code></p>
+                        <p class="text-sm"><code>/total</code></p>
+                        <p class="text-sm"><code>/polygon export</code></p>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Example 2: Mix Multiple Projections</h3>
+                    <div class="bg-gray-50 p-4 rounded space-y-2">
+                        <p class="text-sm"><code>/polygon add 6.5 3.4</code> <span class="text-gray-500">// WGS84</span></p>
+                        <p class="text-sm"><code>/polygon add nigeria-mid 670000 1000000</code> <span class="text-gray-500">// Nigeria Mid Belt</span></p>
+                        <p class="text-sm"><code>/polygon add utm 31 N 500000 720000</code> <span class="text-gray-500">// UTM</span></p>
+                        <p class="text-sm"><code>/total</code></p>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3">All coordinates are automatically converted to WGS84 for consistent calculations.</p>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Example 3: Coordinate Conversion</h3>
+                    <div class="bg-gray-50 p-4 rounded space-y-2">
+                        <p class="text-sm"><code>/utm 6.5244 3.3792</code></p>
+                        <p class="text-sm text-gray-600">→ Returns: Zone 31N: 463442.89E, 720912.45N</p>
+                        <br>
+                        <p class="text-sm"><code>/nigeria mid 9.0765 7.3986</code></p>
+                        <p class="text-sm text-gray-600">→ Returns: Nigeria Mid Belt coordinates</p>
+                    </div>
+                </div>
+
+                <!-- Example 4 - NEW -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-2 border-green-200">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-2xl">🌍</span>
+                        <h3 class="text-xl font-bold text-gray-800">Example 4: Field Survey with GPS</h3>
+                        <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">New!</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded space-y-2">
+                        <p class="text-sm text-gray-600 mb-2">Walk to the first corner of your land:</p>
+                        <p class="text-sm"><code>/location</code> <span class="text-gray-500">// Get GPS coordinates</span></p>
+                        <p class="text-sm"><code>/add-location</code> <span class="text-gray-500">// Add to polygon</span></p>
+                        <br>
+                        <p class="text-sm text-gray-600">Walk to the second corner:</p>
+                        <p class="text-sm"><code>/location</code></p>
+                        <p class="text-sm"><code>/add-location</code></p>
+                        <br>
+                        <p class="text-sm text-gray-600">Repeat for all corners, then:</p>
+                        <p class="text-sm"><code>/total</code> <span class="text-gray-500">// Calculate land area</span></p>
+                        <p class="text-sm"><code>/polygon export</code> <span class="text-gray-500">// Save for records</span></p>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3">
+                        <strong>Perfect for:</strong> Land surveyors, farmers, construction planners, property assessors
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Notes -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Technical Notes</h2>
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Geolocation API</h4>
+                    <p class="text-gray-700 mb-2">Uses browser's Geolocation API with high-accuracy mode enabled. GPS accuracy typically ±5-50 meters depending on device and conditions.</p>
+                    <div class="bg-blue-50 p-3 rounded text-sm text-gray-700 mt-2">
+                        <strong>Troubleshooting:</strong>
+                        <ul class="list-disc list-inside ml-2 mt-1">
+                            <li>If denied: Click the 🔒 icon in address bar → Allow location</li>
+                            <li>If unavailable: Move outdoors, enable Location Services in device settings</li>
+                            <li>If timeout: Wait and retry, or use manual coordinates</li>
+                            <li>Localhost: May require allowing location for insecure origins in browser settings</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Datum Transformations</h4>
+                    <p class="text-gray-700">Automatic conversion between WGS84 and Minna datums using approximate Molodensky transformation parameters.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Area Calculations</h4>
+                    <p class="text-gray-700">Uses the Shoelace formula with approximate degree-to-meter conversion (1° ≈ 111km). Suitable for small to medium polygons.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Coordinate Precision</h4>
+                    <p class="text-gray-700">Geographic coordinates: 6 decimal places (~0.1m precision). Projected coordinates: 2 decimal places (centimeter precision).</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Supported Datums</h4>
+                    <ul class="list-disc list-inside text-gray-700 ml-4">
+                        <li>WGS84 (World Geodetic System 1984)</li>
+                        <li>Minna (Clarke 1880 RGS ellipsoid)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="text-center">
+            <a href="chat.html" class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-shadow">
+                Start Using GeoAI Chat →
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2026 Geotechiex. Open source geospatial tools.</p>
+            <div class="mt-4">
+                <a href="https://github.com/Bazzly/geotechiex" class="text-blue-400 hover:underline">GitHub</a>
+                <span class="mx-2">•</span>
+                <a href="CONTRIBUTING.md" class="text-blue-400 hover:underline">Contribute</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/index.js"></script>
+</body>
+</html>

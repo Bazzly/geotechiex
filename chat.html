@@ -78,7 +78,10 @@
                     <span class="text-2xl">🤖</span>
                     <h1 class="text-2xl font-bold">GeoAI Chat</h1>
                 </div>
-                <a href="index.html" class="text-white hover:bg-white/10 px-3 py-2 rounded-lg transition text-sm">← Back to Home</a>
+                <div class="flex gap-3">
+                    <a href="help.html" class="text-white hover:bg-white/10 px-3 py-2 rounded-lg transition text-sm">📖 Help</a>
+                    <a href="index.html" class="text-white hover:bg-white/10 px-3 py-2 rounded-lg transition text-sm">← Home</a>
+                </div>
             </div>
         </div>
     </header>
@@ -92,11 +95,24 @@
         <div class="chat-input-area">
             <div class="container mx-auto max-w-2xl">
                 <div class="mb-2 text-xs text-gray-600">
-                    Try: <code class="bg-white px-2 py-1 rounded">/polygon add 6.5,3.4</code>
-                    <code class="bg-white px-2 py-1 rounded ml-2">/polygon export</code>
+                    Try: <code class="bg-white px-2 py-1 rounded">/location</code>
+                    <code class="bg-white px-2 py-1 rounded ml-2">/polygon add 6.5 3.4</code>
+                    <code class="bg-white px-2 py-1 rounded ml-2">/total</code>
                     <code class="bg-white px-2 py-1 rounded ml-2">/help</code>
                 </div>
                 <form id="chat-form" class="flex gap-2">
+                    <button 
+                        type="button"
+                        id="location-btn"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+                        title="Get GPS location (requires location permission and GPS signal)"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Location</span>
+                    </button>
                     <input 
                         id="chat-input" 
                         type="text" 
@@ -111,6 +127,7 @@
     </div>
 
     <script src="js/modules/polygon.js"></script>
+    <script src="js/modules/coordinates.js"></script>
     <script src="js/chat.js"></script>
 
 </body>
