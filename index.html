@@ -15,9 +15,57 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .fade-in { animation: fadeIn 0.6s ease-out; }
         .hover-lift { transition: transform 0.3s ease; }
         .hover-lift:hover { transform: translateY(-5px); }
+
+        /* Floating share button */
+        #float-share { position: fixed; bottom: 24px; right: 24px; z-index: 999; }
+        #float-share-btn {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #25D366; color: white; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; box-shadow: 0 4px 16px rgba(37,211,102,0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #float-share-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(37,211,102,0.6); }
+        #float-share-menu {
+            position: absolute; bottom: 68px; right: 0;
+            background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            padding: 8px; min-width: 200px; display: none; flex-direction: column; gap: 4px;
+        }
+        #float-share-menu.open { display: flex; }
+        .share-menu-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;
+            color: #1f2937; transition: background 0.15s; cursor: pointer; border: none; width: 100%; background: transparent;
+        }
+        .share-menu-item:hover { background: #f3f4f6; }
+
+        /* Vote poll bars */
+        .vote-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+        .vote-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#0d9488,#06b6d4); transition: width 0.6s ease; }
+
+        /* Lookup result pop */
+        #quick-lookup-result { animation: countUp 0.3s ease; }
+
+        /* Live dot */
+        .live-dot {
+            display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+            background: #22c55e; position: relative;
+        }
+        .live-dot::after {
+            content: ''; position: absolute; inset: -3px; border-radius: 50%;
+            background: rgba(34,197,94,0.4); animation: pulse-ring 1.5s ease-out infinite;
+        }
     </style>
 </head>
 
@@ -265,6 +313,11 @@
                     <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Automation & Tools</h3>
                     <p class="text-gray-600 text-sm sm:text-base">Learn how to automate workflows, integrate APIs, and create dynamic web applications with geospatial data.</p>
                 </div>
+                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-teal-500">
+                    <div class="text-4xl sm:text-5xl mb-4">💬</div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Public Interest Chat Assistants</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Simple AI-powered chat assistants built for everyday public use — answering common questions, guiding users, and making information accessible to everyone.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -355,13 +408,98 @@
                 </div>
             </div>
 
-            <!-- Other Tools (temporarily hidden) -->
+            <!-- Public Interest Chat Assistants -->
             <div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">🧰 Other Tools</h3>
-                <div class="bg-white rounded-xl p-8 text-center text-gray-700">
-                    <div class="text-4xl mb-2">⏳</div>
-                    <h4 class="text-lg font-semibold mb-2">Other Tools — Coming Soon</h4>
-                    <p class="text-sm">We're rebuilding these tools live. Check back during the stream or follow us on TikTok and GitHub to contribute.</p>
+                <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-2">
+                    <h3 class="text-2xl font-bold text-gray-800">💬 Public Interest Chat Assistants</h3>
+                    <span class="flex items-center gap-2 text-sm text-teal-700 font-medium bg-teal-50 border border-teal-200 rounded-full px-4 py-1 w-fit">
+                        <span class="live-dot"></span> More assistants added regularly
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-5 max-w-2xl">Simple, free chat tools built for everyday Nigerians — covering topics like road laws, rights, and more. We will keep adding useful assistants here over time.</p>
+
+                <!-- Mini Quick Lookup Widget -->
+                <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5 mb-6 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-lg">⚡</span>
+                        <h4 class="font-bold text-gray-800 text-sm sm:text-base">Try it now — Quick FRSC Fine Lookup</h4>
+                        <span class="text-xs bg-teal-600 text-white px-2 py-0.5 rounded-full ml-auto hidden sm:inline">Live Preview</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="quick-lookup-input" type="text"
+                            placeholder="e.g. seatbelt, drunk driving, overloading..."
+                            class="flex-1 border border-teal-300 bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
+                            onkeydown="if(event.key==='Enter') quickLookup()">
+                        <button onclick="quickLookup()" class="bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-semibold transition whitespace-nowrap">Check Fine</button>
+                    </div>
+                    <div id="quick-lookup-result" class="mt-3 hidden"></div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <!-- Nigeria Road Offence Fine Checker -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
+                        <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 sm:p-6">
+                            <div class="text-3xl sm:text-4xl mb-2">🚦</div>
+                            <h4 class="text-lg sm:text-xl font-bold text-white">Road Offence Fine Checker</h4>
+                            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / FRSC</span>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Ask about any road traffic offence and instantly get the official FRSC fine — seatbelt, drunk driving, overloading, and more.</p>
+                            <a href="nigeria-road-offence-assistant.html" class="block bg-teal-600 hover:bg-teal-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base mb-3">
+                                Check Road Fines
+                            </a>
+                            <!-- Share buttons -->
+                            <div class="flex gap-2">
+                                <a id="frsc-wa-share" href="#" target="_blank" rel="noopener"
+                                    class="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 rounded-lg transition">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                    Share
+                                </a>
+                                <a id="frsc-tw-share" href="#" target="_blank" rel="noopener"
+                                    class="flex-1 flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2 rounded-lg transition">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    Post
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More Coming -->
+                    <div class="bg-white rounded-xl shadow-lg border border-dashed border-teal-300 p-6 flex flex-col items-center justify-center text-center hover-lift">
+                        <div class="text-4xl mb-3">🔜</div>
+                        <h4 class="text-base font-bold text-gray-700 mb-2">More Assistants Coming</h4>
+                        <p class="text-sm text-gray-500 mb-4">We are continuously building simple chat assistants on topics that matter to the public — tenant rights, consumer protection, health FAQs, and more.</p>
+                        <a href="https://github.com/Bazzly/geotechiex/issues" target="_blank" rel="noopener"
+                            class="text-xs bg-teal-600 hover:bg-teal-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+                            Suggest a topic on GitHub
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Vote Poll -->
+                <div class="mt-8 bg-white rounded-xl shadow border border-purple-100 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">🗳️</span>
+                            <h4 class="font-bold text-gray-800">What should we build next?</h4>
+                        </div>
+                        <span class="text-xs text-purple-600 font-semibold bg-purple-50 border border-purple-200 px-3 py-1 rounded-full w-fit">Community Vote</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-5">Top-voted topics get built first on the livestream. Vote and share your pick!</p>
+                    <div id="vote-options" class="space-y-3"></div>
+                    <div id="vote-share-row" class="hidden mt-5 flex flex-wrap gap-3 items-center">
+                        <span class="text-sm text-gray-600 font-medium">Share your vote:</span>
+                        <a id="vote-wa-btn" href="#" target="_blank" rel="noopener"
+                            class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            WhatsApp
+                        </a>
+                        <a id="vote-tw-btn" href="#" target="_blank" rel="noopener"
+                            class="inline-flex items-center gap-2 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            Post on X
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -370,27 +508,68 @@
     <!-- Contact Section -->
     <section id="contact" class="py-12 sm:py-20 bg-gray-900 text-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">Connect with GeoTechieX</h2>
-            <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
-                <a href="https://www.youtube.com/@GeotechieX" target="_blank" 
-                    class="flex items-center space-x-2 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
-                    <span class="text-xl sm:text-2xl">📺</span>
-                    <span class="font-semibold text-sm sm:text-base">YouTube</span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-3">Connect with GeoTechieX</h2>
+            <p class="text-center text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-8">
+                Follow the journey — watch live builds, suggest tools, and share with friends who need these resources.
+            </p>
+
+            <!-- Social links grid -->
+            <div class="flex flex-wrap justify-center gap-4 sm:gap-5 mb-10">
+                <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener"
+                    class="flex items-center gap-3 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    <span class="text-2xl">🎵</span>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">TikTok</div>
+                        <div class="text-xs text-pink-200">Watch live builds</div>
+                    </div>
                 </a>
-                <a href="https://www.tiktok.com/@GeotechieX" target="_blank" 
-                    class="flex items-center space-x-2 bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
-                    <span class="text-xl sm:text-2xl">🎵</span>
-                    <span class="font-semibold text-sm sm:text-base">TikTok</span>
+                <a href="https://www.youtube.com/@GeotechieX" target="_blank" rel="noopener"
+                    class="flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    <span class="text-2xl">📺</span>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">YouTube</div>
+                        <div class="text-xs text-red-200">Tutorials & replays</div>
+                    </div>
                 </a>
-                <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" 
-                    class="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg shadow-xl transition transform hover:scale-105">
-                    <span class="text-xl sm:text-2xl">📸</span>
-                    <span class="font-semibold text-sm sm:text-base">LinkedIn</span>
+                <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" rel="noopener"
+                    class="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    <span class="text-2xl">💼</span>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">LinkedIn</div>
+                        <div class="text-xs text-blue-200">Professional updates</div>
+                    </div>
+                </a>
+                <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener"
+                    class="flex items-center gap-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    <span class="text-2xl">🐙</span>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">GitHub</div>
+                        <div class="text-xs text-gray-300">Contribute & star</div>
+                    </div>
                 </a>
             </div>
-            <p class="text-center text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
-                Follow us for tutorials, tips, and updates on geospatial technology and web development
-            </p>
+
+            <!-- Share this site CTA -->
+            <div class="max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                <p class="text-white font-bold text-lg mb-1">Know someone who needs these tools?</p>
+                <p class="text-gray-400 text-sm mb-5">Share GeoTechieX with friends, colleagues, or your WhatsApp group.</p>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="shareSite('whatsapp')"
+                        class="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white font-semibold px-5 py-2.5 rounded-lg transition">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        Share on WhatsApp
+                    </button>
+                    <button onclick="shareSite('twitter')"
+                        class="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold px-5 py-2.5 rounded-lg transition">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        Post on X / Twitter
+                    </button>
+                    <button onclick="shareSite('copy')" id="copy-link-btn"
+                        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-lg transition">
+                        🔗 Copy Link
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -418,7 +597,244 @@
 
     <!-- Promo modal and server-sync removed for fresh live builds; no backend calls will be made. -->
 
+    <!-- Floating WhatsApp Share Button -->
+    <div id="float-share">
+        <div id="float-share-menu">
+            <button class="share-menu-item" onclick="shareSite('whatsapp'); toggleFloatMenu();">
+                <span style="font-size:18px">📲</span> Share on WhatsApp
+            </button>
+            <button class="share-menu-item" onclick="shareSite('twitter'); toggleFloatMenu();">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Post on X / Twitter
+            </button>
+            <button class="share-menu-item" onclick="shareSite('copy'); toggleFloatMenu();">
+                <span style="font-size:16px">🔗</span> Copy link
+            </button>
+        </div>
+        <button id="float-share-btn" onclick="toggleFloatMenu()" title="Share GeoTechieX">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </button>
+    </div>
+
     <script src="js/index.js"></script>
+
+    <script>
+    // ─── FRSC OFFENCES DATA (mini copy for homepage widget) ────────────────────
+    const FRSC_OFFENCES = [
+      { name: "No C Caution (triangle/warning sign) in vehicle", fine: 3000, keywords: ["caution", "triangle", "warning sign", "c caution"] },
+      { name: "Child below 16 sitting at the front seat", fine: 3000, keywords: ["child", "children", "minor", "front seat", "under 16", "below 16"] },
+      { name: "Dangerous driving (reckless driving)", fine: 50000, keywords: ["dangerous", "reckless", "careless", "speed", "overspeed"] },
+      { name: "Driving under alcohol or drug influence (DUI)", fine: 5000, keywords: ["drunk", "alcohol", "drug", "dui", "drink driving", "intoxicated"] },
+      { name: "Driving with expired tyre or without spare tyre", fine: 2000, keywords: ["expired tyre", "no spare tyre", "spare tyre", "stepney"] },
+      { name: "Driving with worn out / bald tyre", fine: 3000, keywords: ["worn tyre", "bald tyre", "tyre", "bad tyre"] },
+      { name: "Excessive exhaust smoke (emission violation)", fine: 5000, keywords: ["smoke", "exhaust", "emission", "black smoke", "fumes"] },
+      { name: "No speed limit device / governor in vehicle", fine: 3000, keywords: ["speed limit", "speed device", "governor", "speed limiter"] },
+      { name: "No fire extinguisher in vehicle", fine: 3000, keywords: ["fire extinguisher", "extinguisher", "fire"] },
+      { name: "Overloading (excess load or passengers)", fine: 10000, keywords: ["overload", "overloading", "excess load", "too many passengers"] },
+      { name: "Preaching or selling items inside a vehicle", fine: 50000, keywords: ["preaching", "selling", "hawking", "preach", "hawker"] },
+      { name: "Not using seatbelt while driving", fine: 2000, keywords: ["seatbelt", "seat belt", "belt", "no belt"] },
+      { name: "Using phone while driving", fine: 4000, keywords: ["phone", "mobile", "call", "texting", "using phone"] },
+      { name: "Damaged or bad side mirror", fine: 3000, keywords: ["side mirror", "mirror", "bad mirror", "broken mirror"] },
+      { name: "Broken front or rear windshield / windscreen", fine: 2000, keywords: ["windshield", "windscreen", "broken glass", "cracked glass"] },
+      { name: "Driving with expired licence or without licence", fine: 10000, keywords: ["licence", "license", "expired licence", "no licence", "driver licence"] },
+    ];
+
+    function fmtNaira(n) { return '₦' + Number(n).toLocaleString('en-NG'); }
+
+    // ─── MINI QUICK LOOKUP ─────────────────────────────────────────────────────
+    function quickLookup() {
+      const input = document.getElementById('quick-lookup-input');
+      const resultBox = document.getElementById('quick-lookup-result');
+      const q = (input.value || '').toLowerCase().trim();
+      if (!q) return;
+
+      const matches = FRSC_OFFENCES.filter(o =>
+        o.name.toLowerCase().includes(q) ||
+        (o.keywords || []).some(k => k.toLowerCase().includes(q) || q.includes(k.toLowerCase()))
+      );
+
+      resultBox.classList.remove('hidden');
+
+      if (matches.length === 0) {
+        resultBox.innerHTML = `<p class="text-sm text-red-600">No offence found for "<strong>${q}</strong>". <a href="nigeria-road-offence-assistant.html" class="underline text-teal-700">Try the full assistant →</a></p>`;
+        return;
+      }
+
+      const top = matches[0];
+      const waMsg = encodeURIComponent(`🚦 FRSC Fine Checker\n\nOffence: ${top.name}\nFine: ${fmtNaira(top.fine)}\n\nCheck more at: ${window.location.href}`);
+      const twMsg = encodeURIComponent(`Did you know? The fine for "${top.name}" in Nigeria is ${fmtNaira(top.fine)} (FRSC). Check all road fines ↓`);
+      const twUrl = encodeURIComponent(window.location.href);
+
+      resultBox.innerHTML = `
+        <div class="bg-white border border-teal-200 rounded-lg p-4">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <p class="text-xs font-semibold text-red-500 uppercase mb-1">⚠️ Road Offence</p>
+              <p class="text-sm font-bold text-gray-800">${top.name}</p>
+              <p class="text-xl font-extrabold text-amber-600 mt-1">${fmtNaira(top.fine)} <span class="text-sm font-normal text-gray-500">fine</span></p>
+              ${matches.length > 1 ? `<p class="text-xs text-gray-400 mt-1">+${matches.length - 1} more match${matches.length > 2 ? 'es' : ''}. <a href="nigeria-road-offence-assistant.html" class="text-teal-700 underline">See all →</a></p>` : ''}
+            </div>
+            <div class="flex flex-col gap-2">
+              <a href="https://wa.me/?text=${waMsg}" target="_blank" rel="noopener"
+                class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Share
+              </a>
+              <a href="https://twitter.com/intent/tweet?text=${twMsg}&url=${twUrl}" target="_blank" rel="noopener"
+                class="flex items-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Post
+              </a>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ─── VOTE POLL ─────────────────────────────────────────────────────────────
+    const VOTE_OPTIONS = [
+      { id: 'tenant',   label: '🏠 Tenant Rights Checker',        desc: 'Know your rights as a tenant in Nigeria' },
+      { id: 'consumer', label: '🛒 Consumer Rights Assistant',     desc: 'What to do when you\'re short-changed' },
+      { id: 'court',    label: '⚖️ Traffic Court Fine Guide',       desc: 'What happens if you contest an FRSC fine' },
+      { id: 'permits',  label: '📋 Government Permits Explainer',  desc: 'Which permits you need and how to get them' },
+    ];
+
+    const VOTE_KEY = 'geotechiex_votes_v1';
+    const VOTED_KEY = 'geotechiex_voted_v1';
+
+    function loadVotes() {
+      try { return JSON.parse(localStorage.getItem(VOTE_KEY)) || {}; } catch(e) { return {}; }
+    }
+    function saveVotes(v) { try { localStorage.setItem(VOTE_KEY, JSON.stringify(v)); } catch(e) {} }
+    function hasVoted() { return !!localStorage.getItem(VOTED_KEY); }
+    function setVoted(id) { try { localStorage.setItem(VOTED_KEY, id); } catch(e) {} }
+
+    function renderVotes() {
+      const container = document.getElementById('vote-options');
+      if (!container) return;
+      const votes = loadVotes();
+      const myVote = localStorage.getItem(VOTED_KEY);
+      const total = Object.values(votes).reduce((a, b) => a + b, 0) || 1;
+
+      container.innerHTML = '';
+      VOTE_OPTIONS.forEach(opt => {
+        const count = votes[opt.id] || 0;
+        const pct = Math.round((count / total) * 100);
+        const isMyVote = myVote === opt.id;
+        const voted = hasVoted();
+
+        const div = document.createElement('div');
+        div.className = 'border rounded-xl p-3 transition cursor-pointer ' +
+          (isMyVote ? 'border-purple-400 bg-purple-50' : 'border-gray-200 bg-gray-50 hover:border-purple-300 hover:bg-purple-50/50');
+
+        div.innerHTML = `
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <div>
+              <span class="text-sm font-semibold text-gray-800">${opt.label}</span>
+              <span class="text-xs text-gray-400 block">${opt.desc}</span>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${voted ? `<span class="text-xs font-bold text-purple-600">${pct}%</span>` : ''}
+              ${isMyVote ? '<span class="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">Your vote</span>' : ''}
+              ${!voted ? `<button class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg font-semibold transition vote-btn" data-id="${opt.id}">Vote</button>` : ''}
+            </div>
+          </div>
+          <div class="vote-bar"><div class="vote-bar-fill" style="width:${voted ? pct : 0}%"></div></div>`;
+
+        container.appendChild(div);
+      });
+
+      // Attach vote button listeners
+      container.querySelectorAll('.vote-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          castVote(btn.dataset.id);
+        });
+      });
+
+      // Click on row to vote (if not voted)
+      if (!hasVoted()) {
+        container.querySelectorAll('div[class*="border rounded-xl"]').forEach(row => {
+          row.addEventListener('click', () => {
+            const btn = row.querySelector('.vote-btn');
+            if (btn) castVote(btn.dataset.id);
+          });
+        });
+      }
+    }
+
+    function castVote(id) {
+      if (hasVoted()) return;
+      const votes = loadVotes();
+      votes[id] = (votes[id] || 0) + 1;
+      saveVotes(votes);
+      setVoted(id);
+      renderVotes();
+      showVoteShare(id);
+    }
+
+    function showVoteShare(id) {
+      const opt = VOTE_OPTIONS.find(o => o.id === id);
+      if (!opt) return;
+      const shareRow = document.getElementById('vote-share-row');
+      if (!shareRow) return;
+      shareRow.classList.remove('hidden');
+      shareRow.style.display = 'flex';
+
+      const msg = `I just voted for "${opt.label.replace(/^[^\w]+/, '')}" as the next GeoTechieX public tool to build! Go vote 👇 ${window.location.href}#projects`;
+      const waHref = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const twHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}`;
+      document.getElementById('vote-wa-btn').href = waHref;
+      document.getElementById('vote-tw-btn').href = twHref;
+    }
+
+    // ─── SHARE SITE ───────────────────────────────────────────────────────────
+    function shareSite(platform) {
+      const url = window.location.href;
+      const text = 'Check out GeoTechieX — free Nigerian road fine checker, geospatial tools, and more public interest AI tools!';
+      if (platform === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+      } else if (platform === 'twitter') {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      } else if (platform === 'copy') {
+        navigator.clipboard.writeText(url).then(() => {
+          const btn = document.getElementById('copy-link-btn');
+          if (btn) { const orig = btn.innerHTML; btn.innerHTML = '✅ Copied!'; setTimeout(() => btn.innerHTML = orig, 2000); }
+        }).catch(() => {
+          prompt('Copy this link:', url);
+        });
+      }
+    }
+
+    // ─── FLOATING SHARE MENU ─────────────────────────────────────────────────
+    function toggleFloatMenu() {
+      const menu = document.getElementById('float-share-menu');
+      menu.classList.toggle('open');
+    }
+    // Close float menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const floatShare = document.getElementById('float-share');
+      if (floatShare && !floatShare.contains(e.target)) {
+        document.getElementById('float-share-menu').classList.remove('open');
+      }
+    });
+
+    // ─── FRSC TOOL CARD SHARE BUTTONS ─────────────────────────────────────────
+    (function setupFrscCardShares() {
+      const waBtn = document.getElementById('frsc-wa-share');
+      const twBtn = document.getElementById('frsc-tw-share');
+      const toolUrl = window.location.origin + window.location.pathname.replace('index.html','') + 'nigeria-road-offence-assistant.html';
+      const waMsg = encodeURIComponent(`🚦 Check FRSC road fines instantly with this free Nigerian Road Offence Fine Checker! ${toolUrl}`);
+      const twMsg = encodeURIComponent('Free tool: check any FRSC road traffic fine in Nigeria instantly 🚦');
+      const twUrl = encodeURIComponent(toolUrl);
+      if (waBtn) waBtn.href = `https://wa.me/?text=${waMsg}`;
+      if (twBtn) twBtn.href = `https://twitter.com/intent/tweet?text=${twMsg}&url=${twUrl}`;
+    })();
+
+    // ─── INIT ─────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      renderVotes();
+    });
+    </script>
 </body>
 
 </html>
