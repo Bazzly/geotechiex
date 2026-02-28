@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoLex — Nigerian Survey & Land Law Assistant | GeoTechieX</title>
+  <meta name="description" content="GeoLex: Free Nigerian Survey & Land Law chat assistant. Ask about the Land Use Act, C of O, Governor's Consent, SURCON registration, survey plans, and more.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40%           { transform: translateY(-6px); }
+    }
+    .msg-animate { animation: msgIn 0.3s ease; }
+    .dot { width:7px; height:7px; background:#a5b4fc; border-radius:50%; animation:bounce 1.2s infinite; display:inline-block; }
+    .dot:nth-child(2){ animation-delay:.15s; }
+    .dot:nth-child(3){ animation-delay:.3s; }
+
+    #chatMessages::-webkit-scrollbar { width:4px; }
+    #chatMessages::-webkit-scrollbar-track { background:transparent; }
+    #chatMessages::-webkit-scrollbar-thumb { background:#c7d2fe; border-radius:2px; }
+
+    #chatInput { resize:none; overflow:hidden; }
+
+    .chip { cursor:pointer; transition:all .15s; }
+    .chip:hover { background:#4f46e5; color:white; border-color:#4f46e5; }
+
+    /* Answer cards */
+    .answer-card { background:#f5f3ff; border:1px solid #c4b5fd; border-radius:12px; padding:16px; margin-top:10px; }
+    .law-tag    { display:inline-block; background:#ede9fe; color:#5b21b6; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:6px; letter-spacing:.3px; }
+    .warn-tag   { display:inline-block; background:#fef2f2; color:#dc2626; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:6px; }
+    .caution-tag{ display:inline-block; background:#fefce8; color:#b45309; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:6px; }
+    .tool-tag   { display:inline-block; background:#ecfdf5; color:#065f46; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:6px; }
+
+    /* Browse topics tables */
+    .ref-table { width:100%; font-size:13px; border-collapse:collapse; }
+    .ref-table th { background:#ede9fe; color:#5b21b6; font-weight:700; padding:8px 12px; text-align:left; }
+    .ref-table td { padding:8px 12px; border-bottom:1px solid #e8e4f8; vertical-align:top; }
+    .ref-table tr:last-child td { border-bottom:none; }
+    .ref-table tr:hover td { background:#faf5ff; }
+
+    /* Toast */
+    #toast { position:fixed; bottom:24px; right:24px; z-index:9999; transform:translateY(80px); opacity:0; transition:all .3s ease; pointer-events:none; }
+    #toast.show { transform:translateY(0); opacity:1; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+  <!-- GeoTechieX Header -->
+  <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-4">
+        <a href="index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
+          <span class="text-2xl">🌍</span>
+          <span class="text-xl sm:text-2xl font-bold">GeoTechieX</span>
+        </a>
+        <div class="flex items-center gap-2 text-sm">
+          <a href="nigeria-law-hub.html" class="text-blue-200 hover:text-white transition hidden sm:inline">Public Interest Assistants</a>
+          <span class="text-blue-300 hidden sm:inline">›</span>
+          <span class="text-white font-semibold">🏛️ GeoLex</span>
+        </div>
+        <a href="nigeria-law-hub.html" class="hidden md:inline-block hover:bg-white/10 px-3 py-2 rounded-lg transition text-sm">← All Assistants</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Banner -->
+  <div class="bg-gradient-to-r from-indigo-800 to-blue-900 text-white py-6 px-4">
+    <div class="container mx-auto max-w-4xl">
+      <div class="flex items-start gap-4">
+        <div class="text-4xl">🏛️</div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold">GeoLex</h1>
+            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold">Nigerian Survey & Land Law</span>
+          </div>
+          <p class="text-indigo-200 text-sm sm:text-base">Ask about the Land Use Act, C of O, Governor's Consent, SURCON, survey plans, and how to buy land safely.</p>
+          <p class="text-indigo-300 text-xs mt-1">Land Use Act 1978 · SURCON Act S18 LFN 2004 · Federal Surveys Act Cap F17 LFN 2004</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="bg-white border-b border-gray-200 shadow-sm sticky top-[72px] z-40">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="flex gap-1 py-2">
+        <button id="tab-chat" onclick="switchTab('chat')"
+          class="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-700 text-white transition">💬 Chat with GeoLex</button>
+        <button id="tab-topics" onclick="switchTab('topics')"
+          class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-100 transition">📚 Browse Topics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHAT TAB ===== -->
+  <div id="chat-page" class="flex-1 flex flex-col" style="max-height:calc(100vh - 180px);">
+    <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-6 space-y-4 container mx-auto max-w-3xl w-full" style="scroll-behavior:smooth;"></div>
+
+    <div class="bg-white border-t border-gray-200 shadow-lg px-4 py-4 sticky bottom-0">
+      <div class="container mx-auto max-w-3xl">
+        <div class="flex gap-3 items-end">
+          <textarea id="chatInput" rows="1"
+            placeholder="Ask e.g. 'What is a C of O?', 'How do I verify a surveyor?', 'What is Governor's Consent?'..."
+            class="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-gray-50"
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button onclick="sendMessage()"
+            class="bg-indigo-700 hover:bg-indigo-600 active:scale-95 text-white w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-gray-400 mt-2 text-center">General information only — not legal advice. For land transactions, engage a SURCON-registered surveyor and a qualified Nigerian property lawyer.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BROWSE TOPICS TAB ===== -->
+  <div id="topics-page" class="hidden flex-1 overflow-y-auto">
+    <div class="container mx-auto px-4 py-8 max-w-4xl space-y-8">
+
+      <!-- Land Use Act -->
+      <div class="bg-white rounded-xl shadow border border-indigo-100 overflow-hidden">
+        <div class="bg-indigo-700 text-white px-6 py-4 flex items-center gap-3">
+          <span class="text-2xl">📜</span>
+          <div>
+            <h3 class="font-bold text-lg">Land Use Act 1978 — Key Provisions</h3>
+            <p class="text-indigo-200 text-xs">Cap L5 LFN 2004 · Entrenched in Section 315 of the 1999 Constitution</p>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
+            <p class="text-sm font-bold text-indigo-800 mb-1">The Single Most Important Rule:</p>
+            <p class="text-sm text-indigo-700 italic">"All land comprised in the territory of each State is vested in the Governor of that State and shall be held in trust and administered for the use and common benefit of all Nigerians." — LUA 1978, Section 1</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="ref-table rounded-lg overflow-hidden">
+              <thead><tr><th>Section</th><th>Plain Meaning</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Sec. 1</strong> — Land vested in Governor</td><td>The State holds all land. You own a <em>right of occupancy</em>, not the land itself.</td></tr>
+                <tr><td><strong>Sec. 5</strong> — Statutory Right of Occupancy</td><td>Governor grants SRO for urban land. Valid for up to 99 years.</td></tr>
+                <tr><td><strong>Sec. 6</strong> — Customary Right of Occupancy</td><td>Local Government grants CRO for rural/agricultural land.</td></tr>
+                <tr><td><strong>Sec. 9</strong> — Certificate of Occupancy</td><td>The official document proving your right of occupancy.</td></tr>
+                <tr><td><strong>Sec. 22</strong> — Governor's Consent required</td><td>All sales, transfers, mortgages, and leases MUST have Governor's approval.</td></tr>
+                <tr><td><strong>Sec. 26</strong> — Void without consent</td><td>Any land transaction without Governor's Consent is legally null and void.</td></tr>
+                <tr><td><strong>Sec. 28</strong> — Revocation of rights</td><td>Government can revoke land for "overriding public interest."</td></tr>
+                <tr><td><strong>Sec. 29</strong> — Compensation</td><td>On revocation, you get paid for <em>buildings/improvements only</em> — not the land value.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Land Documents -->
+      <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+        <div class="bg-gray-800 text-white px-6 py-4 flex items-center gap-3">
+          <span class="text-2xl">📋</span>
+          <h3 class="font-bold text-lg">Nigerian Land Documents — Hierarchy</h3>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="border border-indigo-300 bg-indigo-50 rounded-lg p-4">
+            <p class="font-bold text-indigo-800">🥇 Certificate of Occupancy (C of O)</p>
+            <p class="text-sm text-gray-700 mt-1">The gold standard. Issued by the Governor. Valid for 99 years. Strongest form of title in Nigeria.</p>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <p class="font-bold text-gray-800">📄 Deed of Assignment</p>
+            <p class="text-sm text-gray-700 mt-1">Transfers seller's right of occupancy to buyer. <strong>Must</strong> be registered and Governor's Consent obtained after the transfer.</p>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <p class="font-bold text-gray-800">🗺️ Registered Survey Plan</p>
+            <p class="text-sm text-gray-700 mt-1">Required for all title documents. Must be prepared by a SURCON-registered surveyor and approved/stamped by the State Surveyor General.</p>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <p class="font-bold text-gray-800">✅ Governor's Consent Letter</p>
+            <p class="text-sm text-gray-700 mt-1">Formal government approval for any land transaction. Without it, the transaction is void (Sec. 26, LUA 1978).</p>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <p class="font-bold text-gray-800">🏦 Deed of Mortgage</p>
+            <p class="text-sm text-gray-700 mt-1">Used when land is collateral for a loan. Also requires Governor's Consent.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SURCON -->
+      <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+        <div class="bg-emerald-800 text-white px-6 py-4 flex items-center gap-3">
+          <span class="text-2xl">🏢</span>
+          <div>
+            <h3 class="font-bold text-lg">SURCON — Surveyors Council of Nigeria</h3>
+            <p class="text-emerald-200 text-xs">Act No. S18 LFN 2004 · surcon.gov.ng · 10 Yawuri Street, Garki 2, Abuja</p>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+              <p class="font-bold text-emerald-800 text-sm mb-2">What SURCON Does</p>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Regulates the surveying profession in Nigeria</li>
+                <li>• Maintains the public Register of Surveyors</li>
+                <li>• Sets professional standards</li>
+                <li>• Investigates complaints (Surveyors Investigating Panel)</li>
+                <li>• Takes disciplinary action against unregistered practice</li>
+              </ul>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p class="font-bold text-red-800 text-sm mb-2">Practising Without Registration</p>
+              <ul class="text-sm text-red-700 space-y-1">
+                <li>• Criminal offence under SURCON Act</li>
+                <li>• Survey plan is legally invalid</li>
+                <li>• Surveyor General won't approve the plan</li>
+                <li>• Cannot process a C of O</li>
+                <li>• Report to surcon.gov.ng</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-sm font-bold text-gray-700 mb-2">SURCON Registration Path:</p>
+          <ol class="space-y-2 text-sm text-gray-700">
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span><span>Complete B.Sc/B.Tech in Surveying & Geoinformatics from an accredited institution</span></li>
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span><span>Enroll as a Pupil Surveyor with SURCON (1–2 years supervised internship)</span></li>
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span><span>Sit and pass the SURCON Professional Examination</span></li>
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span><span>Attend the SURCON Induction Ceremony (oath-taking)</span></li>
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">5</span><span>Name added to SURCON Register — now a Registered Surveyor (R.Surv.)</span></li>
+            <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">6</span><span>Renew registration annually</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- How to verify a surveyor -->
+      <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+        <div class="bg-amber-700 text-white px-6 py-4 flex items-center gap-3">
+          <span class="text-2xl">🔍</span>
+          <h3 class="font-bold text-lg">How to Verify a Registered Surveyor</h3>
+        </div>
+        <div class="p-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <p class="font-bold text-green-700 text-sm mb-2">✅ Signs of a Legitimate Surveyor</p>
+              <ul class="text-sm text-gray-700 space-y-2">
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Has a unique <strong>SURCON registration number</strong> (e.g. S2023/XXX)</span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Uses <strong>"R.Surv."</strong> after their name</span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Survey plans carry their seal, signature, SURCON number, and <strong>Surveyor General's approval stamp</strong></span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Plans include a <strong>beaconing certificate</strong></span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Has a physical office address</span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Name verifiable on <a href="https://surcon.gov.ng" target="_blank" class="text-indigo-700 underline">surcon.gov.ng</a></span></li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-bold text-red-700 text-sm mb-2">🚩 Red Flags — Walk Away</p>
+              <ul class="text-sm text-gray-700 space-y-2">
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>No SURCON registration number on documents</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Cannot produce a registration certificate</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Survey plan has no Surveyor General's stamp</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>No beaconing certificate on plan</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Demands full payment before any field work</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Unusually cheap survey fee</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Name not found on SURCON register</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Law reference sheet -->
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+        <p class="font-bold text-indigo-800 mb-3">📚 Key Legal References</p>
+        <div class="overflow-x-auto">
+          <table class="ref-table bg-white rounded-lg overflow-hidden">
+            <thead><tr><th>Law</th><th>Citation</th><th>Key Provision</th></tr></thead>
+            <tbody>
+              <tr><td>Land Use Act</td><td>Cap L5 LFN 2004 (1978)</td><td>All land vested in State Governor</td></tr>
+              <tr><td>LUA Sec. 22</td><td>—</td><td>Governor's Consent mandatory for all transfers</td></tr>
+              <tr><td>LUA Sec. 26</td><td>—</td><td>Transactions without consent are void</td></tr>
+              <tr><td>LUA Sec. 28–29</td><td>—</td><td>Revocation and compensation (buildings only)</td></tr>
+              <tr><td>SURCON Act</td><td>Act No. S18 LFN 2004</td><td>Regulates the surveying profession</td></tr>
+              <tr><td>SURCON Act Sec. 15</td><td>—</td><td>Only registered surveyors may practise</td></tr>
+              <tr><td>Federal Surveys Act</td><td>Cap F17 LFN 2004</td><td>Federal land surveys</td></tr>
+              <tr><td>NURP Act</td><td>Cap N138 LFN 2004</td><td>Planning permissions (survey plans required)</td></tr>
+              <tr><td>Constitution</td><td>CFRN 1999, Sec. 315</td><td>Land Use Act entrenched — cannot be repealed without constitutional amendment</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-indigo-500 mt-3">General information only. Consult a registered property lawyer for your specific situation.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 py-6 border-t border-gray-700 mt-auto">
+    <div class="container mx-auto px-4 text-center text-sm">
+      <p class="mb-1"><span class="text-white font-semibold">GeoTechieX — GeoLex</span></p>
+      <p class="text-gray-500 text-xs">Based on Land Use Act 1978, SURCON Act S18 LFN 2004, Federal Surveys Act Cap F17 LFN 2004. Not legal advice — consult a qualified Nigerian property lawyer for your specific situation.</p>
+      <div class="flex justify-center gap-4 mt-3">
+        <a href="nigeria-law-hub.html" class="text-blue-400 hover:text-blue-300 text-xs">← All Assistants</a>
+        <span class="text-gray-600">|</span>
+        <a href="index.html" class="text-blue-400 hover:text-blue-300 text-xs">GeoTechieX Home</a>
+        <span class="text-gray-600">|</span>
+        <a href="https://surcon.gov.ng" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 text-xs">SURCON ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="bg-indigo-700 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg"></div>
+
+<script>
+// ─── KNOWLEDGE BASE ────────────────────────────────────────────────────────────
+const WA_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+const KB = [
+  {
+    id: 'buy_land',
+    keywords: ['buy land','buying land','purchase land','documents','before paying','safe buy','land purchase','invest','land investment','checklist'],
+    title: 'How to Buy Land Safely in Nigeria',
+    tag: 'practical', tagLabel: 'BUYER CHECKLIST',
+    answer: `Before you pay for any land in Nigeria, confirm all of the following:<br><br>
+<strong>📋 Documents to Request from the Seller:</strong><br>
+1. <strong>Original Title Document</strong> — Certificate of Occupancy (C of O), Registered Deed of Assignment, or Deed of Conveyance for old-scheme land<br>
+2. <strong>Survey Plan</strong> — Prepared by a SURCON-registered surveyor, bearing their SURCON number, seal, AND the Surveyor General's approval stamp<br>
+3. <strong>Governor's Consent</strong> — Required for every transfer after the original grant (Sec. 22, LUA 1978)<br>
+4. <strong>Tax Clearance / Land Charge Receipt</strong> — Proof that land-use charges are paid<br><br>
+<strong>🔍 How to Verify:</strong><br>
+• Take the survey plan to the State Surveyor General's office to confirm it's genuine and registered<br>
+• Search the Land Registry to confirm ownership and check for loans or disputes<br>
+• Verify the surveyor's SURCON number at surcon.gov.ng`,
+    steps: [],
+    shareMsg: '🏡 Buying land in Nigeria? Always check: C of O, SURCON-registered survey plan, Governor\'s Consent, and search the Land Registry. Protect your money! 🇳🇬',
+    tools: []
+  },
+  {
+    id: 'coo',
+    keywords: ['c of o','certificate of occupancy','coo','cof o','occupancy','99 years','how to get c of o','title document'],
+    title: 'Certificate of Occupancy (C of O)',
+    tag: 'law', tagLabel: 'Land Use Act — Sec. 9',
+    answer: `The <strong>Certificate of Occupancy (C of O)</strong> is the gold-standard land title in Nigeria. It is:<br><br>
+• Issued by the <strong>Governor</strong> of the state<br>
+• Valid for <strong>up to 99 years</strong><br>
+• The strongest proof of your right to occupy and use land<br>
+• Required by banks for mortgages and loans<br><br>
+<strong>What it means:</strong> Under the Land Use Act, nobody truly "owns" land — you hold a <em>right of occupancy</em>. The C of O is the official document for that right.<br><br>
+<strong>How to get a C of O:</strong><br>
+1. Get a registered survey plan (SURCON-registered surveyor)<br>
+2. Submit application to the State Lands Bureau with the survey plan and existing deed<br>
+3. Government inspection of the land<br>
+4. Payment of fees<br>
+5. Governor signs and issues the C of O`,
+    steps: [],
+    shareMsg: 'The C of O (Certificate of Occupancy) is the strongest land title in Nigeria — issued by the Governor, valid for 99 years. Always insist on one! 🇳🇬🏠',
+    tools: []
+  },
+  {
+    id: 'governors_consent',
+    keywords: ["governor's consent",'governors consent','governor consent','consent','void','transfer land','sell land','section 22','sec 22','mortgage'],
+    title: "Governor's Consent — Why It's Mandatory",
+    tag: 'law', tagLabel: 'LUA 1978 — Sec. 22 & 26',
+    answer: `Under the <strong>Land Use Act 1978</strong>, the Governor of each state technically holds all land "in trust" for Nigerians. This means that any time land changes hands — through sale, gift, mortgage, or lease — the Governor must give formal approval. This is called <strong>Governor's Consent</strong>.<br><br>
+<strong>Without it (Sec. 26 LUA):</strong><br>
+• Your transaction is <strong>legally null and void</strong> — as if it never happened<br>
+• The seller could legally sell the same land to someone else<br>
+• Banks won't accept your title as collateral<br>
+• You cannot get a C of O in your name<br><br>
+<strong>Steps to Get Governor's Consent:</strong>`,
+    steps: [
+      'Hire a SURCON-registered surveyor to prepare and file a survey plan',
+      'Engage a property lawyer to prepare the Deed of Assignment',
+      'Submit application to the State Lands Bureau with: deed, survey plan, existing title, and application letter',
+      'Government physically inspects the land',
+      'Pay consent fee (typically 3–5% of property value)',
+      'Collect Governor\'s Consent letter and register the deed at the Land Registry'
+    ],
+    shareMsg: "No Governor's Consent = your land deal is legally VOID in Nigeria, no matter how much you paid. This is the law (Sec. 22 & 26, Land Use Act 1978). 🇳🇬🔑",
+    tools: []
+  },
+  {
+    id: 'land_use_act',
+    keywords: ['land use act','lua','what is land use act','land law','1978','cap l5','state owns land','own land nigeria'],
+    title: 'The Land Use Act 1978 — Overview',
+    tag: 'law', tagLabel: 'Cap L5 LFN 2004 · CFRN Sec. 315',
+    answer: `The <strong>Land Use Act of 1978</strong> is the foundation of all land ownership in Nigeria. It was enacted on 29 March 1978 and is <strong>entrenched in Section 315 of the 1999 Constitution</strong> — meaning it cannot be repealed without a constitutional amendment.<br><br>
+<strong>The Core Rule:</strong><br>
+No Nigerian legally "owns" land outright. You own a <strong>Right of Occupancy</strong> — the right to use land for up to 99 years. The Governor of each state holds all land in trust for Nigerians.<br><br>
+<strong>Key Consequences:</strong><br>
+• You must get <strong>Governor's Consent</strong> for any land sale or transfer<br>
+• The government can <strong>revoke</strong> your right to land (Sec. 28)<br>
+• If revoked, you only get paid for your <strong>buildings</strong> — not the land value itself (Sec. 29)<br>
+• Urban land = Statutory Right of Occupancy (Governor's office)<br>
+• Rural land = Customary Right of Occupancy (Local Government)`,
+    steps: [],
+    shareMsg: 'In Nigeria, no one truly "owns" land — the Land Use Act 1978 vests all land in each State Governor. You only hold a right of occupancy for up to 99 years. 🇳🇬📜',
+    tools: []
+  },
+  {
+    id: 'survey_plan',
+    keywords: ['survey plan','what is a survey plan','survey document','valid survey plan','what should be on','plan content','beacon','beaconing'],
+    title: 'What Is a Survey Plan & What Must It Contain?',
+    tag: 'law', tagLabel: 'SURCON Act S18 LFN 2004',
+    answer: `A <strong>survey plan</strong> is the official document that maps the exact boundaries of a piece of land. It is legally required for all land titles, C of O applications, and land transactions in Nigeria.<br><br>
+<strong>A valid survey plan MUST contain:</strong><br>
+• The surveyor's full name and <strong>SURCON registration number</strong><br>
+• The surveyor's official seal/rubber stamp<br>
+• The surveyor's signature<br>
+• <strong>The State Surveyor General's approval stamp</strong> (this is the government's authentication)<br>
+• A <strong>beaconing certificate</strong> — confirming physical concrete pillars/beacons were placed on the land boundaries<br>
+• Date of survey<br>
+• Scale of the plan<br>
+• Coordinates and bearings of boundary lines<br>
+• Name(s) of adjoining land owners<br><br>
+<strong>No Surveyor General's stamp = the plan is not legally approved.</strong>`,
+    steps: [],
+    shareMsg: 'A valid Nigerian survey plan MUST have the Surveyor General\'s approval stamp, SURCON number, and a beaconing certificate. Without these, it\'s worthless! 🇳🇬📐',
+    tools: [{ label: '📐 Try our Survey Plan OCR Extractor', href: 'PlanOcr/index.html' }]
+  },
+  {
+    id: 'surcon',
+    keywords: ['surcon','surveyors council','what is surcon','regulatory body','surveying regulation','survey body','professional body','surcon act'],
+    title: 'SURCON — Surveyors Council of Nigeria',
+    tag: 'law', tagLabel: 'Act No. S18 LFN 2004',
+    answer: `<strong>SURCON (Surveyors Council of Nigeria)</strong> is the statutory body that regulates the surveying profession in all its forms in Nigeria. It was established by Decree No. 44 of 1989 (now Act No. S18 LFN 2004).<br><br>
+<strong>SURCON's Main Functions:</strong><br>
+• Determine who qualifies as a Surveyor in Nigeria<br>
+• Maintain and publish the <strong>Register of Surveyors</strong> — the only official list<br>
+• Regulate and control all surveying practice<br>
+• Investigate complaints through the <strong>Surveyors Investigating Panel (SIP)</strong><br>
+• Take disciplinary action against unregistered practice (criminal offence)<br><br>
+<strong>Contact:</strong><br>
+• Website: <a href="https://surcon.gov.ng" target="_blank" class="text-indigo-700 underline">surcon.gov.ng</a><br>
+• Email: info@surcon.gov.ng<br>
+• Abuja: 10 Yawuri Street, Off Jere Street, Garki 2, Abuja`,
+    steps: [],
+    shareMsg: 'SURCON (Surveyors Council of Nigeria) maintains the official register of all registered surveyors. Always verify your surveyor at surcon.gov.ng before paying! 🇳🇬',
+    tools: []
+  },
+  {
+    id: 'verify_surveyor',
+    keywords: ['verify surveyor','check surveyor','is my surveyor registered','real surveyor','fake surveyor','how to identify','legitimate surveyor','r.surv','rsurv','registration number'],
+    title: 'How to Verify a Registered Surveyor',
+    tag: 'law', tagLabel: 'SURCON Act — Sec. 15',
+    answer: `Before hiring any surveyor, verify their registration. Here's how:<br><br>
+<strong>Step 1 — Ask for their SURCON Registration Number</strong><br>
+Every registered surveyor has a unique number (format: S[Year]/[Number], e.g. S2019/045). It must appear on all their documents and plans.<br><br>
+<strong>Step 2 — Check the "R.Surv." designation</strong><br>
+A fully registered surveyor uses "R.Surv." after their name. Example: <em>Surv. Adebayo Lawal, R.Surv.</em><br><br>
+<strong>Step 3 — Contact SURCON to verify</strong><br>
+Visit <a href="https://surcon.gov.ng" target="_blank" class="text-indigo-700 underline">surcon.gov.ng</a> or call SURCON Abuja to confirm the number is active.<br><br>
+<strong>Step 4 — Check the survey plan</strong><br>
+A valid plan must have: SURCON number, surveyor's seal, their signature, <strong>Surveyor General's stamp</strong>, and beaconing certificate.`,
+    steps: [],
+    shareMsg: 'Before hiring a surveyor in Nigeria: always check their SURCON registration number at surcon.gov.ng. A plan with no Surveyor General stamp is worthless! 🇳🇬',
+    tools: []
+  },
+  {
+    id: 'deed_of_assignment',
+    keywords: ['deed of assignment','deed','assignment','transfer','conveyance','what is deed'],
+    title: 'What Is a Deed of Assignment?',
+    tag: 'law', tagLabel: 'Land Use Act — Sec. 22',
+    answer: `A <strong>Deed of Assignment</strong> is a legal document that transfers a seller's right of occupancy to a buyer. It is prepared by a property lawyer and is the core transaction document when buying land in Nigeria.<br><br>
+<strong>Important things to know:</strong><br>
+• A Deed of Assignment alone is <strong>not enough</strong> — you MUST also obtain <strong>Governor's Consent</strong> after the transfer (Sec. 22, LUA 1978)<br>
+• Without Governor's Consent, the transfer is legally void (Sec. 26, LUA 1978)<br>
+• The deed must be registered at the State Land Registry<br>
+• Hierarchy: <strong>C of O > Deed of Assignment</strong> — a C of O is always stronger than a Deed of Assignment<br><br>
+<strong>When you receive a Deed of Assignment, immediately:</strong><br>
+1. Engage a property lawyer to review it<br>
+2. Search the Land Registry to confirm the seller actually has the rights being transferred<br>
+3. Process Governor's Consent without delay`,
+    steps: [],
+    shareMsg: 'A Deed of Assignment transfers land rights in Nigeria — but without Governor\'s Consent, it\'s legally VOID. Always process consent after buying land! 🇳🇬📝',
+    tools: []
+  },
+  {
+    id: 'beaconing',
+    keywords: ['beaconing','beacon','pillar','boundary pillar','concrete pillar','boundary marker','demarcation'],
+    title: 'What Is Beaconing?',
+    tag: 'law', tagLabel: 'SURCON Act — Survey Requirement',
+    answer: `<strong>Beaconing</strong> is the physical marking of land boundaries with permanent concrete pillars (beacons/trigonometric pillars) on the actual land.<br><br>
+<strong>Why it matters legally:</strong><br>
+• Beaconing is legally required for a valid cadastral (boundary) survey in Nigeria<br>
+• Without beaconing, there is no physical evidence of where your land boundaries are<br>
+• A valid survey plan must include a <strong>beaconing certificate</strong> confirming the pillars were placed<br>
+• If a surveyor gives you a plan without actually visiting the land and placing pillars — that's a red flag<br><br>
+<strong>What beacons look like:</strong> Concrete pillars (usually marked with the surveyor's name and survey number) placed at all corner points and key turning points of the land boundary.`,
+    steps: [],
+    shareMsg: 'Beaconing = physical concrete pillars marking your land boundaries. A valid Nigerian survey plan MUST include a beaconing certificate. No beacons = incomplete survey! 🇳🇬📍',
+    tools: []
+  },
+  {
+    id: 'revocation',
+    keywords: ['government take land','revoke','revocation','compulsory acquisition','compensation','section 28','section 29','take my land'],
+    title: 'Can the Government Take My Land?',
+    tag: 'caution', tagLabel: 'LUA Sec. 28 & 29',
+    answer: `<strong>Yes — the government can revoke your right of occupancy</strong> under the Land Use Act (Sec. 28), but only for:<br>
+• Overriding public interest (e.g. road construction, government projects)<br>
+• Breach of terms of the right of occupancy<br>
+• Non-payment of rent<br><br>
+<strong>Compensation (Sec. 29) — Critical to Know:</strong><br>
+If the government revokes your land, compensation is paid for:<br>
+• <strong>Buildings and improvements on the land</strong> — YES<br>
+• <strong>The land itself</strong> — NO (because you never technically "owned" the land)<br><br>
+This is one of the most controversial aspects of the Land Use Act. You could lose land you paid millions for and only receive compensation for the building on it.<br><br>
+<strong>What to do if your land is being acquired:</strong><br>
+• Engage a property lawyer immediately<br>
+• Ensure you receive the formal Notice of Revocation<br>
+• You have the right to challenge in court if the acquisition is not for genuine public interest`,
+    steps: [],
+    shareMsg: 'The Nigerian government can revoke your land under the Land Use Act — and only pay for your buildings, NOT the land value. Know your rights before investing! 🇳🇬⚠️',
+    tools: []
+  },
+  {
+    id: 'right_of_occupancy',
+    keywords: ['right of occupancy','sro','cro','statutory right','customary right','99 years','occupancy right','urban land','rural land'],
+    title: 'Right of Occupancy — Statutory vs Customary',
+    tag: 'law', tagLabel: 'LUA Sec. 5 & 6',
+    answer: `Under the Land Use Act, there are two types of Right of Occupancy in Nigeria:<br><br>
+<strong>1. Statutory Right of Occupancy (SRO) — Sec. 5</strong><br>
+• Granted by the <strong>State Governor</strong><br>
+• Covers <strong>urban land</strong><br>
+• Valid for up to <strong>99 years</strong><br>
+• Evidenced by a Certificate of Occupancy (C of O)<br>
+• Transferable with Governor's Consent<br><br>
+<strong>2. Customary Right of Occupancy (CRO) — Sec. 6</strong><br>
+• Granted by the <strong>Local Government</strong><br>
+• Covers <strong>rural and agricultural land</strong><br>
+• Recognises traditional/customary use of land<br>
+• Also transferable, but with local government approval<br><br>
+<strong>The difference in practice:</strong> Most urban land purchases deal with SROs. If you're buying rural or village land, confirm whether it's under CRO or has been converted to SRO.`,
+    steps: [],
+    shareMsg: 'In Nigeria, there are 2 types of land rights: Statutory (Governor, urban) and Customary (Local Govt, rural). Know which one your land has! 🇳🇬📜',
+    tools: []
+  },
+  {
+    id: 'survey_types',
+    keywords: ['types of survey','cadastral','engineering survey','topographic','geodetic','hydrographic','photogrammetric','what type of survey'],
+    title: 'Types of Surveys in Nigeria',
+    tag: 'law', tagLabel: 'Survey Classification',
+    answer: `The main types of surveys practised in Nigeria are:<br><br>
+<strong>🗺️ Cadastral Survey</strong> — The most common. Boundary survey for land title and ownership. What you need for a C of O or land purchase.<br><br>
+<strong>🏗️ Engineering Survey</strong> — For construction, roads, bridges, and infrastructure projects.<br><br>
+<strong>🌊 Hydrographic Survey</strong> — Mapping of waterways, harbours, rivers, and offshore areas.<br><br>
+<strong>🏔️ Topographic Survey</strong> — Maps terrain shape, elevation, and surface features.<br><br>
+<strong>🌍 Geodetic Survey</strong> — Large-scale national reference surveys establishing coordinate systems.<br><br>
+<strong>📸 Photogrammetric / Remote Sensing Survey</strong> — Uses aerial photographs and satellite imagery for mapping.<br><br>
+For land ownership purposes, you almost always need a <strong>Cadastral Survey</strong>.`,
+    steps: [],
+    shareMsg: '',
+    tools: [{ label: '🎯 Try our Area Delineation AI', href: 'areadelAi.html' }]
+  },
+  {
+    id: 'survey_fee',
+    keywords: ['survey fee','how much survey','cost survey','survey cost','price survey','pay surveyor','surveyor fees'],
+    title: 'How Much Does a Survey Cost?',
+    tag: 'caution', tagLabel: 'Practical Guide',
+    answer: `Survey fees in Nigeria vary significantly by:<br>
+• <strong>State</strong> — fees differ between Lagos, Abuja, Rivers, etc.<br>
+• <strong>Size of land</strong> — larger plots cost more<br>
+• <strong>Type of survey</strong> — cadastral, topographic, etc.<br>
+• <strong>Terrain and accessibility</strong> of the land<br><br>
+<strong>General guidance:</strong><br>
+There is no single national fixed rate. Each state's surveying chapter may publish a professional fee schedule, but in practice prices are negotiated.<br><br>
+<strong>⚠️ Be careful if:</strong><br>
+• A surveyor charges an unusually low price — it may be a sign they are unregistered or will cut corners<br>
+• Always get a written quote that includes beaconing and plan filing costs<br>
+• Professional surveyors should provide a fee proposal on their official letterhead`,
+    steps: [],
+    shareMsg: '',
+    tools: [{ label: '💰 Use our Survey Fee Estimator', href: 'valuemap/index.html' }]
+  },
+  {
+    id: 'fake_surveyor',
+    keywords: ['fake surveyor','unregistered surveyor','illegal practice','spot fake','how to spot','fraudulent plan','worthless plan'],
+    title: 'How to Spot a Fake or Unregistered Surveyor',
+    tag: 'warn', tagLabel: 'PROTECT YOURSELF',
+    answer: `Unregistered surveyors are a serious problem in Nigeria. Their plans are <strong>legally worthless</strong> and cannot be used to process a C of O or any title document. Watch for these red flags:<br><br>
+🚩 <strong>No SURCON number</strong> on their documents or letterhead<br>
+🚩 <strong>Cannot show a SURCON registration certificate</strong> when asked<br>
+🚩 <strong>Survey plan has no Surveyor General's approval stamp</strong><br>
+🚩 <strong>No beaconing certificate</strong> on the plan<br>
+🚩 <strong>Full payment demanded before field work</strong><br>
+🚩 <strong>No physical office address</strong> — only a phone number<br>
+🚩 <strong>Name not found on surcon.gov.ng</strong><br>
+🚩 <strong>Price is suspiciously cheap</strong><br><br>
+<strong>What to do if you suspect a fake surveyor:</strong><br>
+Report to SURCON at surcon.gov.ng or info@surcon.gov.ng — unregistered practice is a criminal offence under the SURCON Act.`,
+    steps: [],
+    shareMsg: '🚩 Fake surveyors are everywhere in Nigeria — their plans are WORTHLESS legally. Always check the SURCON registration at surcon.gov.ng before paying! 🇳🇬',
+    tools: []
+  },
+  {
+    id: 'become_surveyor',
+    keywords: ['become a surveyor','how to become surveyor','surveying career','surcon registration','pupil surveyor','how to register surcon','surveying course'],
+    title: 'How to Become a Registered Surveyor in Nigeria',
+    tag: 'law', tagLabel: 'SURCON Registration Path',
+    answer: `The full path to becoming a <strong>Registered Surveyor (R.Surv.)</strong> in Nigeria:`,
+    steps: [
+      'Complete a B.Sc or B.Tech in Surveying & Geoinformatics from a SURCON-accredited institution',
+      'Register as a Pupil Surveyor with SURCON (supervised by a Registered Surveyor for 1–2 years)',
+      'Maintain a logbook of all field work during your pupilage period',
+      'Sit and pass the SURCON Professional Examination',
+      'Attend the annual SURCON Induction Ceremony (oath-taking)',
+      'Your name is added to the SURCON Register — you are now a Registered Surveyor',
+      'Use the designation "R.Surv." after your name and renew annually'
+    ],
+    shareMsg: '',
+    tools: []
+  },
+];
+
+// ─── CHAT ENGINE ───────────────────────────────────────────────────────────────
+const msgContainer = document.getElementById('chatMessages');
+
+function addMessage(content, type = 'bot') {
+  const wrap = document.createElement('div');
+  wrap.className = 'flex gap-3 msg-animate ' + (type === 'user' ? 'flex-row-reverse self-end max-w-lg ml-auto' : 'max-w-2xl');
+
+  const avatar = document.createElement('div');
+  avatar.className = 'w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-lg mt-1 ' +
+    (type === 'bot' ? 'bg-indigo-100 border border-indigo-300' : 'bg-amber-100 border border-amber-300');
+  avatar.textContent = type === 'bot' ? '🏛️' : '👤';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'px-4 py-3 rounded-2xl text-sm leading-relaxed ' +
+    (type === 'bot' ? 'bg-white border border-gray-200 shadow-sm rounded-tl-sm text-gray-800' : 'bg-indigo-700 text-white rounded-tr-sm');
+
+  if (typeof content === 'string') { bubble.innerHTML = content; }
+  else { bubble.appendChild(content); }
+
+  wrap.appendChild(avatar); wrap.appendChild(bubble);
+  msgContainer.appendChild(wrap);
+  msgContainer.scrollTop = msgContainer.scrollHeight;
+  return bubble;
+}
+
+function addTyping() {
+  const wrap = document.createElement('div');
+  wrap.id = 'typing-msg'; wrap.className = 'flex gap-3 max-w-2xl msg-animate';
+  wrap.innerHTML = `<div class="w-9 h-9 rounded-full bg-indigo-100 border border-indigo-300 flex items-center justify-center text-lg mt-1">🏛️</div>
+    <div class="px-4 py-3 rounded-2xl rounded-tl-sm bg-white border border-gray-200 shadow-sm flex items-center gap-1">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+  msgContainer.appendChild(wrap); msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+function removeTyping() { const el = document.getElementById('typing-msg'); if (el) el.remove(); }
+
+function chips(...queries) {
+  const div = document.createElement('div');
+  div.className = 'flex flex-wrap gap-2 mt-3';
+  queries.forEach(q => {
+    const span = document.createElement('span');
+    span.className = 'chip text-xs border border-indigo-300 text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full';
+    span.textContent = q; span.onclick = () => quickQuery(q); div.appendChild(span);
+  });
+  return div;
+}
+
+function buildCard(item) {
+  const card = document.createElement('div');
+  card.className = 'answer-card';
+
+  let tagHtml = '';
+  if (item.tag === 'law') tagHtml = `<span class="law-tag">📋 ${item.tagLabel}</span>`;
+  else if (item.tag === 'warn') tagHtml = `<span class="warn-tag">⚠️ ${item.tagLabel}</span>`;
+  else if (item.tag === 'practical') tagHtml = `<span class="law-tag">✅ ${item.tagLabel}</span>`;
+  else tagHtml = `<span class="caution-tag">ℹ️ ${item.tagLabel}</span>`;
+
+  let stepsHtml = '';
+  if (item.steps && item.steps.length) {
+    stepsHtml = `<ol class="mt-3 space-y-1.5">${item.steps.map((s,i) =>
+      `<li class="flex gap-2 text-sm text-gray-700"><span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">${i+1}</span><span>${s}</span></li>`
+    ).join('')}</ol>`;
+  }
+
+  let toolsHtml = '';
+  if (item.tools && item.tools.length) {
+    toolsHtml = `<div class="mt-3 flex flex-wrap gap-2">${item.tools.map(t =>
+      `<a href="${t.href}" class="inline-flex items-center gap-1 text-xs bg-emerald-50 border border-emerald-300 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-lg font-semibold transition">${t.label}</a>`
+    ).join('')}</div>`;
+  }
+
+  let shareHtml = '';
+  if (item.shareMsg) {
+    const waMsg = encodeURIComponent(item.shareMsg + '\n\nLearn more: ' + window.location.href);
+    shareHtml = `<div class="mt-3 pt-3 border-t border-indigo-200 flex gap-2">
+      <a href="https://wa.me/?text=${waMsg}" target="_blank" rel="noopener"
+        class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+        ${WA_SVG} Share this tip
+      </a>
+    </div>`;
+  }
+
+  const disclaimerHtml = `<p class="text-xs text-gray-400 mt-3 italic">💡 I'm GeoLex, an AI assistant. For formal transactions, engage a SURCON-registered surveyor and a qualified Nigerian property lawyer.</p>`;
+
+  card.innerHTML = `${tagHtml}
+    <div class="font-bold text-gray-800 text-sm mb-2">${item.title}</div>
+    <div class="text-sm text-gray-700 leading-relaxed">${item.answer}</div>
+    ${stepsHtml}${toolsHtml}${shareHtml}${disclaimerHtml}`;
+  return card;
+}
+
+function search(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  return KB.filter(item =>
+    item.keywords.some(k => q.includes(k) || k.includes(q) || q.split(' ').some(w => w.length > 3 && k.includes(w)))
+  );
+}
+
+function handleQuery(query) {
+  if (!query.trim()) return;
+  addMessage(query, 'user');
+  addTyping();
+
+  setTimeout(() => {
+    removeTyping();
+    const q = query.toLowerCase().trim();
+
+    // Greeting
+    if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy|oga)/.test(q)) {
+      const frag = document.createDocumentFragment();
+      const t = document.createElement('span');
+      t.innerHTML = `Hello! 👋 I'm <strong>GeoLex</strong>, your Nigerian Survey & Land Law assistant on GeoTechieX.<br><br>I can help you understand land ownership, the Land Use Act, SURCON, Governor's Consent, survey plans, and how to protect yourself when buying land. Try one of these:`;
+      frag.appendChild(t);
+      frag.appendChild(chips('What documents do I need to buy land?', 'What is a C of O?', "What is Governor's Consent?", 'How do I verify a surveyor?', 'What is SURCON?', 'What is the Land Use Act?'));
+      addMessage(frag); return;
+    }
+
+    // Help
+    if (q === 'help' || q === 'topics' || q.includes('what can you do') || q.includes('what do you know')) {
+      const frag = document.createDocumentFragment();
+      const t = document.createElement('span');
+      t.innerHTML = `I cover these topics on Nigerian Survey & Land Law:`;
+      frag.appendChild(t);
+      frag.appendChild(chips(
+        'Buying land safely', 'Certificate of Occupancy', "Governor's Consent",
+        'Land Use Act', 'Survey Plan', 'SURCON', 'Verify a surveyor',
+        'Deed of Assignment', 'Beaconing', 'Can government take my land?',
+        'Spot a fake surveyor', 'Become a surveyor'
+      ));
+      addMessage(frag); return;
+    }
+
+    const results = search(query);
+
+    if (!results.length) {
+      const frag = document.createDocumentFragment();
+      const t = document.createElement('span');
+      t.innerHTML = `😕 I couldn't find a specific answer for <strong>"${query}"</strong>. Try one of these topics:`;
+      frag.appendChild(t);
+      frag.appendChild(chips('Buying land safely', 'What is a C of O?', "Governor's Consent", 'Verify a surveyor', 'Help'));
+      addMessage(frag); return;
+    }
+
+    const top = results[0];
+    const frag = document.createDocumentFragment();
+    frag.appendChild(buildCard(top));
+
+    if (results.length > 1) {
+      const more = document.createElement('p');
+      more.className = 'mt-3 text-xs text-gray-500';
+      more.innerHTML = `Related: `;
+      results.slice(1, 4).forEach(r => {
+        const chip = document.createElement('span');
+        chip.className = 'chip text-xs border border-indigo-300 text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full ml-1 cursor-pointer';
+        chip.textContent = r.title; chip.onclick = () => quickQuery(r.keywords[0]);
+        more.appendChild(chip);
+      });
+      frag.appendChild(more);
+    }
+
+    addMessage(frag);
+  }, 800);
+}
+
+function quickQuery(q) { handleQuery(q); }
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = ''; input.style.height = '';
+  handleQuery(val);
+}
+
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  const chatPage   = document.getElementById('chat-page');
+  const topicsPage = document.getElementById('topics-page');
+  const tabChat    = document.getElementById('tab-chat');
+  const tabTopics  = document.getElementById('tab-topics');
+  if (tab === 'chat') {
+    chatPage.classList.remove('hidden'); chatPage.classList.add('flex');
+    topicsPage.classList.add('hidden');
+    tabChat.className   = 'px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-700 text-white transition';
+    tabTopics.className = 'px-4 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-100 transition';
+  } else {
+    chatPage.classList.add('hidden'); chatPage.classList.remove('flex');
+    topicsPage.classList.remove('hidden');
+    tabTopics.className = 'px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-700 text-white transition';
+    tabChat.className   = 'px-4 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-100 transition';
+  }
+}
+
+// ─── WELCOME ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const frag = document.createDocumentFragment();
+  const t = document.createElement('div');
+  t.innerHTML = `Welcome! I'm <strong>GeoLex</strong> 🏛️🇳🇬 — your Nigerian Survey & Land Law assistant.<br><br>
+    Ask me anything about buying land safely, the Land Use Act, Governor's Consent, SURCON registration, survey plans, or how to spot a fake surveyor. In plain English.`;
+  frag.appendChild(t);
+  frag.appendChild(chips(
+    '📄 What documents do I need to buy land?',
+    '🔍 How do I verify a surveyor is registered?',
+    '📜 What is the Land Use Act?',
+    '✅ What is a Certificate of Occupancy?',
+    '⚠️ What happens without Governor\'s Consent?',
+    '🗺️ What should be on a valid survey plan?',
+    '🚩 How do I spot a fake surveyor?',
+    '🏢 What is SURCON and what do they do?'
+  ));
+  addMessage(frag);
+});
+</script>
+</body>
+</html>
