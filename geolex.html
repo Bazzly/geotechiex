@@ -1168,9 +1168,7 @@ function loadChatHistory() {
 function clearChatHistory() {
   if (!confirm('Clear your full GeoLex chat history? This cannot be undone.')) return;
   localStorage.removeItem(CHAT_STORE);
-  msgContainer.innerHTML = '';
-  updateHistoryBar();
-  showWelcome();
+  location.reload();
 }
 
 function addMessage(content, type = 'bot') {
@@ -1265,11 +1263,38 @@ function buildCard(item) {
 }
 
 function search(query) {
-  const q = query.toLowerCase().trim();
+  const q = query.toLowerCase().trim().replace(/[?!.]+$/, '');
   if (!q) return [];
-  return KB.filter(item =>
-    item.keywords.some(k => q.includes(k) || k.includes(q) || q.split(' ').some(w => w.length > 3 && k.includes(w)))
-  );
+
+  // Words in the query that are meaningful (5+ chars)
+  const qWords = new Set(q.split(/\s+/).filter(w => w.length >= 5));
+
+  const scored = KB.map(item => {
+    let bestScore = 0;
+    for (const k of item.keywords) {
+      let s = 0;
+      if (q === k) {
+        s = 20;                                              // exact match
+      } else if (k.includes(' ') && q.includes(k)) {
+        s = 8;                                              // multi-word keyword found in query
+      } else if (!k.includes(' ') && q.includes(k) && k.length >= 5) {
+        s = 5;                                              // long single-word keyword in query
+      } else if (q.length >= 5 && k.includes(q)) {
+        s = 4;                                              // query found inside keyword
+      } else {
+        // Word-level: count distinct keyword-words that appear in query
+        const kWords = k.split(/\s+/).filter(w => w.length >= 5);
+        const overlap = kWords.filter(w => qWords.has(w)).length;
+        s = overlap * 2;
+      }
+      if (s > bestScore) bestScore = s;
+    }
+    return { item, score: bestScore };
+  })
+    .filter(x => x.score >= 4)
+    .sort((a, b) => b.score - a.score);
+
+  return scored.map(x => x.item);
 }
 
 function handleQuery(query) {
