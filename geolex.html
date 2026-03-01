@@ -173,7 +173,7 @@
           </div>
           <div class="border border-gray-200 rounded-lg p-4">
             <p class="font-bold text-gray-800">🗺️ Registered Survey Plan</p>
-            <p class="text-sm text-gray-700 mt-1">Required for all title documents. Must be prepared by a SURCON-registered surveyor and approved/stamped by the State Surveyor General.</p>
+            <p class="text-sm text-gray-700 mt-1">Required for all title documents. Must be prepared by a SURCON-registered surveyor and approved/stamped a Registered Surveyor.</p>
           </div>
           <div class="border border-gray-200 rounded-lg p-4">
             <p class="font-bold text-gray-800">✅ Governor's Consent Letter</p>
@@ -212,7 +212,7 @@
               <ul class="text-sm text-red-700 space-y-1">
                 <li>• Criminal offence under SURCON Act</li>
                 <li>• Survey plan is legally invalid</li>
-                <li>• Surveyor General won't approve the plan</li>
+                <li>• Registered Surveyor won't approve the plan</li>
                 <li>• Cannot process a C of O</li>
                 <li>• Report to surcon.gov.ng</li>
               </ul>
@@ -243,7 +243,7 @@
               <ul class="text-sm text-gray-700 space-y-2">
                 <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Has a unique <strong>SURCON registration number</strong> (e.g. S2023/XXX)</span></li>
                 <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Uses <strong>"R.Surv."</strong> after their name</span></li>
-                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Survey plans carry their seal, signature, SURCON number, and <strong>Surveyor General's approval stamp</strong></span></li>
+                <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Survey plans carry their seal, signature, SURCON number, and <strong>Registered Surveyor's approval stamp</strong></span></li>
                 <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Plans include a <strong>beaconing certificate</strong></span></li>
                 <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Has a physical office address</span></li>
                 <li class="flex gap-2"><span class="text-green-600 font-bold flex-shrink-0">✓</span><span>Name verifiable on <a href="https://surcon.gov.ng" target="_blank" class="text-indigo-700 underline">surcon.gov.ng</a></span></li>
@@ -254,7 +254,7 @@
               <ul class="text-sm text-gray-700 space-y-2">
                 <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>No SURCON registration number on documents</span></li>
                 <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Cannot produce a registration certificate</span></li>
-                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Survey plan has no Surveyor General's stamp</span></li>
+                <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Survey plan has no Registered Surveyor's stamp</span></li>
                 <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>No beaconing certificate on plan</span></li>
                 <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Demands full payment before any field work</span></li>
                 <li class="flex gap-2"><span class="text-red-600 font-bold flex-shrink-0">✗</span><span>Unusually cheap survey fee</span></li>
@@ -320,11 +320,11 @@ const KB = [
     answer: `Before you pay for any land in Nigeria, confirm all of the following:<br><br>
 <strong>📋 Documents to Request from the Seller:</strong><br>
 1. <strong>Original Title Document</strong> — Certificate of Occupancy (C of O), Registered Deed of Assignment, or Deed of Conveyance for old-scheme land<br>
-2. <strong>Survey Plan</strong> — Prepared by a SURCON-registered surveyor, bearing their SURCON number, seal, AND the Surveyor General's approval stamp<br>
+2. <strong>Survey Plan</strong> — Prepared by a SURCON-registered surveyor, bearing their SURCON number, seal, AND the Registered Surveyor's approval stamp<br>
 3. <strong>Governor's Consent</strong> — Required for every transfer after the original grant (Sec. 22, LUA 1978)<br>
 4. <strong>Tax Clearance / Land Charge Receipt</strong> — Proof that land-use charges are paid<br><br>
 <strong>🔍 How to Verify:</strong><br>
-• Take the survey plan to the State Surveyor General's office to confirm it's genuine and registered<br>
+• Take the survey plan to the State Registered Surveyor's office to confirm it's genuine and registered<br>
 • Search the Land Registry to confirm ownership and check for loans or disputes<br>
 • Verify the surveyor's SURCON number at surcon.gov.ng`,
     steps: [],
@@ -403,15 +403,15 @@ No Nigerian legally "owns" land outright. You own a <strong>Right of Occupancy</
 • The surveyor's full name and <strong>SURCON registration number</strong><br>
 • The surveyor's official seal/rubber stamp<br>
 • The surveyor's signature<br>
-• <strong>The State Surveyor General's approval stamp</strong> (this is the government's authentication)<br>
+• <strong>The State Registered Surveyor's approval stamp</strong> (this is the government's authentication)<br>
 • A <strong>beaconing certificate</strong> — confirming physical concrete pillars/beacons were placed on the land boundaries<br>
 • Date of survey<br>
 • Scale of the plan<br>
 • Coordinates and bearings of boundary lines<br>
 • Name(s) of adjoining land owners<br><br>
-<strong>No Surveyor General's stamp = the plan is not legally approved.</strong>`,
+<strong>No Registered Surveyor's stamp = the plan is not legally approved.</strong>`,
     steps: [],
-    shareMsg: 'A valid Nigerian survey plan MUST have the Surveyor General\'s approval stamp, SURCON number, and a beaconing certificate. Without these, it\'s worthless! 🇳🇬📐',
+    shareMsg: 'A valid Nigerian survey plan MUST have the Registered Surveyor\'s approval stamp, SURCON number, and a beaconing certificate. Without these, it\'s worthless! 🇳🇬📐',
     tools: [{ label: '📐 Try our Survey Plan OCR Extractor', href: 'PlanOcr/index.html' }]
   },
   {
@@ -447,9 +447,9 @@ A fully registered surveyor uses "R.Surv." after their name. Example: <em>Surv. 
 <strong>Step 3 — Contact SURCON to verify</strong><br>
 Visit <a href="https://surcon.gov.ng" target="_blank" class="text-indigo-700 underline">surcon.gov.ng</a> or call SURCON Abuja to confirm the number is active.<br><br>
 <strong>Step 4 — Check the survey plan</strong><br>
-A valid plan must have: SURCON number, surveyor's seal, their signature, <strong>Surveyor General's stamp</strong>, and beaconing certificate.`,
+A valid plan must have: SURCON number, surveyor's seal, their signature, <strong>Registered Surveyor's stamp</strong>, and beaconing certificate.`,
     steps: [],
-    shareMsg: 'Before hiring a surveyor in Nigeria: always check their SURCON registration number at surcon.gov.ng. A plan with no Surveyor General stamp is worthless! 🇳🇬',
+    shareMsg: 'Before hiring a surveyor in Nigeria: always check their SURCON registration number at surcon.gov.ng. A plan with no Registered Surveyor stamp is worthless! 🇳🇬',
     tools: []
   },
   {
@@ -576,7 +576,7 @@ There is no single national fixed rate. Each state's surveying chapter may publi
     answer: `Unregistered surveyors are a serious problem in Nigeria. Their plans are <strong>legally worthless</strong> and cannot be used to process a C of O or any title document. Watch for these red flags:<br><br>
 🚩 <strong>No SURCON number</strong> on their documents or letterhead<br>
 🚩 <strong>Cannot show a SURCON registration certificate</strong> when asked<br>
-🚩 <strong>Survey plan has no Surveyor General's approval stamp</strong><br>
+🚩 <strong>Survey plan has no Registered Surveyor's approval stamp</strong><br>
 🚩 <strong>No beaconing certificate</strong> on the plan<br>
 🚩 <strong>Full payment demanded before field work</strong><br>
 🚩 <strong>No physical office address</strong> — only a phone number<br>
