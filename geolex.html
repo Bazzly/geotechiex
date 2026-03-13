@@ -775,6 +775,60 @@
     </div>
   </footer>
 
+  <!-- ===== BAZZLYLINKS AD MODAL ===== -->
+  <div id="ad-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.75);backdrop-filter:blur(4px);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-[msgIn_0.3s_ease]">
+
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🌐</span>
+          <div>
+            <p class="text-white font-bold text-sm">Powered by Bazzlylinks</p>
+            <p class="text-blue-200 text-xs">Technology & Geospatial Solutions</p>
+          </div>
+        </div>
+        <button onclick="closeAdModal()" class="text-white/70 hover:text-white transition text-xl leading-none" title="Close">&times;</button>
+      </div>
+
+      <!-- Two service cards -->
+      <div class="p-5 space-y-3">
+        <!-- Bazzlylinks IT -->
+        <a href="https://bazzlylinks.com" target="_blank" rel="noopener"
+          class="flex items-start gap-4 border border-blue-100 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 rounded-xl p-4 transition group">
+          <div class="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0 text-white text-lg">💡</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-blue-900 text-sm group-hover:text-blue-700 transition">Bazzlylinks IT Solutions</p>
+            <p class="text-xs text-gray-600 mt-0.5 leading-snug">Transforming Businesses Through Innovation — cutting-edge IT solutions that drive growth and efficiency.</p>
+            <span class="inline-block mt-2 text-xs text-blue-700 font-semibold">Visit bazzlylinks.com →</span>
+          </div>
+        </a>
+
+        <!-- Bazzlylinks Geotech -->
+        <a href="https://bazzlylinks.com/geotech" target="_blank" rel="noopener"
+          class="flex items-start gap-4 border border-indigo-100 hover:border-indigo-400 bg-indigo-50 hover:bg-indigo-100 rounded-xl p-4 transition group">
+          <div class="w-10 h-10 rounded-lg bg-indigo-700 flex items-center justify-center flex-shrink-0 text-white text-lg">🛰️</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-indigo-900 text-sm group-hover:text-indigo-700 transition">Bazzlylinks Geotech Limited</p>
+            <p class="text-xs text-gray-600 mt-0.5 leading-snug">Integrated Geospatial Solutions from Ground to Cloud — your partner for surveying, mapping, and remote sensing.</p>
+            <span class="inline-block mt-2 text-xs text-indigo-700 font-semibold">Visit bazzlylinks.com/geotech →</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-gray-50 border-t border-gray-100 px-5 py-3 flex items-center justify-between">
+        <label class="flex items-center gap-2 text-xs text-gray-500 cursor-pointer select-none">
+          <input type="checkbox" id="ad-no-show" class="rounded accent-indigo-600">
+          Don't show again this session
+        </label>
+        <button onclick="closeAdModal()" class="text-xs bg-indigo-700 hover:bg-indigo-600 active:scale-95 text-white font-semibold px-4 py-2 rounded-lg transition">
+          Continue to GeoLex
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="bg-indigo-700 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg"></div>
 
 <script>
@@ -1589,6 +1643,7 @@ function search(query) {
 function handleQuery(query) {
   if (!query.trim()) return;
   addMessage(query, 'user');
+  maybeShowAd();
 
   // Plan-specific queries — instant answer if a plan is uploaded
   if (planData && handlePlanQuery(query.toLowerCase().trim())) return;
@@ -1677,6 +1732,33 @@ function sendMessage() {
 }
 
 function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+
+// ─── AD MODAL ─────────────────────────────────────────────────────────────────
+const AD_KEY = 'geolex_ad_dismissed';
+let _adShown = false;
+let _msgCount = 0;
+
+function maybeShowAd() {
+  if (_adShown) return;
+  if (sessionStorage.getItem(AD_KEY)) return;
+  _msgCount++;
+  // Show on the 2nd user interaction
+  if (_msgCount < 2) return;
+  _adShown = true;
+  document.getElementById('ad-modal').classList.remove('hidden');
+}
+
+function closeAdModal() {
+  document.getElementById('ad-modal').classList.add('hidden');
+  if (document.getElementById('ad-no-show').checked) {
+    sessionStorage.setItem(AD_KEY, '1');
+  }
+}
+
+// Close modal on backdrop click
+document.getElementById('ad-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeAdModal();
+});
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -2245,5 +2327,11 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+
+    // ── USER COUNTER (once per session) ───────────────────────────────────
+    if (!sessionStorage.getItem('geolex_counted')) {
+      sessionStorage.setItem('geolex_counted', '1');
+      fetch('https://api.counterapi.dev/v1/geotechiex/geolex-users/up').catch(() => {});
+    }
 </body>
 </html>

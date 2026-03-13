@@ -418,6 +418,32 @@
                 </div>
                 <p class="text-gray-600 text-sm mb-5 max-w-2xl">Simple, free chat tools built for everyday Nigerians — covering topics like road laws, rights, and more. We will keep adding useful assistants here over time.</p>
 
+                <!-- ── LIVE STATS BAR ── -->
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-5 mb-6">
+                  <div class="flex items-center gap-2 mb-4">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Live Usage Stats</p>
+                  </div>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="text-center bg-blue-50 border border-blue-100 rounded-xl px-3 py-3">
+                      <div class="text-2xl sm:text-3xl font-extrabold text-blue-700 leading-none mb-1" id="stat-visitors">—</div>
+                      <div class="text-xs text-gray-500">👥 Total Visitors</div>
+                    </div>
+                    <div class="text-center bg-teal-50 border border-teal-100 rounded-xl px-3 py-3">
+                      <div class="text-2xl sm:text-3xl font-extrabold text-teal-700 leading-none mb-1" id="stat-road">—</div>
+                      <div class="text-xs text-gray-500">🚦 Road Offence AI</div>
+                    </div>
+                    <div class="text-center bg-green-50 border border-green-100 rounded-xl px-3 py-3">
+                      <div class="text-2xl sm:text-3xl font-extrabold text-green-700 leading-none mb-1" id="stat-tenant">—</div>
+                      <div class="text-xs text-gray-500">🏠 Tenant Rights AI</div>
+                    </div>
+                    <div class="text-center bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-3">
+                      <div class="text-2xl sm:text-3xl font-extrabold text-indigo-700 leading-none mb-1" id="stat-geolex">—</div>
+                      <div class="text-xs text-gray-500">📐 GeoLex AI</div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Mini Quick Lookup Widget -->
                 <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5 mb-6 shadow-sm">
                     <div class="flex items-center gap-2 mb-3">
@@ -442,6 +468,7 @@
                             <div class="text-3xl sm:text-4xl mb-2">🚦</div>
                             <h4 class="text-lg sm:text-xl font-bold text-white">Road Offence Fine Checker</h4>
                             <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / FRSC</span>
+                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-road">—</span> users</span>
                         </div>
                         <div class="p-4 sm:p-6">
                             <p class="text-gray-600 mb-4 text-sm sm:text-base">Ask about any road traffic offence and instantly get the official FRSC fine — seatbelt, drunk driving, overloading, and more.</p>
@@ -469,6 +496,7 @@
                             <div class="text-3xl sm:text-4xl mb-2">🏠</div>
                             <h4 class="text-lg sm:text-xl font-bold text-white">Tenant Rights Checker</h4>
                             <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / Tenancy Law</span>
+                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-tenant">—</span> users</span>
                         </div>
                         <div class="p-4 sm:p-6">
                             <p class="text-gray-600 mb-4 text-sm sm:text-base">Know your rights as a tenant. Ask about eviction, notice periods, illegal landlord actions, rent advance (Lagos), and security deposits.</p>
@@ -496,6 +524,7 @@
                             <div class="text-3xl sm:text-4xl mb-2">📐</div>
                             <h4 class="text-lg sm:text-xl font-bold text-white">GeoLex — Survey & Land Law</h4>
                             <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / Land Use Act</span>
+                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-geolex">—</span> users</span>
                         </div>
                         <div class="p-4 sm:p-6">
                             <p class="text-gray-600 mb-4 text-sm sm:text-base">Ask about buying land safely, C of O, Governor's Consent, SURCON verification, survey plans, deed of assignment, and the Land Use Act 1978.</p>
@@ -903,6 +932,69 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderVotes();
     });
+
+    // ── LIVE STATS COUNTERS ────────────────────────────────────────────────
+    (function initStats() {
+      const BASE = 'https://api.counterapi.dev/v1/geotechiex';
+
+      function fmt(n) {
+        if (typeof n !== 'number' || isNaN(n)) return '0';
+        if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return n.toString();
+      }
+
+      function animateTo(el, val) {
+        if (!el) return;
+        const target = typeof val === 'number' ? val : parseInt(val) || 0;
+        const start = 0;
+        const duration = 1200;
+        const startTime = performance.now();
+        function step(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = fmt(Math.floor(start + (target - start) * eased));
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      function applyCount(statId, badgeId, count) {
+        animateTo(document.getElementById(statId), count);
+        const badge = document.getElementById(badgeId);
+        if (badge) badge.textContent = fmt(count);
+      }
+
+      // Increment total visit counter once per session
+      const visitKey = 'gtx_visited';
+      const visitEndpoint = sessionStorage.getItem(visitKey)
+        ? BASE + '/visits'
+        : BASE + '/visits/up';
+      sessionStorage.setItem(visitKey, '1');
+
+      fetch(visitEndpoint)
+        .then(r => r.json())
+        .then(d => animateTo(document.getElementById('stat-visitors'), d.count || 0))
+        .catch(() => { const el = document.getElementById('stat-visitors'); if (el) el.textContent = '—'; });
+
+      // Fetch per-AI counts (read-only on landing page; increment happens on each AI page)
+      const aiKeys = [
+        { key: 'road-users',   statId: 'stat-road',   badgeId: 'badge-road' },
+        { key: 'tenant-users', statId: 'stat-tenant',  badgeId: 'badge-tenant' },
+        { key: 'geolex-users', statId: 'stat-geolex',  badgeId: 'badge-geolex' },
+      ];
+      aiKeys.forEach(({ key, statId, badgeId }) => {
+        fetch(BASE + '/' + key)
+          .then(r => r.json())
+          .then(d => applyCount(statId, badgeId, d.count || 0))
+          .catch(() => {
+            const el = document.getElementById(statId);
+            if (el) el.textContent = '0';
+            const b = document.getElementById(badgeId);
+            if (b) b.textContent = '0';
+          });
+      });
+    })();
     </script>
 </body>
 

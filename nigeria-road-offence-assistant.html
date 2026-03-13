@@ -616,5 +616,11 @@ function showToast(msg, isError=false) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
+
+    // ── USER COUNTER (once per session) ───────────────────────────────────
+    if (!sessionStorage.getItem('road_counted')) {
+      sessionStorage.setItem('road_counted', '1');
+      fetch('https://api.counterapi.dev/v1/geotechiex/road-users/up').catch(() => {});
+    }
 </body>
 </html>
