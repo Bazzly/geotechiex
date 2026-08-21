@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Log | GeoTechieX</title>
+  <meta name="description" content="The daily build log: what got built, deployed, broken and fixed, documented in public as GeoTechieX ships geospatial tools, AI assistants, and automation, live on TikTok." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://geotechiex.com/log.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Build Log | GeoTechieX" />
+  <meta property="og:description" content="The daily build log: what got built, deployed, broken and fixed, documented in public." />
+  <meta property="og:image" content="https://geotechiex.com/assets/img/og-image.png" />
+  <meta property="og:url" content="https://geotechiex.com/log.html" />
+  <meta property="og:site_name" content="GeoTechieX" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Build Log | GeoTechieX" />
+  <meta name="twitter:description" content="The daily build log: what got built, deployed, broken and fixed, documented in public." />
+  <meta name="twitter:image" content="https://geotechiex.com/assets/img/og-image.png" />
+
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-ink text-paper font-body antialiased">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 border-b border-line/0 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+      <a href="index.html#top" class="flex items-center gap-2 font-display font-semibold text-lg tracking-tight" aria-label="GeoTechieX home">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Geo<span class="text-accent">Techie</span>X</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-paper/80" aria-label="Primary">
+        <a href="index.html#services" class="hover:text-paper transition-colors">Services</a>
+        <a href="index.html#tools" class="hover:text-paper transition-colors">Live Tools</a>
+        <a href="log.html" class="text-paper">Build Log</a>
+        <a href="charades.html" class="hover:text-paper transition-colors">Charades</a>
+        <a href="index.html#about" class="hover:text-paper transition-colors">About</a>
+        <a href="index.html#faq" class="hover:text-paper transition-colors">FAQ</a>
+      </nav>
+
+      <a href="index.html#contact" class="hidden md:inline-flex items-center gap-2 bg-accent text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-accent/90 transition-colors">
+        Start a Project
+      </a>
+
+      <button id="nav-toggle" class="md:hidden inline-flex flex-col justify-center items-center w-9 h-9 gap-1.5" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+        <span class="block w-6 h-0.5 bg-paper"></span>
+        <span class="block w-6 h-0.5 bg-paper"></span>
+      </button>
+    </div>
+
+    <nav id="mobile-nav" class="md:hidden hidden bg-ink border-t border-line px-5 py-4 flex flex-col gap-4 text-sm font-medium" aria-label="Mobile">
+      <a href="index.html#services" class="py-1">Services</a>
+      <a href="index.html#tools" class="py-1">Live Tools</a>
+      <a href="log.html" class="py-1">Build Log</a>
+      <a href="charades.html" class="py-1">Charades</a>
+      <a href="index.html#about" class="py-1">About</a>
+      <a href="index.html#faq" class="py-1">FAQ</a>
+      <a href="index.html#contact" class="inline-flex justify-center bg-accent text-white font-semibold px-4 py-2 rounded-md mt-1">Start a Project</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pt-40 pb-16 px-5 sm:px-8 border-b border-line">
+      <div class="max-w-5xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs sm:text-sm text-accent mb-6">
+          8+ Years of Experience. Documenting Every Day, Live.
+        </p>
+        <h1 class="font-display font-bold uppercase leading-[0.95] text-5xl sm:text-6xl tracking-tight">
+          The Build Log<span class="text-accent">.</span>
+        </h1>
+        <p class="mt-8 max-w-2xl text-base sm:text-lg text-paper/70 leading-relaxed">
+          Every day of building GeoTechieX gets logged here: what got built, what got deployed, what
+          broke, and what got learned. <span data-log-count>0 days</span> documented so far. No hype, no filler days.
+        </p>
+        <a href="index.html#top" class="mt-8 inline-flex items-center gap-2 text-paper/70 text-sm font-semibold hover:text-paper transition-colors">
+          <span aria-hidden="true">&larr;</span> Back to home
+        </a>
+      </div>
+    </section>
+
+    <section class="py-16 px-5 sm:px-8">
+      <div class="max-w-5xl mx-auto">
+        <div id="log-full" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <p class="text-sm text-paper/50">Loading the log...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-line px-5 sm:px-8 py-12">
+    <div class="max-w-5xl mx-auto flex flex-col gap-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <a href="index.html#top" class="flex items-center gap-2 font-display font-semibold" aria-label="GeoTechieX home">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+          <span>Geo<span class="text-accent">Techie</span>X</span>
+        </a>
+        <p class="font-display uppercase tracking-[0.15em] text-xs text-steel text-center">Build. Deploy. Learn. Repeat.</p>
+        <nav class="flex items-center gap-5 text-xs uppercase tracking-wide text-paper/60" aria-label="Social">
+          <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">TikTok</a>
+          <a href="https://www.youtube.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">YouTube</a>
+          <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">LinkedIn</a>
+          <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">GitHub</a>
+        </nav>
+      </div>
+      <p class="text-xs text-steel text-center sm:text-left">&copy; <span id="year"></span> GeoTechieX. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/log-data.js"></script>
+  <script src="assets/js/log-render.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

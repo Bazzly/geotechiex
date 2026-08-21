@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charades | GeoTechieX</title>
+  <meta name="description" content="A Heads Up-style charades game for surveying and tech words. Act it out, no talking, race the clock. Built for GeoTechieX live streams and community fun." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://geotechiex.com/charades.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Charades | GeoTechieX" />
+  <meta property="og:description" content="Act it out: surveying and tech words, against the clock." />
+  <meta property="og:image" content="https://geotechiex.com/assets/img/og-image.png" />
+  <meta property="og:url" content="https://geotechiex.com/charades.html" />
+  <meta property="og:site_name" content="GeoTechieX" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Charades | GeoTechieX" />
+  <meta name="twitter:description" content="Act it out: surveying and tech words, against the clock." />
+  <meta name="twitter:image" content="https://geotechiex.com/assets/img/og-image.png" />
+
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-ink text-paper font-body antialiased">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 border-b border-line/0 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+      <a href="index.html#top" class="flex items-center gap-2 font-display font-semibold text-lg tracking-tight" aria-label="GeoTechieX home">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Geo<span class="text-accent">Techie</span>X</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-paper/80" aria-label="Primary">
+        <a href="index.html#services" class="hover:text-paper transition-colors">Services</a>
+        <a href="index.html#tools" class="hover:text-paper transition-colors">Live Tools</a>
+        <a href="log.html" class="hover:text-paper transition-colors">Build Log</a>
+        <a href="charades.html" class="text-paper">Charades</a>
+        <a href="index.html#about" class="hover:text-paper transition-colors">About</a>
+        <a href="index.html#faq" class="hover:text-paper transition-colors">FAQ</a>
+      </nav>
+
+      <a href="index.html#contact" class="hidden md:inline-flex items-center gap-2 bg-accent text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-accent/90 transition-colors">
+        Start a Project
+      </a>
+
+      <button id="nav-toggle" class="md:hidden inline-flex flex-col justify-center items-center w-9 h-9 gap-1.5" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+        <span class="block w-6 h-0.5 bg-paper"></span>
+        <span class="block w-6 h-0.5 bg-paper"></span>
+      </button>
+    </div>
+
+    <nav id="mobile-nav" class="md:hidden hidden bg-ink border-t border-line px-5 py-4 flex flex-col gap-4 text-sm font-medium" aria-label="Mobile">
+      <a href="index.html#services" class="py-1">Services</a>
+      <a href="index.html#tools" class="py-1">Live Tools</a>
+      <a href="log.html" class="py-1">Build Log</a>
+      <a href="charades.html" class="py-1">Charades</a>
+      <a href="index.html#about" class="py-1">About</a>
+      <a href="index.html#faq" class="py-1">FAQ</a>
+      <a href="index.html#contact" class="inline-flex justify-center bg-accent text-white font-semibold px-4 py-2 rounded-md mt-1">Start a Project</a>
+    </nav>
+  </header>
+
+  <main class="pt-32 pb-24 px-5 sm:px-8 min-h-screen">
+    <div class="max-w-2xl mx-auto">
+
+      <!-- Setup screen -->
+      <section id="screen-setup">
+        <p class="font-display uppercase tracking-[0.2em] text-xs sm:text-sm text-accent mb-4 text-center">A Heads Up-Style Game</p>
+        <h1 class="font-display font-bold uppercase leading-[0.95] text-4xl sm:text-6xl tracking-tight text-center">
+          GeoTechie<span class="text-accent">X</span> Charades
+        </h1>
+        <p class="mt-6 text-paper/70 text-center max-w-lg mx-auto leading-relaxed">
+          One player acts it out, no talking, no spelling. Everyone else guesses. Tap
+          <span class="text-paper font-semibold">Got It</span> when they nail it, or
+          <span class="text-paper font-semibold">Skip</span> to move on. Score as many as you can
+          before the clock runs out.
+        </p>
+
+        <div class="mt-12">
+          <p class="text-xs uppercase tracking-wide text-steel mb-3 text-center">Category</p>
+          <div class="grid sm:grid-cols-3 gap-3">
+            <button type="button" data-category="surveying" class="category-btn text-left border border-paper/20 rounded-lg p-4 hover:border-paper/50 transition-colors">
+              <span class="block font-display font-semibold">Surveying</span>
+              <span class="block text-xs text-paper/60 mt-1">Instruments, fieldwork, plans.</span>
+            </button>
+            <button type="button" data-category="tech" class="category-btn text-left border border-paper/20 rounded-lg p-4 hover:border-paper/50 transition-colors">
+              <span class="block font-display font-semibold">Tech</span>
+              <span class="block text-xs text-paper/60 mt-1">Code, deploys, dev life.</span>
+            </button>
+            <button type="button" data-category="mixed" class="category-btn text-left border border-paper/20 rounded-lg p-4 hover:border-paper/50 transition-colors">
+              <span class="block font-display font-semibold">Mixed</span>
+              <span class="block text-xs text-paper/60 mt-1">All of GeoTechieX at once.</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <p class="text-xs uppercase tracking-wide text-steel mb-3 text-center">Round length</p>
+          <div class="flex justify-center gap-3">
+            <button type="button" data-duration="30" class="duration-btn border border-paper/20 rounded-md px-5 py-2 text-sm font-semibold hover:border-paper/50 transition-colors">30s</button>
+            <button type="button" data-duration="60" class="duration-btn border border-paper/20 rounded-md px-5 py-2 text-sm font-semibold hover:border-paper/50 transition-colors">60s</button>
+            <button type="button" data-duration="90" class="duration-btn border border-paper/20 rounded-md px-5 py-2 text-sm font-semibold hover:border-paper/50 transition-colors">90s</button>
+          </div>
+        </div>
+
+        <button id="start-game" type="button" class="w-full mt-10 bg-accent text-white font-display font-semibold uppercase tracking-wide text-lg px-6 py-4 rounded-md hover:bg-accent/90 transition-colors">
+          Start Game
+        </button>
+      </section>
+
+      <!-- Play screen -->
+      <section id="screen-play" class="hidden text-center">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-paper/60">Score: <span id="score-count" class="text-paper font-semibold">0</span></p>
+          <p id="timer-display" class="font-display font-bold text-3xl text-paper">60</p>
+        </div>
+
+        <div class="mt-10 min-h-[280px] border border-line rounded-2xl flex items-center justify-center px-6 py-16">
+          <p id="current-word" class="font-display font-bold uppercase text-4xl sm:text-6xl leading-tight break-words"></p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 gap-4">
+          <button id="skip-word" type="button" class="border border-paper/25 text-paper font-display font-semibold uppercase tracking-wide px-6 py-4 rounded-md hover:border-paper/60 transition-colors">
+            Skip
+          </button>
+          <button id="got-it" type="button" class="bg-accent text-white font-display font-semibold uppercase tracking-wide px-6 py-4 rounded-md hover:bg-accent/90 transition-colors">
+            Got It!
+          </button>
+        </div>
+
+        <p class="mt-6 text-xs text-steel">Space / Enter = Got It &middot; Backspace / S = Skip</p>
+
+        <button id="end-early" type="button" class="mt-6 text-sm text-paper/50 hover:text-paper transition-colors">
+          End round early
+        </button>
+      </section>
+
+      <!-- Results screen -->
+      <section id="screen-results" class="hidden text-center">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Time's Up</p>
+        <p id="final-score" class="font-display font-bold text-7xl sm:text-8xl">0</p>
+        <p class="text-paper/60 mt-2">words guessed</p>
+
+        <div class="mt-10 grid sm:grid-cols-2 gap-6 text-left">
+          <div class="border border-line rounded-lg p-5">
+            <p class="text-xs uppercase tracking-wide text-accent mb-3">Got It</p>
+            <ul id="correct-list" class="space-y-1.5 text-sm"></ul>
+          </div>
+          <div class="border border-line rounded-lg p-5">
+            <p class="text-xs uppercase tracking-wide text-steel mb-3">Skipped</p>
+            <ul id="skipped-list" class="space-y-1.5 text-sm"></ul>
+          </div>
+        </div>
+
+        <div class="mt-10 flex flex-col sm:flex-row gap-4">
+          <button id="play-again" type="button" class="flex-1 bg-accent text-white font-display font-semibold uppercase tracking-wide px-6 py-4 rounded-md hover:bg-accent/90 transition-colors">
+            Play Again
+          </button>
+          <button id="change-category" type="button" class="flex-1 border border-paper/25 text-paper font-display font-semibold uppercase tracking-wide px-6 py-4 rounded-md hover:border-paper/60 transition-colors">
+            Change Category
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-line px-5 sm:px-8 py-12">
+    <div class="max-w-5xl mx-auto flex flex-col gap-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <a href="index.html#top" class="flex items-center gap-2 font-display font-semibold" aria-label="GeoTechieX home">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+          <span>Geo<span class="text-accent">Techie</span>X</span>
+        </a>
+        <p class="font-display uppercase tracking-[0.15em] text-xs text-steel text-center">Build. Deploy. Learn. Repeat.</p>
+        <nav class="flex items-center gap-5 text-xs uppercase tracking-wide text-paper/60" aria-label="Social">
+          <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">TikTok</a>
+          <a href="https://www.youtube.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">YouTube</a>
+          <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">LinkedIn</a>
+          <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">GitHub</a>
+        </nav>
+      </div>
+      <p class="text-xs text-steel text-center sm:text-left">&copy; <span id="year"></span> GeoTechieX. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/charades-words.js"></script>
+  <script src="assets/js/charades.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

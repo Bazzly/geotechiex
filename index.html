@@ -1,1001 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Explore the intersection of geospatial technology and web development with GeoTechieX.">
-    <!-- Set this meta when deploying to change API base, leave empty to use same origin + /api -->
-    <meta name="api-base" content="">
-    <meta name="google-site-verification" content="xpH_xpr4t3xGt67BHzKOuXOdwZd0LNTz7wuBeLbBup4" />
-    <title>GeoTechieX | Geospatial Tech & Web Programming</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in { animation: fadeIn 0.6s ease-out; }
-        .hover-lift { transition: transform 0.3s ease; }
-        .hover-lift:hover { transform: translateY(-5px); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoTechieX | Registered Surveyor &amp; Geospatial Developer</title>
+  <meta name="description" content="8+ years of experience as a registered surveyor, DevOps engineer, and web/geospatial developer. I build open-source geospatial tools, AI assistants, and automation, live in public on TikTok. Let's build something real." />
+  <meta name="keywords" content="registered surveyor, land surveying, geospatial developer, GIS tools, AI assistant developer, web developer, devops engineer, automation, open source, live coding, TikTok developer" />
+  <meta name="author" content="GeoTechieX" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://geotechiex.com/" />
 
-        /* Floating share button */
-        #float-share { position: fixed; bottom: 24px; right: 24px; z-index: 999; }
-        #float-share-btn {
-            width: 56px; height: 56px; border-radius: 50%;
-            background: #25D366; color: white; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; box-shadow: 0 4px 16px rgba(37,211,102,0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        #float-share-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(37,211,102,0.6); }
-        #float-share-menu {
-            position: absolute; bottom: 68px; right: 0;
-            background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            padding: 8px; min-width: 200px; display: none; flex-direction: column; gap: 4px;
-        }
-        #float-share-menu.open { display: flex; }
-        .share-menu-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-            border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;
-            color: #1f2937; transition: background 0.15s; cursor: pointer; border: none; width: 100%; background: transparent;
-        }
-        .share-menu-item:hover { background: #f3f4f6; }
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="GeoTechieX | Registered Surveyor &amp; Geospatial Developer" />
+  <meta property="og:description" content="Registered surveyor, DevOps engineer, and web/geospatial developer. Open-source geospatial tools, AI assistants, and automation, built live in public on TikTok." />
+  <meta property="og:image" content="https://geotechiex.com/assets/img/og-image.png" />
+  <meta property="og:url" content="https://geotechiex.com/" />
+  <meta property="og:site_name" content="GeoTechieX" />
 
-        /* Vote poll bars */
-        .vote-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
-        .vote-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#0d9488,#06b6d4); transition: width 0.6s ease; }
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GeoTechieX | Registered Surveyor &amp; Geospatial Developer" />
+  <meta name="twitter:description" content="Registered surveyor, DevOps engineer, and web/geospatial developer, building live in public on TikTok." />
+  <meta name="twitter:image" content="https://geotechiex.com/assets/img/og-image.png" />
 
-        /* Lookup result pop */
-        #quick-lookup-result { animation: countUp 0.3s ease; }
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
 
-        /* Live dot */
-        .live-dot {
-            display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-            background: #22c55e; position: relative;
-        }
-        .live-dot::after {
-            content: ''; position: absolute; inset: -3px; border-radius: 50%;
-            background: rgba(34,197,94,0.4); animation: pulse-ring 1.5s ease-out infinite;
-        }
-    </style>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind (CDN, config inline) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "GeoTechieX",
+    "description": "Registered surveyor, DevOps engineer, and web/geospatial developer with 8+ years of experience. Open-source geospatial (GIS) tools, AI assistants, web development, and automation, built live in public on TikTok.",
+    "url": "https://geotechiex.com/",
+    "image": "https://geotechiex.com/assets/img/og-image.png",
+    "priceRange": "$$",
+    "areaServed": "Worldwide",
+    "sameAs": [
+      "https://www.tiktok.com/@GeotechieX",
+      "https://www.youtube.com/@GeotechieX",
+      "https://www.linkedin.com/in/bazzlycodes/",
+      "https://github.com/Bazzly/geotechiex"
+    ],
+    "makesOffer": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Land Surveying & GIS Tools" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Assistants" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web Development" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Automation & DevOps" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Live Build Sessions" } }
+    ]
+  }
+  </script>
 </head>
+<body class="bg-ink text-paper font-body antialiased">
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900">
+  <div class="grain" aria-hidden="true"></div>
 
-    <!-- Banner removed per request: we no longer surface a missing-files message -->
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 border-b border-line/0 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+      <a href="#top" class="flex items-center gap-2 font-display font-semibold text-lg tracking-tight" aria-label="GeoTechieX home">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Geo<span class="text-accent">Techie</span>X</span>
+      </a>
 
-    <style>
-    /* simple style for disabled/missing tool links */
-    a.missing-link{ pointer-events: none; opacity: 0.5; cursor: not-allowed; }
-    </style>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-paper/80" aria-label="Primary">
+        <a href="#services" class="hover:text-paper transition-colors">Services</a>
+        <a href="#tools" class="hover:text-paper transition-colors">Live Tools</a>
+        <a href="#log" class="hover:text-paper transition-colors">Build Log</a>
+        <a href="charades.html" class="hover:text-paper transition-colors">Charades</a>
+        <a href="#about" class="hover:text-paper transition-colors">About</a>
+        <a href="#faq" class="hover:text-paper transition-colors">FAQ</a>
+      </nav>
 
-    <script>
-    (function(){
-        // Remove any tool cards whose linked .html page is missing locally.
-        async function removeMissingTools(){
-            try{
-                const anchors = Array.from(document.querySelectorAll('a[href$=".html"]'));
-                if(!anchors.length) return;
-                let removedAny = false;
-                await Promise.all(anchors.map(async a=>{
-                    const href = a.getAttribute('href');
-                    if(!href) return;
-                    // only check relative links (skip external and anchors)
-                    if(href.startsWith('http') || href.startsWith('#')) return;
-                    try{
-                        const res = await fetch(href, { method: 'HEAD' });
-                        if(!res.ok) throw new Error('Not found');
-                    }catch(e){
-                        // find a sensible parent card and remove it
-                        let card = a.closest('.bg-white') || a.closest('.rounded-xl') || a.closest('[class*="shadow"]') || a.closest('div');
-                        if(card && card.parentElement){
-                            card.remove();
-                            removedAny = true;
-                        } else {
-                            a.remove();
-                            removedAny = true;
-                        }
-                    }
-                }));
-                if(removedAny){
-                    console.log('Removed missing tool cards');
-                }
-            }catch(err){
-                console.warn('Removing missing tools failed', err);
-            }
-        }
-        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', removeMissingTools); else removeMissingTools();
-    })();
-    </script>
+      <a href="#contact" class="hidden md:inline-flex items-center gap-2 bg-accent text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-accent/90 transition-colors">
+        Start a Project
+      </a>
 
-    <!-- Header with Navigation -->
-    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-800 text-white shadow-2xl sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center space-x-2 hover:opacity-80 transition">
-                    <span class="text-2xl">🌍</span>
-                    <h1 class="text-xl sm:text-2xl font-bold">GeoTechieX</h1>
-                </a>
-                
-                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                
-                <nav id="desktop-menu" class="hidden md:flex items-center space-x-2">
-                    <a href="index.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
-                    <a href="chat.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">GeoAI Chat</a>
-                    <a href="help.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Help</a>
-                    <a href="#services" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Services</a>
-                    <a href="#projects" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
-                    <a href="#contact" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
-                    <a href="alli-bazeet-damola-profile.html" class="hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
-                </nav>
-            </div>
-            
-            <!-- Mobile Menu Dropdown -->
-            <nav id="mobile-menu-dropdown" class="hidden md:hidden pb-4 space-y-2">
-                <a href="index.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Home</a>
-                <a href="chat.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">GeoAI Chat</a>
-                <a href="help.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Help</a>
-                <a href="#services" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Services</a>
-                <a href="#projects" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Projects</a>
-                <a href="#contact" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Contact</a>
-                <a href="alli-bazeet-damola-profile.html" class="block hover:bg-white/10 px-3 py-2 rounded-lg transition">Profile</a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section (Redesigned for Live Builds) -->
-    <section class="relative bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-700 text-white py-16 sm:py-24 overflow-hidden">
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div class="text-center lg:text-left">
-                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">GeoTechieX — Live GeoDeveloper Builds</h1>
-                    <p class="text-base sm:text-lg text-blue-100 mb-6 max-w-2xl">
-                        Building open-source geospatial tools live on TikTok. Watch the stream, suggest features, and contribute code — together we'll shape practical GIS tools for everyone.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-3 justify-center lg:justify-start">
-                        <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener" class="inline-block bg-white text-indigo-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold shadow-md transition">Watch Live on TikTok</a>
-                        <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener" class="inline-block bg-transparent ring-1 ring-white/30 hover:ring-white px-6 py-3 rounded-lg font-semibold">Contribute on GitHub</a>
-                    </div>
-
-                    <p class="text-sm text-blue-100 mt-4 max-w-2xl">Prefer to contribute during or after the stream? Open an issue or PR using the templates in this repo — small focused changes are easiest to review live.</p>
-                </div>
-
-                <div class="mx-auto lg:mx-0 w-full max-w-md bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-lg">
-                    <h3 class="text-white text-lg font-semibold mb-3">Repository Snapshot</h3>
-                    <div id="github-stats" class="text-sm text-blue-50 space-y-2">
-                        <p>Loading repository data…</p>
-                    </div>
-                    <div class="mt-4 text-xs text-blue-100">Data from GitHub API (read-only)</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Live Builds / Contribute Section -->
-    <section class="py-10 bg-gradient-to-br from-white/5 to-white/3">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Live Builds — How to Participate</h2>
-            <p class="text-gray-700 max-w-3xl mx-auto mb-6">During streams we'll pick a small feature to implement. Viewers can suggest ideas, test previews, and open PRs after the session. Use the issue templates to make your contribution actionable.</p>
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="README.md" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold">See the Live Build Plan</a>
-                <a href="CONTRIBUTING.md" class="inline-block bg-white ring-1 ring-blue-600 text-blue-600 px-5 py-3 rounded-lg font-semibold">How to Contribute</a>
-            </div>
-        </div>
-    </section>
-
-    <script>
-    (function(){
-        // Styled GitHub widget with caching to reduce API calls
-        const target = document.getElementById('github-stats');
-        if(!target) return;
-        const owner = 'Bazzly';
-        const repo = 'geotechiex';
-        const repoApi = `https://api.github.com/repos/${owner}/${repo}`;
-        const cacheKey = 'geotechiex_github_cache_v1';
-        const cacheTTL = 10 * 60 * 1000; // 10 minutes
-
-        function formatNumber(n){ return new Intl.NumberFormat().format(n || 0); }
-        function t(date){ try{ return new Date(date).toLocaleString(); }catch(e){ return date; } }
-
-        async function fetchRepo(){
-            // Allow optional GitHub token via meta[name="github-token"] for higher rate limit
-            const meta = document.querySelector('meta[name="github-token"]');
-            const headers = { 'Accept': 'application/vnd.github.v3+json' };
-            if(meta && meta.content) headers['Authorization'] = 'token ' + meta.content;
-            const r = await fetch(repoApi, { headers });
-            if(!r.ok) throw new Error('GitHub API error: ' + r.status);
-            return await r.json();
-        }
-
-        function render(data, fromCache=false){
-            const pushed = data.pushed_at || data.updated_at || data.created_at || '';
-            target.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <img src="${data.owner && data.owner.avatar_url}" alt="owner" class="w-12 h-12 rounded-full ring-2 ring-white/30" />
-                    <div class="flex-1">
-                        <a href="${data.html_url}" target="_blank" rel="noopener" class="font-semibold text-white text-sm">${data.full_name}</a>
-                        <div class="text-xs text-blue-100">${data.description || ''}</div>
-                    </div>
-                    <div class="text-xs text-blue-100">${fromCache ? 'cached' : 'live'}</div>
-                </div>
-                <div class="grid grid-cols-2 gap-2 mt-3">
-                    <div class="p-3 rounded bg-white/10 text-center">
-                        <div class="text-xs">⭐ Stars</div>
-                        <div class="text-lg font-bold">${formatNumber(data.stargazers_count)}</div>
-                    </div>
-                    <div class="p-3 rounded bg-white/10 text-center">
-                        <div class="text-xs">🍴 Forks</div>
-                        <div class="text-lg font-bold">${formatNumber(data.forks_count)}</div>
-                    </div>
-                    <div class="p-3 rounded bg-white/10 text-center">
-                        <div class="text-xs">🐞 Open Issues</div>
-                        <div class="text-lg font-bold">${formatNumber(data.open_issues_count)}</div>
-                    </div>
-                    <div class="p-3 rounded bg-white/10 text-center">
-                        <div class="text-xs">🕒 Last Push</div>
-                        <div class="text-xs">${pushed ? t(pushed) : 'n/a'}</div>
-                    </div>
-                </div>
-                <div class="mt-3 flex gap-2">
-                    <a href="https://github.com/${owner}/${repo}" target="_blank" rel="noopener" class="flex-1 bg-white text-indigo-600 py-2 rounded font-semibold text-sm text-center">View on GitHub</a>
-                    <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener" class="flex-1 bg-transparent ring-1 ring-white/20 text-white py-2 rounded font-semibold text-sm text-center">Watch Live</a>
-                </div>
-            `;
-        }
-
-        async function init(){
-            try{
-                // try cache first
-                const raw = localStorage.getItem(cacheKey);
-                if(raw){
-                    try{
-                        const parsed = JSON.parse(raw);
-                        if(parsed && parsed.ts && (Date.now() - parsed.ts) < cacheTTL && parsed.data){
-                            render(parsed.data, true);
-                        }
-                    }catch(e){ /* ignore parse errors */ }
-                }
-
-                // Fetch fresh data in background and update cache
-                try{
-                    const data = await fetchRepo();
-                    render(data, false);
-                    try{ localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); }catch(e){ /* ignore storage errors */ }
-                }catch(fetchErr){
-                    // If fetch fails and we already displayed cache, keep it; otherwise show error
-                    if(!raw){
-                        target.innerHTML = `<p class="text-sm text-yellow-100">Could not fetch GitHub data — network or rate limit.</p>`;
-                    }
-                    console.warn('GitHub widget fetch failed', fetchErr);
-                }
-            }catch(err){
-                console.warn('GitHub widget init failed', err);
-            }
-        }
-
-        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-    })();
-    </script>
-
-    <!-- Services Section -->
-    <section id="services" class="py-12 sm:py-20">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800">Our Core Services</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-blue-500">
-                    <div class="text-4xl sm:text-5xl mb-4">🗺️</div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Geospatial Technology</h3>
-                    <p class="text-gray-600 text-sm sm:text-base">Explore cutting-edge geospatial solutions like GIS, mapping, and spatial data analysis for real-world applications.</p>
-                </div>
-                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-purple-500">
-                    <div class="text-4xl sm:text-5xl mb-4">💻</div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Web Development</h3>
-                    <p class="text-gray-600 text-sm sm:text-base">Stay updated on the latest trends in web development, including HTML, CSS, JavaScript, and modern frameworks.</p>
-                </div>
-                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-green-500">
-                    <div class="text-4xl sm:text-5xl mb-4">🔧</div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Automation & Tools</h3>
-                    <p class="text-gray-600 text-sm sm:text-base">Learn how to automate workflows, integrate APIs, and create dynamic web applications with geospatial data.</p>
-                </div>
-                <div class="bg-white p-6 sm:p-8 shadow-xl rounded-xl hover-lift border-t-4 border-teal-500">
-                    <div class="text-4xl sm:text-5xl mb-4">💬</div>
-                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Public Interest Chat Assistants</h3>
-                    <p class="text-gray-600 text-sm sm:text-base">Simple AI-powered chat assistants built for everyday public use — answering common questions, guiding users, and making information accessible to everyone.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section - split into AI Tools and Other Tools -->
-    <section id="projects" class="py-12 sm:py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 text-gray-800">Interactive Geospatial Tools</h2>
-            <p class="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
-                Choose from intelligent AI-driven assistants or traditional geospatial tools
-            </p>
-
-            <!-- AI Tools -->
-            <div class="mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">🤖 Top Tools</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                    <!-- Area Delineation AI -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-green-600 to-emerald-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🎯</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Area Delineation AI</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Use an AI assistant to analyze coordinates and classify areas (Prime, Special Prime, General).</p>
-                            <a href="areadelAi.html" class="block bg-green-600 hover:bg-green-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Launch AI Assistant
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- GeoAI Chat -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🤖</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">GeoAI Chat</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Chat-based geospatial assistant. Create polygons, transform coordinates, calculate areas, and more using conversational commands.</p>
-                            <a href="chat.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Open Chat
-                            </a>
-                        </div>
-                    </div>
-
-                        <!-- Existing user confirmation modal -->
-                        <div id="existing-user-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
-                            <div class="absolute inset-0 bg-black/50"></div>
-                            <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 z-10">
-                                <h3 class="text-xl font-bold mb-2">Welcome back</h3>
-                                <p class="text-sm text-gray-600 mb-4">We found an account for this email. Current usage summary:</p>
-                                <div class="mb-4">
-                                    <div class="text-gray-700">Credits available: <span id="existing-credits" class="font-semibold">0</span></div>
-                                    <div class="text-gray-700">Free uses: <span id="existing-usage" class="font-semibold">0</span></div>
-                                </div>
-                                <div class="flex gap-2 justify-end">
-                                    <button id="existing-cancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                                    <button id="existing-continue" class="px-4 py-2 bg-blue-600 text-white rounded">Continue to tool</button>
-                                </div>
-                            </div>
-                        </div>
-
-                                   <!-- Survey Fee Estimator -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Fee Estimator</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Calculate professional survey fees based on area and complexity.</p>
-                            <a href="valuemap/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                                Estimate Fees
-                            </a>
-                        </div>
-                    </div>
-
-                              <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">💰</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Survey Plan Extractor (OCR)</h4>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Extract survey plan details using Optical Character Recognition (OCR) technology. and interact with your data seamlessly.</p>
-                            <a href="PlanOcr/index.html" class="block bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base">
-                               Survey Plan Extractor(OCR)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Public Interest Chat Assistants -->
-            <div>
-                <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-2">
-                    <h3 class="text-2xl font-bold text-gray-800">💬 Public Interest Chat Assistants</h3>
-                    <span class="flex items-center gap-2 text-sm text-teal-700 font-medium bg-teal-50 border border-teal-200 rounded-full px-4 py-1 w-fit">
-                        <span class="live-dot"></span> More assistants added regularly
-                    </span>
-                </div>
-                <p class="text-gray-600 text-sm mb-5 max-w-2xl">Simple, free chat tools built for everyday Nigerians — covering topics like road laws, rights, and more. We will keep adding useful assistants here over time.</p>
-
-                <!-- ── LIVE STATS BAR ── -->
-                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-5 mb-6">
-                  <div class="flex items-center gap-2 mb-4">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Live Usage Stats</p>
-                  </div>
-                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="text-center bg-blue-50 border border-blue-100 rounded-xl px-3 py-3">
-                      <div class="text-2xl sm:text-3xl font-extrabold text-blue-700 leading-none mb-1" id="stat-visitors">—</div>
-                      <div class="text-xs text-gray-500">👥 Total Visitors</div>
-                    </div>
-                    <div class="text-center bg-teal-50 border border-teal-100 rounded-xl px-3 py-3">
-                      <div class="text-2xl sm:text-3xl font-extrabold text-teal-700 leading-none mb-1" id="stat-road">—</div>
-                      <div class="text-xs text-gray-500">🚦 Road Offence AI</div>
-                    </div>
-                    <div class="text-center bg-green-50 border border-green-100 rounded-xl px-3 py-3">
-                      <div class="text-2xl sm:text-3xl font-extrabold text-green-700 leading-none mb-1" id="stat-tenant">—</div>
-                      <div class="text-xs text-gray-500">🏠 Tenant Rights AI</div>
-                    </div>
-                    <div class="text-center bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-3">
-                      <div class="text-2xl sm:text-3xl font-extrabold text-indigo-700 leading-none mb-1" id="stat-geolex">—</div>
-                      <div class="text-xs text-gray-500">📐 GeoLex AI</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Mini Quick Lookup Widget -->
-                <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5 mb-6 shadow-sm">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="text-lg">⚡</span>
-                        <h4 class="font-bold text-gray-800 text-sm sm:text-base">Try it now — Quick FRSC Fine Lookup</h4>
-                        <span class="text-xs bg-teal-600 text-white px-2 py-0.5 rounded-full ml-auto hidden sm:inline">Live Preview</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <input id="quick-lookup-input" type="text"
-                            placeholder="e.g. seatbelt, drunk driving, overloading..."
-                            class="flex-1 border border-teal-300 bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
-                            onkeydown="if(event.key==='Enter') quickLookup()">
-                        <button onclick="quickLookup()" class="bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-semibold transition whitespace-nowrap">Check Fine</button>
-                    </div>
-                    <div id="quick-lookup-result" class="mt-3 hidden"></div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                    <!-- Nigeria Road Offence Fine Checker -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🚦</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Road Offence Fine Checker</h4>
-                            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / FRSC</span>
-                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-road">—</span> users</span>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Ask about any road traffic offence and instantly get the official FRSC fine — seatbelt, drunk driving, overloading, and more.</p>
-                            <a href="nigeria-road-offence-assistant.html" class="block bg-teal-600 hover:bg-teal-700 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base mb-3">
-                                Check Road Fines
-                            </a>
-                            <div class="flex gap-2">
-                                <a id="frsc-wa-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                    Share
-                                </a>
-                                <a id="frsc-tw-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                    Post
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tenant Rights Checker — NEW LIVE -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-green-700 to-emerald-600 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">🏠</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">Tenant Rights Checker</h4>
-                            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / Tenancy Law</span>
-                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-tenant">—</span> users</span>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Know your rights as a tenant. Ask about eviction, notice periods, illegal landlord actions, rent advance (Lagos), and security deposits.</p>
-                            <a href="tenant-rights-checker.html" class="block bg-green-700 hover:bg-green-600 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base mb-3">
-                                Check Tenant Rights
-                            </a>
-                            <div class="flex gap-2">
-                                <a id="tenant-wa-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                    Share
-                                </a>
-                                <a id="tenant-tw-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                    Post
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GeoLex — Survey & Land Law -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200">
-                        <div class="bg-gradient-to-r from-indigo-700 to-blue-600 p-4 sm:p-6">
-                            <div class="text-3xl sm:text-4xl mb-2">📐</div>
-                            <h4 class="text-lg sm:text-xl font-bold text-white">GeoLex — Survey & Land Law</h4>
-                            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Nigeria / Land Use Act</span>
-                            <span class="text-xs bg-white/10 text-white/80 px-2 py-0.5 rounded-full mt-1 inline-block ml-1">👤 <span id="badge-geolex">—</span> users</span>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <p class="text-gray-600 mb-4 text-sm sm:text-base">Ask about buying land safely, C of O, Governor's Consent, SURCON verification, survey plans, deed of assignment, and the Land Use Act 1978.</p>
-                            <a href="geolex.html" class="block bg-indigo-700 hover:bg-indigo-600 text-white text-center py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base mb-3">
-                                Ask GeoLex
-                            </a>
-                            <div class="flex gap-2">
-                                <a id="geolex-wa-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                    Share
-                                </a>
-                                <a id="geolex-tw-share" href="#" target="_blank" rel="noopener"
-                                    class="flex-1 flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2 rounded-lg transition">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                    Post
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- View All / More Coming -->
-                    <div class="bg-white rounded-xl shadow-lg border border-dashed border-teal-300 p-6 flex flex-col items-center justify-center text-center hover-lift">
-                        <div class="text-4xl mb-3">🔜</div>
-                        <h4 class="text-base font-bold text-gray-700 mb-2">More Assistants Coming</h4>
-                        <p class="text-sm text-gray-500 mb-4">Consumer rights, traffic court guide, government permits, and more — added one by one, built live on the stream.</p>
-                        <a href="nigeria-law-hub.html"
-                            class="block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm mb-2">
-                            View All Assistants →
-                        </a>
-                        <a href="https://github.com/Bazzly/geotechiex/issues" target="_blank" rel="noopener"
-                            class="text-xs text-teal-600 hover:underline">Suggest a topic on GitHub</a>
-                    </div>
-                </div>
-
-                <!-- Vote Poll -->
-                <div class="mt-8 bg-white rounded-xl shadow border border-purple-100 p-6">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">🗳️</span>
-                            <h4 class="font-bold text-gray-800">What should we build next?</h4>
-                        </div>
-                        <span class="text-xs text-purple-600 font-semibold bg-purple-50 border border-purple-200 px-3 py-1 rounded-full w-fit">Community Vote</span>
-                    </div>
-                    <p class="text-sm text-gray-500 mb-5">Top-voted topics get built first on the livestream. Vote and share your pick!</p>
-                    <div id="vote-options" class="space-y-3"></div>
-                    <div id="vote-share-row" class="hidden mt-5 flex flex-wrap gap-3 items-center">
-                        <span class="text-sm text-gray-600 font-medium">Share your vote:</span>
-                        <a id="vote-wa-btn" href="#" target="_blank" rel="noopener"
-                            class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                            WhatsApp
-                        </a>
-                        <a id="vote-tw-btn" href="#" target="_blank" rel="noopener"
-                            class="inline-flex items-center gap-2 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                            Post on X
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-12 sm:py-20 bg-gray-900 text-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-3">Connect with GeoTechieX</h2>
-            <p class="text-center text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-8">
-                Follow the journey — watch live builds, suggest tools, and share with friends who need these resources.
-            </p>
-
-            <!-- Social links grid -->
-            <div class="flex flex-wrap justify-center gap-4 sm:gap-5 mb-10">
-                <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener"
-                    class="flex items-center gap-3 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
-                    <span class="text-2xl">🎵</span>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">TikTok</div>
-                        <div class="text-xs text-pink-200">Watch live builds</div>
-                    </div>
-                </a>
-                <a href="https://www.youtube.com/@GeotechieX" target="_blank" rel="noopener"
-                    class="flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
-                    <span class="text-2xl">📺</span>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">YouTube</div>
-                        <div class="text-xs text-red-200">Tutorials & replays</div>
-                    </div>
-                </a>
-                <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" rel="noopener"
-                    class="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
-                    <span class="text-2xl">💼</span>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">LinkedIn</div>
-                        <div class="text-xs text-blue-200">Professional updates</div>
-                    </div>
-                </a>
-                <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener"
-                    class="flex items-center gap-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 px-5 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
-                    <span class="text-2xl">🐙</span>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">GitHub</div>
-                        <div class="text-xs text-gray-300">Contribute & star</div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Share this site CTA -->
-            <div class="max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
-                <p class="text-white font-bold text-lg mb-1">Know someone who needs these tools?</p>
-                <p class="text-gray-400 text-sm mb-5">Share GeoTechieX with friends, colleagues, or your WhatsApp group.</p>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <button onclick="shareSite('whatsapp')"
-                        class="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white font-semibold px-5 py-2.5 rounded-lg transition">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        Share on WhatsApp
-                    </button>
-                    <button onclick="shareSite('twitter')"
-                        class="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold px-5 py-2.5 rounded-lg transition">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        Post on X / Twitter
-                    </button>
-                    <button onclick="shareSite('copy')" id="copy-link-btn"
-                        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-lg transition">
-                        🔗 Copy Link
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-300 py-8 border-t border-gray-700">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-6">
-                <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">GeoTechieX</h3>
-                <p class="text-sm sm:text-base">Explore. Innovate. Elevate with Geospatial Technology.</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-4 mb-6 text-xs sm:text-sm">
-                <a href="index.html" class="hover:text-blue-400 transition">Home</a>
-                <span>•</span>
-                <a href="#services" class="hover:text-blue-400 transition">Services</a>
-                <span>•</span>
-                <a href="#projects" class="hover:text-blue-400 transition">Projects</a>
-                <span>•</span>
-                <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
-            </div>
-            <div class="text-center text-xs sm:text-sm text-gray-500">
-                <p>© 2025 GeoTechieX. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Promo modal and server-sync removed for fresh live builds; no backend calls will be made. -->
-
-    <!-- Floating WhatsApp Share Button -->
-    <div id="float-share">
-        <div id="float-share-menu">
-            <button class="share-menu-item" onclick="shareSite('whatsapp'); toggleFloatMenu();">
-                <span style="font-size:18px">📲</span> Share on WhatsApp
-            </button>
-            <button class="share-menu-item" onclick="shareSite('twitter'); toggleFloatMenu();">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                Post on X / Twitter
-            </button>
-            <button class="share-menu-item" onclick="shareSite('copy'); toggleFloatMenu();">
-                <span style="font-size:16px">🔗</span> Copy link
-            </button>
-        </div>
-        <button id="float-share-btn" onclick="toggleFloatMenu()" title="Share GeoTechieX">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </button>
+      <button id="nav-toggle" class="md:hidden inline-flex flex-col justify-center items-center w-9 h-9 gap-1.5" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+        <span class="block w-6 h-0.5 bg-paper"></span>
+        <span class="block w-6 h-0.5 bg-paper"></span>
+      </button>
     </div>
 
-    <script src="js/index.js"></script>
+    <nav id="mobile-nav" class="md:hidden hidden bg-ink border-t border-line px-5 py-4 flex flex-col gap-4 text-sm font-medium" aria-label="Mobile">
+      <a href="#services" class="py-1">Services</a>
+      <a href="#tools" class="py-1">Live Tools</a>
+      <a href="#log" class="py-1">Build Log</a>
+      <a href="charades.html" class="py-1">Charades</a>
+      <a href="#about" class="py-1">About</a>
+      <a href="#faq" class="py-1">FAQ</a>
+      <a href="#contact" class="inline-flex justify-center bg-accent text-white font-semibold px-4 py-2 rounded-md mt-1">Start a Project</a>
+    </nav>
+  </header>
 
-    <script>
-    // ─── FRSC OFFENCES DATA (mini copy for homepage widget) ────────────────────
-    const FRSC_OFFENCES = [
-      { name: "No C Caution (triangle/warning sign) in vehicle", fine: 3000, keywords: ["caution", "triangle", "warning sign", "c caution"] },
-      { name: "Child below 16 sitting at the front seat", fine: 3000, keywords: ["child", "children", "minor", "front seat", "under 16", "below 16"] },
-      { name: "Dangerous driving (reckless driving)", fine: 50000, keywords: ["dangerous", "reckless", "careless", "speed", "overspeed"] },
-      { name: "Driving under alcohol or drug influence (DUI)", fine: 5000, keywords: ["drunk", "alcohol", "drug", "dui", "drink driving", "intoxicated"] },
-      { name: "Driving with expired tyre or without spare tyre", fine: 2000, keywords: ["expired tyre", "no spare tyre", "spare tyre", "stepney"] },
-      { name: "Driving with worn out / bald tyre", fine: 3000, keywords: ["worn tyre", "bald tyre", "tyre", "bad tyre"] },
-      { name: "Excessive exhaust smoke (emission violation)", fine: 5000, keywords: ["smoke", "exhaust", "emission", "black smoke", "fumes"] },
-      { name: "No speed limit device / governor in vehicle", fine: 3000, keywords: ["speed limit", "speed device", "governor", "speed limiter"] },
-      { name: "No fire extinguisher in vehicle", fine: 3000, keywords: ["fire extinguisher", "extinguisher", "fire"] },
-      { name: "Overloading (excess load or passengers)", fine: 10000, keywords: ["overload", "overloading", "excess load", "too many passengers"] },
-      { name: "Preaching or selling items inside a vehicle", fine: 50000, keywords: ["preaching", "selling", "hawking", "preach", "hawker"] },
-      { name: "Not using seatbelt while driving", fine: 2000, keywords: ["seatbelt", "seat belt", "belt", "no belt"] },
-      { name: "Using phone while driving", fine: 4000, keywords: ["phone", "mobile", "call", "texting", "using phone"] },
-      { name: "Damaged or bad side mirror", fine: 3000, keywords: ["side mirror", "mirror", "bad mirror", "broken mirror"] },
-      { name: "Broken front or rear windshield / windscreen", fine: 2000, keywords: ["windshield", "windscreen", "broken glass", "cracked glass"] },
-      { name: "Driving with expired licence or without licence", fine: 10000, keywords: ["licence", "license", "expired licence", "no licence", "driver licence"] },
-    ];
+  <main id="top">
+    <!-- Hero -->
+    <section class="relative pt-40 pb-24 px-5 sm:px-8 border-b border-line overflow-hidden">
+      <div class="max-w-5xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs sm:text-sm text-accent mb-6">
+          Registered Surveyor &amp; Geospatial Developer
+        </p>
+        <h1 class="font-display font-bold uppercase leading-[0.95] text-5xl sm:text-7xl lg:text-8xl tracking-tight">
+          GeoTechie<span class="text-accent">X.</span>
+        </h1>
+        <p class="mt-8 max-w-2xl text-base sm:text-lg text-paper/70 leading-relaxed">
+          I'm a registered surveyor, DevOps engineer, web and geospatial developer with 8+ years of
+          experience, building open-source geospatial tools, AI assistants, and automation, live in
+          public on TikTok. No hype, no fake growth hacks. Just work, documented and shipped.
+        </p>
 
-    function fmtNaira(n) { return '₦' + Number(n).toLocaleString('en-NG'); }
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+          <a href="#contact" class="inline-flex items-center gap-2 bg-accent text-white font-semibold px-6 py-3.5 rounded-md hover:bg-accent/90 transition-colors">
+            Start a Project
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 border border-paper/25 text-paper font-semibold px-6 py-3.5 rounded-md hover:border-paper/60 transition-colors">
+            Watch Live on TikTok
+          </a>
+        </div>
 
-    // ─── MINI QUICK LOOKUP ─────────────────────────────────────────────────────
-    function quickLookup() {
-      const input = document.getElementById('quick-lookup-input');
-      const resultBox = document.getElementById('quick-lookup-result');
-      const q = (input.value || '').toLowerCase().trim();
-      if (!q) return;
+        <p class="mt-10 font-display uppercase tracking-[0.15em] text-xs sm:text-sm text-steel">
+          Surveying <span class="text-line">•</span> GIS <span class="text-line">•</span> Web Dev <span class="text-line">•</span> AI Assistants <span class="text-line">•</span> Automation <span class="text-line">•</span> DevOps
+        </p>
+      </div>
+    </section>
 
-      const matches = FRSC_OFFENCES.filter(o =>
-        o.name.toLowerCase().includes(q) ||
-        (o.keywords || []).some(k => k.toLowerCase().includes(q) || q.includes(k.toLowerCase()))
-      );
+    <!-- Stats / trust bar -->
+    <section class="border-b border-line px-5 sm:px-8" aria-label="Highlights">
+      <div class="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 divide-x divide-line">
+        <div class="py-8 px-4 sm:px-6 text-center">
+          <p class="font-display font-bold text-3xl sm:text-4xl">8+</p>
+          <p class="mt-1 text-xs sm:text-sm text-steel uppercase tracking-wide">Years Experience</p>
+        </div>
+        <div class="py-8 px-4 sm:px-6 text-center">
+          <p class="font-display font-bold text-3xl sm:text-4xl">4</p>
+          <p class="mt-1 text-xs sm:text-sm text-steel uppercase tracking-wide">Live GIS &amp; AI Tools</p>
+        </div>
+        <div class="py-8 px-4 sm:px-6 text-center">
+          <p class="font-display font-bold text-3xl sm:text-4xl">100%</p>
+          <p class="mt-1 text-xs sm:text-sm text-steel uppercase tracking-wide">Open Source</p>
+        </div>
+        <div class="py-8 px-4 sm:px-6 text-center">
+          <p class="font-display font-bold text-3xl sm:text-4xl">Live</p>
+          <p class="mt-1 text-xs sm:text-sm text-steel uppercase tracking-wide">Build Log on TikTok</p>
+        </div>
+      </div>
+    </section>
 
-      resultBox.classList.remove('hidden');
+    <!-- Services -->
+    <section id="services" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-5xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Services</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight">What I Build</h2>
+        <p class="mt-4 max-w-2xl text-paper/70">
+          From land surveying to AI assistants to full-stack web apps, productized from 8+ years of
+          shipping production software. Pick what matches where your project is right now.
+        </p>
 
-      if (matches.length === 0) {
-        resultBox.innerHTML = `<p class="text-sm text-red-600">No offence found for "<strong>${q}</strong>". <a href="nigeria-road-offence-assistant.html" class="underline text-teal-700">Try the full assistant →</a></p>`;
-        return;
-      }
+        <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+          <article class="bg-ink p-8 flex flex-col">
+            <svg class="w-8 h-8 text-accent mb-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <h3 class="font-display font-semibold text-lg">Land Surveying &amp; GIS Tools</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Custom mapping, spatial analysis, and geodata tools, built with a registered surveyor's eye for accuracy, from area delineation to survey automation.</p>
+            <a href="#contact" data-service="Land Surveying & GIS Tools" class="service-link mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold hover:gap-2 transition-all">Get this <span aria-hidden="true">&rarr;</span></a>
+          </article>
 
-      const top = matches[0];
-      const waMsg = encodeURIComponent(`🚦 FRSC Fine Checker\n\nOffence: ${top.name}\nFine: ${fmtNaira(top.fine)}\n\nCheck more at: ${window.location.href}`);
-      const twMsg = encodeURIComponent(`Did you know? The fine for "${top.name}" in Nigeria is ${fmtNaira(top.fine)} (FRSC). Check all road fines ↓`);
-      const twUrl = encodeURIComponent(window.location.href);
+          <article class="bg-ink p-8 flex flex-col">
+            <svg class="w-8 h-8 text-accent mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+            <h3 class="font-display font-semibold text-lg">AI Assistants</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Purpose-built AI chat tools trained on real data, like GeoAI Chat and Nigeria's legal assistants.</p>
+            <a href="#contact" data-service="AI Assistants" class="service-link mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold hover:gap-2 transition-all">Get this <span aria-hidden="true">&rarr;</span></a>
+          </article>
 
-      resultBox.innerHTML = `
-        <div class="bg-white border border-teal-200 rounded-lg p-4">
-          <div class="flex items-start justify-between gap-2 flex-wrap">
+          <article class="bg-ink p-8 flex flex-col">
+            <svg class="w-8 h-8 text-accent mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v13.5A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18.75V5.25z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 9h18M8 21V9"/></svg>
+            <h3 class="font-display font-semibold text-lg">Web Development</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Fast, clean websites and web apps, built and deployed properly, not stitched together from a template.</p>
+            <a href="#contact" data-service="Web Development" class="service-link mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold hover:gap-2 transition-all">Get this <span aria-hidden="true">&rarr;</span></a>
+          </article>
+
+          <article class="bg-ink p-8 flex flex-col">
+            <svg class="w-8 h-8 text-accent mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 00-.12-1.03l-2.268-9.64a3.375 3.375 0 00-3.285-2.602H7.923a3.375 3.375 0 00-3.285 2.602l-2.268 9.64a4.5 4.5 0 00-.12 1.03v.228m19.5 0a3 3 0 01-3 3H5.25a3 3 0 01-3-3m19.5 0a3 3 0 00-3-3H5.25a3 3 0 00-3 3m16.5 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008z"/></svg>
+            <h3 class="font-display font-semibold text-lg">Automation &amp; DevOps</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Workflow automation plus proper deployment, SSL, CI/CD and infrastructure, done right the first time.</p>
+            <a href="#contact" data-service="Automation & DevOps" class="service-link mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold hover:gap-2 transition-all">Get this <span aria-hidden="true">&rarr;</span></a>
+          </article>
+
+          <article class="bg-ink p-8 flex flex-col">
+            <svg class="w-8 h-8 text-accent mb-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.25"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>
+            <h3 class="font-display font-semibold text-lg">Live Build Sessions</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Watch it get built. Every tool is developed live on TikTok, start to deploy, no pre-recorded polish.</p>
+            <a href="#contact" data-service="Live Build Session" class="service-link mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold hover:gap-2 transition-all">Get this <span aria-hidden="true">&rarr;</span></a>
+          </article>
+
+          <article class="bg-ink p-8 flex flex-col justify-center">
+            <h3 class="font-display font-semibold text-lg">Not sure which one?</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed">Tell me what you're trying to get done. I'll tell you honestly what it needs, and what it doesn't.</p>
+            <a href="#contact" data-service="Not sure yet" class="service-link mt-6 inline-flex items-center gap-1 text-paper text-sm font-semibold hover:gap-2 transition-all">Ask me <span aria-hidden="true">&rarr;</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Tools -->
+    <section id="tools" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-5xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Live Tools</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight">Try What's Already Live</h2>
+        <p class="mt-4 max-w-2xl text-paper/70">
+          Free, open-source tools already shipped and running, built the same way everything here gets
+          built: live, in public, on TikTok.
+        </p>
+
+        <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+          <a href="https://geotechiex.netlify.app/areadelAi.html" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col group">
+            <h3 class="font-display font-semibold text-lg">Area Delineation AI</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">AI-assisted land area delineation from survey data.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Try it <span aria-hidden="true">&rarr;</span></span>
+          </a>
+
+          <a href="https://geotechiex.netlify.app/chat" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col group">
+            <h3 class="font-display font-semibold text-lg">GeoAI Chat</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">A geospatial-aware AI chat assistant for quick answers on GIS and mapping.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Try it <span aria-hidden="true">&rarr;</span></span>
+          </a>
+
+          <a href="https://geotechiex.netlify.app/valuemap/index.html" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col group">
+            <h3 class="font-display font-semibold text-lg">Survey Fee Estimator</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Estimate survey fees instantly instead of doing it by hand.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Try it <span aria-hidden="true">&rarr;</span></span>
+          </a>
+
+          <a href="https://geotechiex.netlify.app/PlanOcr/index.html" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col group">
+            <h3 class="font-display font-semibold text-lg">Survey Plan OCR</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Extract data from survey plans automatically instead of retyping it.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Try it <span aria-hidden="true">&rarr;</span></span>
+          </a>
+
+          <a href="https://geotechiex.netlify.app/nigeria-law-hub" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col group">
+            <h3 class="font-display font-semibold text-lg">Nigeria Law Hub</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed flex-1">Road fines, tenant rights, and land law assistants, in one place.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Try it <span aria-hidden="true">&rarr;</span></span>
+          </a>
+
+          <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener noreferrer" class="bg-ink p-8 flex flex-col justify-center group">
+            <h3 class="font-display font-semibold text-lg">Contribute on GitHub</h3>
+            <p class="mt-3 text-sm text-paper/65 leading-relaxed">Every tool is open source. Fork it, file an issue, or ship a PR.</p>
+            <span class="mt-6 inline-flex items-center gap-1 text-paper text-sm font-semibold group-hover:gap-2 transition-all">View repo <span aria-hidden="true">&rarr;</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-5xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Process</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight">Build. Deploy. Learn. Repeat.</h2>
+
+        <ol class="mt-14 grid sm:grid-cols-5 gap-8 sm:gap-4">
+          <li class="flex sm:flex-col items-start sm:items-start gap-4">
+            <span class="font-display font-bold text-2xl text-accent">01</span>
             <div>
-              <p class="text-xs font-semibold text-red-500 uppercase mb-1">⚠️ Road Offence</p>
-              <p class="text-sm font-bold text-gray-800">${top.name}</p>
-              <p class="text-xl font-extrabold text-amber-600 mt-1">${fmtNaira(top.fine)} <span class="text-sm font-normal text-gray-500">fine</span></p>
-              ${matches.length > 1 ? `<p class="text-xs text-gray-400 mt-1">+${matches.length - 1} more match${matches.length > 2 ? 'es' : ''}. <a href="nigeria-road-offence-assistant.html" class="text-teal-700 underline">See all →</a></p>` : ''}
+              <h3 class="font-display font-semibold">Idea</h3>
+              <p class="mt-1 text-sm text-paper/60">We define the actual problem, not just the feature list.</p>
             </div>
-            <div class="flex flex-col gap-2">
-              <a href="https://wa.me/?text=${waMsg}" target="_blank" rel="noopener"
-                class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition whitespace-nowrap">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Share
-              </a>
-              <a href="https://twitter.com/intent/tweet?text=${twMsg}&url=${twUrl}" target="_blank" rel="noopener"
-                class="flex items-center gap-1.5 bg-gray-900 hover:bg-black text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition whitespace-nowrap">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                Post
-              </a>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    // ─── VOTE POLL ─────────────────────────────────────────────────────────────
-    const VOTE_OPTIONS = [
-      { id: 'consumer', label: '🛒 Consumer Rights Assistant',     desc: 'What to do when you\'re short-changed or sold fake goods' },
-      { id: 'court',    label: '⚖️ Traffic Court Fine Guide',       desc: 'What happens if you contest an FRSC fine in court' },
-      { id: 'permits',  label: '📋 Government Permits Explainer',  desc: 'Which permits you need and how to get them' },
-      { id: 'police',   label: '🚔 Know Your Rights (Police)',      desc: 'What police can and cannot do during a stop or arrest' },
-    ];
-
-    const VOTE_KEY = 'geotechiex_votes_v1';
-    const VOTED_KEY = 'geotechiex_voted_v1';
-
-    function loadVotes() {
-      try { return JSON.parse(localStorage.getItem(VOTE_KEY)) || {}; } catch(e) { return {}; }
-    }
-    function saveVotes(v) { try { localStorage.setItem(VOTE_KEY, JSON.stringify(v)); } catch(e) {} }
-    function hasVoted() { return !!localStorage.getItem(VOTED_KEY); }
-    function setVoted(id) { try { localStorage.setItem(VOTED_KEY, id); } catch(e) {} }
-
-    function renderVotes() {
-      const container = document.getElementById('vote-options');
-      if (!container) return;
-      const votes = loadVotes();
-      const myVote = localStorage.getItem(VOTED_KEY);
-      const total = Object.values(votes).reduce((a, b) => a + b, 0) || 1;
-
-      container.innerHTML = '';
-      VOTE_OPTIONS.forEach(opt => {
-        const count = votes[opt.id] || 0;
-        const pct = Math.round((count / total) * 100);
-        const isMyVote = myVote === opt.id;
-        const voted = hasVoted();
-
-        const div = document.createElement('div');
-        div.className = 'border rounded-xl p-3 transition cursor-pointer ' +
-          (isMyVote ? 'border-purple-400 bg-purple-50' : 'border-gray-200 bg-gray-50 hover:border-purple-300 hover:bg-purple-50/50');
-
-        div.innerHTML = `
-          <div class="flex items-center justify-between gap-2 mb-2">
+          </li>
+          <li class="flex sm:flex-col items-start sm:items-start gap-4">
+            <span class="font-display font-bold text-2xl text-accent">02</span>
             <div>
-              <span class="text-sm font-semibold text-gray-800">${opt.label}</span>
-              <span class="text-xs text-gray-400 block">${opt.desc}</span>
+              <h3 class="font-display font-semibold">Plan</h3>
+              <p class="mt-1 text-sm text-paper/60">Scope, stack, and timeline agreed before anything gets built.</p>
             </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              ${voted ? `<span class="text-xs font-bold text-purple-600">${pct}%</span>` : ''}
-              ${isMyVote ? '<span class="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">Your vote</span>' : ''}
-              ${!voted ? `<button class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg font-semibold transition vote-btn" data-id="${opt.id}">Vote</button>` : ''}
+          </li>
+          <li class="flex sm:flex-col items-start sm:items-start gap-4">
+            <span class="font-display font-bold text-2xl text-accent">03</span>
+            <div>
+              <h3 class="font-display font-semibold">Build</h3>
+              <p class="mt-1 text-sm text-paper/60">Code shipped in small, reviewable pieces, often streamed live.</p>
             </div>
+          </li>
+          <li class="flex sm:flex-col items-start sm:items-start gap-4">
+            <span class="font-display font-bold text-2xl text-accent">04</span>
+            <div>
+              <h3 class="font-display font-semibold">Test &amp; Fix</h3>
+              <p class="mt-1 text-sm text-paper/60">Broken things get fixed before you ever see them.</p>
+            </div>
+          </li>
+          <li class="flex sm:flex-col items-start sm:items-start gap-4">
+            <span class="font-display font-bold text-2xl text-accent">05</span>
+            <div>
+              <h3 class="font-display font-semibold">Deploy</h3>
+              <p class="mt-1 text-sm text-paper/60">Shipped to production with monitoring and a clean handoff.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Build Log -->
+    <section id="log" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Build Log</p>
+            <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight">Documented, Day by Day</h2>
+            <p class="mt-4 max-w-2xl text-paper/70">
+              8+ years of experience, and every day of building GeoTechieX gets logged here, on-site and
+              on TikTok, wins and failures included. <span data-log-count>0 days</span> documented so far.
+            </p>
           </div>
-          <div class="vote-bar"><div class="vote-bar-fill" style="width:${voted ? pct : 0}%"></div></div>`;
+          <a href="log.html" class="inline-flex items-center gap-2 text-accent font-semibold text-sm hover:gap-3 transition-all whitespace-nowrap">
+            View Full Log <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
 
-        container.appendChild(div);
-      });
+        <div id="log-preview" class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <p class="text-sm text-paper/50">Loading the log...</p>
+        </div>
+      </div>
+    </section>
 
-      // Attach vote button listeners
-      container.querySelectorAll('.vote-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          castVote(btn.dataset.id);
-        });
-      });
+    <!-- About / Story -->
+    <section id="about" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-5xl mx-auto grid lg:grid-cols-5 gap-14">
+        <div class="lg:col-span-2">
+          <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">About</p>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight leading-tight">
+            8+ Years<br />Building.<br /><span class="text-accent">Now Live,<br />In Public.</span>
+          </h2>
+        </div>
+        <div class="lg:col-span-3 space-y-5 text-paper/70 leading-relaxed">
+          <p>I'm Bazeet, a registered surveyor, DevOps engineer, and web/geospatial developer with 8+ years of experience writing production code, running infrastructure, and working land. Almost none of it was ever public.</p>
+          <p>GeoTechieX is where that experience meets geospatial tech: open-source GIS tools, AI assistants, and automation, built live on TikTok instead of behind closed doors. What gets built, what breaks, and what gets fixed all happens on camera.</p>
+          <p>Client work stays private. I publish general lessons, process, and my own open-source projects, never your business details.</p>
+          <div class="pt-4 flex flex-wrap gap-3">
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">Registered Surveyor</span>
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">Web Development</span>
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">DevOps</span>
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">Geospatial &amp; GIS</span>
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">AI Assistants</span>
+            <span class="border border-paper/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-wide text-paper/70">Automation</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      // Click on row to vote (if not voted)
-      if (!hasVoted()) {
-        container.querySelectorAll('div[class*="border rounded-xl"]').forEach(row => {
-          row.addEventListener('click', () => {
-            const btn = row.querySelector('.vote-btn');
-            if (btn) castVote(btn.dataset.id);
-          });
-        });
-      }
-    }
+    <!-- FAQ -->
+    <section id="faq" class="py-24 px-5 sm:px-8 border-b border-line scroll-mt-16">
+      <div class="max-w-3xl mx-auto">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">FAQ</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight">Common Questions</h2>
 
-    function castVote(id) {
-      if (hasVoted()) return;
-      const votes = loadVotes();
-      votes[id] = (votes[id] || 0) + 1;
-      saveVotes(votes);
-      setVoted(id);
-      renderVotes();
-      showVoteShare(id);
-    }
+        <div class="mt-12 divide-y divide-line border-t border-b border-line" id="faq-list">
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">What kind of projects do you take on?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">Websites, land surveying and GIS tools, AI assistants, automation workflows, and DevOps setups for small businesses and founders. If it involves shipping real, working software, I'm interested.</div>
+          </div>
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">How fast can you deliver a website?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">A focused business website can go from idea to deployed in days, not months, especially with AI-assisted builds. Timeline depends on scope, which we agree on before work starts.</div>
+          </div>
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">Do you only build with AI?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">AI speeds up parts of the process, but every line that ships is reviewed by a developer with 8+ years of production experience. It's a tool, not a replacement for judgment.</div>
+          </div>
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">Will my project details be posted publicly?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">No. Client work and business details stay private. What I document publicly is my own process, general lessons, and personal open-source projects, never your data or deliverables.</div>
+          </div>
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">Are the GeoTechieX tools free to use?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">Yes. The live tools, Area Delineation AI, GeoAI Chat, the Survey Fee Estimator, and the Nigeria Law Hub among them, are free and open source, built live on TikTok. This page is for custom client work; the tools themselves are for everyone.</div>
+          </div>
+          <div class="faq-item py-6">
+            <button class="faq-trigger w-full flex items-center justify-between text-left gap-4" aria-expanded="false">
+              <span class="font-display font-semibold">How do we get started?</span>
+              <span class="faq-icon text-accent text-xl leading-none">+</span>
+            </button>
+            <div class="faq-panel mt-3 text-paper/65 text-sm leading-relaxed hidden">Send a message through the contact form with what you're trying to build. I'll reply directly to scope it and give you a straight answer on timeline and approach.</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    function showVoteShare(id) {
-      const opt = VOTE_OPTIONS.find(o => o.id === id);
-      if (!opt) return;
-      const shareRow = document.getElementById('vote-share-row');
-      if (!shareRow) return;
-      shareRow.classList.remove('hidden');
-      shareRow.style.display = 'flex';
+    <!-- Contact -->
+    <section id="contact" class="py-24 px-5 sm:px-8 scroll-mt-16">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">Contact</p>
+        <h2 class="font-display font-bold text-3xl sm:text-5xl uppercase tracking-tight">Let's Build Something Real</h2>
+        <p class="mt-5 text-paper/70 max-w-xl mx-auto">
+          Tell me what you're trying to get done. I read every message myself and reply directly,
+          no sales team, no forms that vanish into a queue.
+        </p>
+      </div>
 
-      const msg = `I just voted for "${opt.label.replace(/^[^\w]+/, '')}" as the next GeoTechieX public tool to build! Go vote 👇 ${window.location.href}#projects`;
-      const waHref = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-      const twHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}`;
-      document.getElementById('vote-wa-btn').href = waHref;
-      document.getElementById('vote-tw-btn').href = twHref;
-    }
+      <form id="contact-form" class="mt-14 max-w-xl mx-auto space-y-5" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label for="name" class="block text-xs uppercase tracking-wide text-steel mb-2">Name</label>
+            <input type="text" id="name" name="name" required
+              class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors"
+              placeholder="Your name" />
+          </div>
+          <div>
+            <label for="email" class="block text-xs uppercase tracking-wide text-steel mb-2">Email</label>
+            <input type="email" id="email" name="email" required
+              class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors"
+              placeholder="you@email.com" />
+          </div>
+        </div>
 
-    // ─── SHARE SITE ───────────────────────────────────────────────────────────
-    function shareSite(platform) {
-      const url = window.location.href;
-      const text = 'Check out GeoTechieX — free Nigerian road fine checker, geospatial tools, and more public interest AI tools!';
-      if (platform === 'whatsapp') {
-        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
-      } else if (platform === 'twitter') {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-      } else if (platform === 'copy') {
-        navigator.clipboard.writeText(url).then(() => {
-          const btn = document.getElementById('copy-link-btn');
-          if (btn) { const orig = btn.innerHTML; btn.innerHTML = '✅ Copied!'; setTimeout(() => btn.innerHTML = orig, 2000); }
-        }).catch(() => {
-          prompt('Copy this link:', url);
-        });
-      }
-    }
+        <div>
+          <label for="service" class="block text-xs uppercase tracking-wide text-steel mb-2">What do you need?</label>
+          <select id="service" name="service"
+            class="w-full bg-ink border border-paper/25 rounded-md px-4 py-3 text-paper focus:outline-none focus:border-accent transition-colors">
+            <option>Land Surveying & GIS Tools</option>
+            <option>AI Assistants</option>
+            <option>Web Development</option>
+            <option>Automation & DevOps</option>
+            <option>Live Build Session</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
 
-    // ─── FLOATING SHARE MENU ─────────────────────────────────────────────────
-    function toggleFloatMenu() {
-      const menu = document.getElementById('float-share-menu');
-      menu.classList.toggle('open');
-    }
-    // Close float menu when clicking outside
-    document.addEventListener('click', (e) => {
-      const floatShare = document.getElementById('float-share');
-      if (floatShare && !floatShare.contains(e.target)) {
-        document.getElementById('float-share-menu').classList.remove('open');
-      }
-    });
+        <div>
+          <label for="message" class="block text-xs uppercase tracking-wide text-steel mb-2">Project details</label>
+          <textarea id="message" name="message" rows="5" required
+            class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors resize-none"
+            placeholder="What are you trying to build?"></textarea>
+        </div>
 
-    // ─── TOOL CARD SHARE BUTTONS ──────────────────────────────────────────────
-    (function setupCardShares() {
-      const base = window.location.origin + window.location.pathname.replace('index.html','');
+        <button type="submit"
+          class="w-full inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold px-6 py-4 rounded-md hover:bg-accent/90 transition-colors">
+          Send Message
+          <span aria-hidden="true">&rarr;</span>
+        </button>
 
-      // FRSC card
-      const frscUrl = base + 'nigeria-road-offence-assistant.html';
-      const frscWa = document.getElementById('frsc-wa-share');
-      const frscTw = document.getElementById('frsc-tw-share');
-      if (frscWa) frscWa.href = `https://wa.me/?text=${encodeURIComponent('🚦 Free Nigerian Road Offence Fine Checker — check any FRSC fine instantly! ' + frscUrl)}`;
-      if (frscTw) frscTw.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('Free tool: check any FRSC road traffic fine in Nigeria instantly 🚦')}&url=${encodeURIComponent(frscUrl)}`;
+        <p id="form-status" class="text-sm text-paper/50 text-center" role="status"></p>
 
-      // Tenant Rights card
-      const tenantUrl = base + 'tenant-rights-checker.html';
-      const tenantWa = document.getElementById('tenant-wa-share');
-      const tenantTw = document.getElementById('tenant-tw-share');
-      if (tenantWa) tenantWa.href = `https://wa.me/?text=${encodeURIComponent('🏠 Free Nigeria Tenant Rights Checker — know your rights as a tenant! Eviction, notice periods, illegal landlord actions & more. ' + tenantUrl)}`;
-      if (tenantTw) tenantTw.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('Free tool: check your rights as a tenant in Nigeria 🏠 — covers eviction, rent advance, illegal lockouts & more.')}&url=${encodeURIComponent(tenantUrl)}`;
+        <p class="text-center text-sm text-paper/50">
+          Prefer email directly?
+          <a href="mailto:geotechiex@gmail.com" class="text-accent hover:underline">geotechiex@gmail.com</a>
+        </p>
+      </form>
+    </section>
+  </main>
 
-      // GeoLex card
-      const geolexUrl = base + 'geolex.html';
-      const geolexWa = document.getElementById('geolex-wa-share');
-      const geolexTw = document.getElementById('geolex-tw-share');
-      if (geolexWa) geolexWa.href = `https://wa.me/?text=${encodeURIComponent('📐 Free Nigeria Survey & Land Law Assistant (GeoLex) — ask about C of O, Governor\'s Consent, Land Use Act, SURCON, survey plans & more! ' + geolexUrl)}`;
-      if (geolexTw) geolexTw.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('Free tool: ask about Nigerian land law — C of O, Governor\'s Consent, SURCON, survey plans 📐 #NigeriaLaw #LandUseAct')}&url=${encodeURIComponent(geolexUrl)}`;
-    })();
+  <footer class="border-t border-line px-5 sm:px-8 py-12">
+    <div class="max-w-5xl mx-auto flex flex-col gap-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <a href="#top" class="flex items-center gap-2 font-display font-semibold" aria-label="GeoTechieX home">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+          <span>Geo<span class="text-accent">Techie</span>X</span>
+        </a>
+        <p class="font-display uppercase tracking-[0.15em] text-xs text-steel text-center">Build. Deploy. Learn. Repeat.</p>
+        <nav class="flex items-center gap-5 text-xs uppercase tracking-wide text-paper/60" aria-label="Social">
+          <a href="https://www.tiktok.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">TikTok</a>
+          <a href="https://www.youtube.com/@GeotechieX" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">YouTube</a>
+          <a href="https://www.linkedin.com/in/bazzlycodes/" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">LinkedIn</a>
+          <a href="https://github.com/Bazzly/geotechiex" target="_blank" rel="noopener noreferrer" class="hover:text-paper transition-colors">GitHub</a>
+        </nav>
+      </div>
+      <p class="text-xs text-steel text-center sm:text-left">&copy; <span id="year"></span> GeoTechieX. All rights reserved.</p>
+    </div>
+  </footer>
 
-    // ─── INIT ─────────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      renderVotes();
-    });
-
-    // ── LIVE STATS COUNTERS ────────────────────────────────────────────────
-    (function initStats() {
-      const BASE = 'https://api.counterapi.dev/v1/geotechiex';
-
-      function fmt(n) {
-        if (typeof n !== 'number' || isNaN(n)) return '0';
-        if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-        if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-        return n.toString();
-      }
-
-      function animateTo(el, val) {
-        if (!el) return;
-        const target = typeof val === 'number' ? val : parseInt(val) || 0;
-        const start = 0;
-        const duration = 1200;
-        const startTime = performance.now();
-        function step(now) {
-          const progress = Math.min((now - startTime) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = fmt(Math.floor(start + (target - start) * eased));
-          if (progress < 1) requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-      }
-
-      function applyCount(statId, badgeId, count) {
-        animateTo(document.getElementById(statId), count);
-        const badge = document.getElementById(badgeId);
-        if (badge) badge.textContent = fmt(count);
-      }
-
-      // Increment total visit counter once per session
-      const visitKey = 'gtx_visited';
-      const visitEndpoint = sessionStorage.getItem(visitKey)
-        ? BASE + '/visits'
-        : BASE + '/visits/up';
-      sessionStorage.setItem(visitKey, '1');
-
-      fetch(visitEndpoint)
-        .then(r => r.json())
-        .then(d => animateTo(document.getElementById('stat-visitors'), d.count || 0))
-        .catch(() => { const el = document.getElementById('stat-visitors'); if (el) el.textContent = '—'; });
-
-      // Fetch per-AI counts (read-only on landing page; increment happens on each AI page)
-      const aiKeys = [
-        { key: 'road-users',   statId: 'stat-road',   badgeId: 'badge-road' },
-        { key: 'tenant-users', statId: 'stat-tenant',  badgeId: 'badge-tenant' },
-        { key: 'geolex-users', statId: 'stat-geolex',  badgeId: 'badge-geolex' },
-      ];
-      aiKeys.forEach(({ key, statId, badgeId }) => {
-        fetch(BASE + '/' + key)
-          .then(r => r.json())
-          .then(d => applyCount(statId, badgeId, d.count || 0))
-          .catch(() => {
-            const el = document.getElementById(statId);
-            if (el) el.textContent = '0';
-            const b = document.getElementById(badgeId);
-            if (b) b.textContent = '0';
-          });
-      });
-    })();
-    </script>
+  <script src="assets/js/log-data.js"></script>
+  <script src="assets/js/log-render.js"></script>
+  <script src="assets/js/main.js"></script>
 </body>
-
 </html>
