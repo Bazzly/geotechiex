@@ -60,18 +60,18 @@
 
   <!-- Admin panel -->
   <div id="admin-panel" class="hidden">
-    <header class="border-b border-line px-5 sm:px-8 py-5 flex items-center justify-between sticky top-0 bg-ink z-40">
-      <div class="flex items-center gap-2 font-display font-semibold">
-        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+    <header class="border-b border-line px-4 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-3 sticky top-0 bg-ink z-40">
+      <div class="flex items-center gap-2 font-display font-semibold text-sm sm:text-base shrink-0">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30 shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
         <span>Content Studio</span>
       </div>
-      <div class="flex items-center gap-4">
-        <a href="index.html" class="text-sm text-paper/60 hover:text-paper transition-colors">Back to site</a>
-        <button id="lock-btn" class="text-sm border border-paper/25 rounded-md px-3 py-1.5 hover:border-paper/60 transition-colors">Lock</button>
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
+        <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-5 sm:px-8 py-10 grid lg:grid-cols-[420px_1fr] gap-10">
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10 grid lg:grid-cols-[420px_1fr] gap-8 sm:gap-10">
 
       <!-- Form column -->
       <div class="space-y-10">
@@ -86,7 +86,7 @@
           </p>
 
           <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs uppercase tracking-wide text-steel mb-2">Series name</label>
                 <input id="f-series-name" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" value="Put Yourself On The Map" />
@@ -113,6 +113,14 @@
           </div>
 
           <button id="gen-episodes" class="w-full mt-4 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Generate Episode Images</button>
+
+          <div class="mt-8 pt-6 border-t border-line">
+            <h3 class="font-display font-semibold text-base mb-1">Publish to the Community Series Page</h3>
+            <p class="text-xs text-steel mb-4">Turns the series/arc/episodes above into a new entry for the top of assets/js/series-data.js. Paste it in and redeploy to make it the "Current Challenge" on community-series.html — the arc it replaces automatically becomes past series.</p>
+            <button id="series-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Series Snippet</button>
+            <textarea id="series-snippet-out" rows="8" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+            <button id="series-snippet-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
+          </div>
 
           <div class="mt-8 pt-6 border-t border-line">
             <h3 class="font-display font-semibold text-base mb-1">Generate the Next Arc with AI</h3>
@@ -146,7 +154,7 @@
             <input id="f-tagline" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Signature line" />
             <textarea id="f-focus" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Focus Today, one line each (up to 3)"></textarea>
           </div>
-          <div class="flex gap-3 mt-4">
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
             <button id="gen-poster" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Generate Poster</button>
             <button id="gen-quote" class="flex-1 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Quote Slide</button>
           </div>
@@ -166,7 +174,7 @@
           <p class="text-xs text-steel mb-4">Paste the JSON the AI gave you, or upload a file. Accepts one day's plan, a whole file of them, or an array. Saved in this browser so it auto-fills whenever you change the Day number.</p>
           <div class="space-y-3">
             <textarea id="import-json-input" rows="6" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Paste day-plan JSON here"></textarea>
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3">
               <button id="import-json-btn" type="button" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Import JSON</button>
               <label class="flex-1 text-center border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors cursor-pointer">
                 Upload File
@@ -176,6 +184,19 @@
             <p id="import-status" class="text-xs text-steel"></p>
             <button id="export-plans-btn" type="button" class="w-full text-paper/60 text-xs font-semibold hover:text-paper transition-colors">Export all saved plans as JSON (backup)</button>
           </div>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h2 class="font-display font-semibold text-lg mb-1">Live Tools — Ready for Use</h2>
+          <p class="text-xs text-steel mb-4">
+            Toggle whether a tool shows a working "Try it" link on the homepage, or a "Coming soon" placeholder.
+            This only edits a draft in this browser: Generate Snippet, then paste the result over
+            assets/js/tools-data.js and redeploy for it to go live for visitors.
+          </p>
+          <div id="tools-ready-list" class="space-y-2"></div>
+          <button id="tools-snippet-generate" type="button" class="w-full mt-4 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Tools Snippet</button>
+          <textarea id="tools-snippet-out" rows="10" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+          <button id="tools-snippet-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
         </section>
 
         <section class="border-t border-line pt-8">
@@ -192,11 +213,24 @@
           </div>
         </section>
 
+        <section class="border-t border-line pt-8">
+          <h2 class="font-display font-semibold text-lg mb-1">Add to Portfolio</h2>
+          <p class="text-xs text-steel mb-4">Produces a ready-to-paste entry for assets/js/portfolio-data.js so the new project shows up on the homepage Portfolio section and /portfolio.html.</p>
+          <div class="space-y-3">
+            <input id="f-portfolio-name" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Project name, e.g. TradeLab" />
+            <textarea id="f-portfolio-description" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="One-line description"></textarea>
+            <input id="f-portfolio-url" type="url" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="https://project-url.example.com" />
+            <button id="portfolio-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Snippet</button>
+            <textarea id="portfolio-snippet-out" rows="7" readonly class="w-full bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+            <button id="portfolio-snippet-copy" type="button" class="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
+          </div>
+        </section>
+
       </div>
 
       <!-- Gallery column -->
       <div>
-        <div class="flex items-center justify-between mb-4 sticky top-[73px] bg-ink py-2 z-30">
+        <div class="flex items-center justify-between mb-4 sticky top-[61px] sm:top-[70px] bg-ink py-2 z-30">
           <h2 class="font-display font-semibold text-lg">Generated Images</h2>
           <div class="flex gap-3">
             <button id="gallery-download-all" class="text-accent text-sm font-semibold hover:underline">Download All</button>
@@ -210,6 +244,9 @@
   </div>
 
   <script src="assets/js/log-data.js"></script>
+  <script src="assets/js/tools-data.js"></script>
+  <script src="assets/js/series-data.js"></script>
+  <script src="assets/js/portfolio-data.js"></script>
   <script src="assets/js/day-plans.js"></script>
   <script src="assets/js/poster-render.js"></script>
   <script src="assets/js/admin-auth.js"></script>
