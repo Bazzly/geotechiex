@@ -66,6 +66,7 @@
         <span>Content Studio</span>
       </div>
       <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <a href="admin-scripts.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Script Studio</a>
         <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
         <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
       </div>
@@ -84,6 +85,16 @@
             own stories. Not a build log entry: each episode is a directive for someone else to respond to,
             relatable to surveyors and the public alike. Rename the series below any time.
           </p>
+
+          <div class="border border-line rounded-lg p-4 mb-8">
+            <p class="text-xs uppercase tracking-wide text-steel mb-1">Future Arcs Roadmap</p>
+            <p class="text-xs text-steel mb-4">
+              Admin-only, saved in this browser, never touches the public site. Load a draft arc into the
+              builder below to review or fill in its episode prompts (use "Generate the Next Arc with AI"
+              for help), then use "Publish to the Community Series Page" when it's ready to go live.
+            </p>
+            <div id="roadmap-list" class="space-y-2"></div>
+          </div>
 
           <div class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -246,6 +257,7 @@
   <script src="assets/js/log-data.js"></script>
   <script src="assets/js/tools-data.js"></script>
   <script src="assets/js/series-data.js"></script>
+  <script src="assets/js/roadmap-seed.js"></script>
   <script src="assets/js/portfolio-data.js"></script>
   <script src="assets/js/day-plans.js"></script>
   <script src="assets/js/poster-render.js"></script>

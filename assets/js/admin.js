@@ -553,6 +553,102 @@ Return only the JSON object.`;
     }
   });
 
+  // ---- Future Arcs Roadmap: admin-only planning, never touches the public site --
+
+  const ROADMAP_STATUS_KEY = 'bfz_roadmap_status';
+  const STATUS_VALUES = ['planned', 'pre_augmented', 'ready', 'current', 'archived'];
+
+  function loadRoadmapStatusOverrides() {
+    try {
+      const raw = localStorage.getItem(ROADMAP_STATUS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveRoadmapStatusOverrides(overrides) {
+    localStorage.setItem(ROADMAP_STATUS_KEY, JSON.stringify(overrides));
+  }
+
+  if (typeof ROADMAP_SEED !== 'undefined') {
+    const roadmapListEl = document.getElementById('roadmap-list');
+    const statusOverrides = loadRoadmapStatusOverrides();
+
+    const arcStatus = (arc) => statusOverrides[arc.arcId] || arc.status;
+
+    function setArcStatus(arc, status) {
+      if (status === 'current') {
+        ROADMAP_SEED.forEach((other) => {
+          if (other.arcId !== arc.arcId && arcStatus(other) === 'current') {
+            statusOverrides[other.arcId] = 'archived';
+          }
+        });
+      }
+      statusOverrides[arc.arcId] = status;
+      saveRoadmapStatusOverrides(statusOverrides);
+    }
+
+    function loadArcIntoBuilder(arc) {
+      document.getElementById('f-arc-title').value = arc.arcTitle;
+      document.getElementById('f-arc-hook').value = arc.arcHook;
+      episodeList.setRows(arc.episodes);
+    }
+
+    function renderRoadmap() {
+      roadmapListEl.innerHTML = '';
+      const sorted = [...ROADMAP_SEED].sort((a, b) => a.seasonOrder - b.seasonOrder);
+
+      sorted.forEach((arc) => {
+        const status = arcStatus(arc);
+        const row = document.createElement('div');
+        row.className = 'border border-paper/15 rounded-md p-3';
+
+        const head = document.createElement('div');
+        head.className = 'flex items-start justify-between gap-3';
+
+        const titleBlock = document.createElement('div');
+        const title = document.createElement('p');
+        title.className = 'text-sm text-paper font-semibold';
+        title.textContent = `${String(arc.seasonOrder).padStart(2, '0')} — ${arc.arcTitle}`;
+        const hook = document.createElement('p');
+        hook.className = 'text-xs text-paper/50 mt-0.5';
+        hook.textContent = `${arc.arcHook} (${arc.episodes.length} episodes)`;
+        titleBlock.append(title, hook);
+
+        const select = document.createElement('select');
+        select.className = 'shrink-0 bg-ink border border-paper/20 rounded-md px-2 py-1 text-xs text-paper focus:outline-none focus:border-accent';
+        STATUS_VALUES.forEach((v) => {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v.replace('_', ' ');
+          if (v === status) opt.selected = true;
+          select.appendChild(opt);
+        });
+        select.addEventListener('change', () => {
+          setArcStatus(arc, select.value);
+          renderRoadmap();
+        });
+
+        head.append(titleBlock, select);
+
+        const loadBtn = document.createElement('button');
+        loadBtn.type = 'button';
+        loadBtn.className = 'text-accent text-xs font-semibold hover:underline mt-2';
+        loadBtn.textContent = 'Load into Builder';
+        loadBtn.addEventListener('click', () => {
+          loadArcIntoBuilder(arc);
+          document.getElementById('f-arc-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        row.append(head, loadBtn);
+        roadmapListEl.appendChild(row);
+      });
+    }
+
+    renderRoadmap();
+  }
+
   // ---- Community Series: publish snippet ------------------------------------
 
   if (typeof COMMUNITY_SERIES !== 'undefined') {

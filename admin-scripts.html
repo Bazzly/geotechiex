@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Script Studio | GeoTechieX</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-ink text-paper font-body antialiased">
+
+  <!-- Password gate -->
+  <div id="admin-gate" class="min-h-screen flex items-center justify-center px-5">
+    <div class="w-full max-w-sm">
+      <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3 text-center">GeoTechieX</p>
+      <h1 class="font-display font-bold text-2xl uppercase text-center mb-8">Script Studio</h1>
+      <form id="gate-form" class="space-y-4">
+        <input
+          type="password"
+          id="gate-password"
+          autocomplete="current-password"
+          class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors"
+          placeholder="Passphrase"
+        />
+        <button type="submit" class="w-full bg-accent text-white font-semibold px-4 py-3 rounded-md hover:bg-accent/90 transition-colors">
+          Unlock
+        </button>
+        <p id="gate-error" class="text-sm text-red-400 text-center h-5"></p>
+      </form>
+      <p class="text-xs text-steel text-center mt-6">This is a soft client-side lock, not real security. See the source of assets/js/admin-auth.js.</p>
+    </div>
+  </div>
+
+  <!-- Script Studio -->
+  <div id="admin-panel" class="hidden">
+    <header class="border-b border-line px-4 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-3 sticky top-0 bg-ink z-40">
+      <div class="flex items-center gap-2 font-display font-semibold text-sm sm:text-base shrink-0">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30 shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Script Studio</span>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <a href="admin.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Content Studio</a>
+        <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
+        <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10 grid lg:grid-cols-[1fr_360px] gap-8 sm:gap-10">
+
+      <!-- Builder column -->
+      <div class="space-y-10">
+
+        <section>
+          <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-2">Daily Video</p>
+          <h2 class="font-display font-semibold text-2xl mb-1">Script Builder</h2>
+          <p class="text-xs text-steel mb-6">
+            One script per day, always anchored to the current community challenge so it stays relatable to
+            surveyors, tech people, and the general public alike, not a generic motivational clip.
+          </p>
+
+          <div class="mb-4">
+            <label class="block text-xs uppercase tracking-wide text-steel mb-2">Day number</label>
+            <input id="s-day" type="number" min="1" max="365" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-paper focus:outline-none focus:border-accent" />
+            <p id="script-status" class="text-xs text-steel mt-2"></p>
+          </div>
+
+          <div id="current-challenge-box" class="border border-line rounded-lg p-4 mb-6">
+            <p class="text-xs uppercase tracking-wide text-steel mb-2">Current Challenge (from Community Series)</p>
+            <p id="cc-empty" class="text-sm text-paper/50">No arc published yet in assets/js/series-data.js.</p>
+            <div id="cc-body" class="hidden">
+              <p class="font-display font-semibold text-paper" id="cc-arc-title"></p>
+              <p class="text-sm text-paper/65 mt-1" id="cc-arc-hook"></p>
+              <p class="text-xs text-accent mt-2" id="cc-hashtag"></p>
+              <div class="mt-3">
+                <label class="block text-xs uppercase tracking-wide text-steel mb-2">Which episode is this video about? (optional)</label>
+                <select id="s-episode-ref" class="w-full bg-ink border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent">
+                  <option value="">Not tied to a specific episode</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Hook (first 1-2 seconds, must stop the scroll)</label>
+              <textarea id="s-hook" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Nobody warns you that..."></textarea>
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Relatable line (why the viewer sees themselves in this)</label>
+              <textarea id="s-relatable" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Every surveyor has..."></textarea>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <label class="block text-xs uppercase tracking-wide text-steel mb-2">Scenes (in order)</label>
+            <div id="scene-items" class="space-y-2"></div>
+            <button id="scene-add" type="button" class="text-accent text-sm font-semibold mt-2">+ Add scene</button>
+          </div>
+
+          <div class="space-y-3 mt-6">
+            <div>
+              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Call to action</label>
+              <input id="s-cta" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Follow for Day 002: sending the invoice." />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Caption</label>
+              <textarea id="s-caption" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Ready-to-post caption"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Hashtags (comma separated)</label>
+              <input id="s-hashtags" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="#PutYourselfOnTheMap, #Surveying, #BuildInPublic" />
+            </div>
+          </div>
+
+          <div class="flex gap-3 mt-6">
+            <button id="script-save" type="button" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Save Script</button>
+            <button id="script-copy-full" type="button" class="flex-1 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Copy Full Script</button>
+          </div>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h3 class="font-display font-semibold text-base mb-1">Generate Today's Script with AI</h3>
+          <p class="text-xs text-steel mb-4">
+            Builds a prompt tied to today's day number, the current community challenge, and GeoTechieX's
+            brand voice, so every script comes back relatable to the same audience. Paste the prompt into
+            Claude/ChatGPT, then paste its JSON reply into "Import" below.
+          </p>
+          <textarea id="script-ai-notes" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Optional notes for the AI, e.g. anything specific that happened today"></textarea>
+          <button id="script-ai-build" type="button" class="w-full mt-3 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Build Prompt</button>
+          <textarea id="script-ai-out" rows="10" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper/80 focus:outline-none"></textarea>
+          <button id="script-ai-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Prompt</button>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h2 class="font-display font-semibold text-lg mb-1">Import Script JSON</h2>
+          <p class="text-xs text-steel mb-4">Paste the JSON the AI gave you, or upload a file. Accepts one day's script, or an array of several days at once (each needs a "day" field), saved straight into Saved Scripts on the right.</p>
+          <div class="space-y-3">
+            <textarea id="script-import-input" rows="6" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Paste script JSON here"></textarea>
+            <div class="flex gap-3">
+              <button id="script-import-btn" type="button" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Import JSON</button>
+              <label class="flex-1 text-center border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors cursor-pointer">
+                Upload File
+                <input id="script-import-file" type="file" accept="application/json" class="hidden" />
+              </label>
+            </div>
+            <p id="script-import-status" class="text-xs text-steel"></p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Saved scripts column -->
+      <div>
+        <div class="flex items-center justify-between mb-4 sticky top-[61px] sm:top-[70px] bg-ink py-2 z-30">
+          <h2 class="font-display font-semibold text-lg">Saved Scripts</h2>
+          <button id="scripts-export" class="text-accent text-sm font-semibold hover:underline">Export All</button>
+        </div>
+        <div id="saved-scripts-list" class="space-y-3"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="assets/js/log-data.js"></script>
+  <script src="assets/js/series-data.js"></script>
+  <script src="assets/js/script-seed.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+  <script src="assets/js/scripts.js"></script>
+</body>
+</html>
