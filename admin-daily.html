@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Content | GeoTechieX</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-ink text-paper font-body antialiased">
+
+  <!-- Password gate -->
+  <div id="admin-gate" class="min-h-screen flex items-center justify-center px-5">
+    <div class="w-full max-w-sm">
+      <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3 text-center">GeoTechieX</p>
+      <h1 class="font-display font-bold text-2xl uppercase text-center mb-8">Daily Content</h1>
+      <form id="gate-form" class="space-y-4">
+        <input
+          type="password"
+          id="gate-password"
+          autocomplete="current-password"
+          class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors"
+          placeholder="Passphrase"
+        />
+        <button type="submit" class="w-full bg-accent text-white font-semibold px-4 py-3 rounded-md hover:bg-accent/90 transition-colors">
+          Unlock
+        </button>
+        <p id="gate-error" class="text-sm text-red-400 text-center h-5"></p>
+      </form>
+      <p class="text-xs text-steel text-center mt-6">This is a soft client-side lock, not real security. See the source of assets/js/admin-auth.js.</p>
+    </div>
+  </div>
+
+  <!-- Daily Content -->
+  <div id="admin-panel" class="hidden">
+    <header class="border-b border-line px-4 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-3 sticky top-0 bg-ink z-40">
+      <div class="flex items-center gap-2 font-display font-semibold text-sm sm:text-base shrink-0">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30 shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Daily Content</span>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <a href="admin.html" class="inline-flex items-center gap-1 text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap"><span aria-hidden="true">&larr;</span> Content Studio</a>
+        <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
+        <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10 grid lg:grid-cols-[420px_1fr] gap-8 sm:gap-10">
+
+      <!-- Form column -->
+      <div class="space-y-10">
+
+        <section>
+          <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-2">Today</p>
+          <h2 class="font-display font-semibold text-2xl mb-1">Quote (Daily Motivation)</h2>
+          <p class="text-xs text-steel mb-6">Used by the Poster &amp; Quote slide. Ties to the current Community Series arc automatically. Saved automatically per day.</p>
+          <div class="mb-3">
+            <label class="block text-xs uppercase tracking-wide text-steel mb-2">Day number</label>
+            <input id="f-day" type="number" min="1" max="365" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-paper focus:outline-none focus:border-accent" />
+            <p id="day-plan-status" class="text-xs text-steel mt-2"></p>
+          </div>
+          <div class="space-y-3">
+            <textarea id="f-quote" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="You don't have to be great to start, but you have to start to be great."></textarea>
+            <input id="f-highlight" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Word(s) to highlight in blue, e.g. START" />
+            <input id="f-tagline" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Signature line" />
+            <textarea id="f-focus" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Focus Today, one line each (up to 3)"></textarea>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <button id="gen-poster" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Generate Poster</button>
+            <button id="gen-quote" class="flex-1 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Quote Slide</button>
+          </div>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h3 class="font-display font-semibold text-base mb-1">Generate Today's Quote with AI</h3>
+          <p class="text-xs text-steel mb-4">Builds a prompt for the day above, tied to the current published arc, in GeoTechieX's voice. Paste the prompt into Claude/ChatGPT, then paste its JSON reply into "Import" below.</p>
+          <textarea id="quote-ai-notes" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Optional notes for the AI, e.g. anything specific about today"></textarea>
+          <button id="quote-ai-build" type="button" class="w-full mt-3 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Build Prompt</button>
+          <textarea id="quote-ai-out" rows="8" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper/80 focus:outline-none"></textarea>
+          <button id="quote-ai-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Prompt</button>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h2 class="font-display font-semibold text-lg mb-1">Import Day Plan(s)</h2>
+          <p class="text-xs text-steel mb-4">Paste the JSON the AI gave you, or upload a file. Accepts one day's plan, a whole file of them, or an array. Saved in this browser so it auto-fills whenever you change the Day number.</p>
+          <div class="space-y-3">
+            <textarea id="import-json-input" rows="6" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Paste day-plan JSON here"></textarea>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button id="import-json-btn" type="button" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Import JSON</button>
+              <label class="flex-1 text-center border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors cursor-pointer">
+                Upload File
+                <input id="import-json-file" type="file" accept="application/json" class="hidden" />
+              </label>
+            </div>
+            <p id="import-status" class="text-xs text-steel"></p>
+            <button id="export-plans-btn" type="button" class="w-full text-paper/60 text-xs font-semibold hover:text-paper transition-colors">Export all saved plans as JSON (backup)</button>
+          </div>
+        </section>
+
+        <section class="border-t border-line pt-8">
+          <h2 class="font-display font-semibold text-lg mb-1">Add to Build Log</h2>
+          <p class="text-xs text-steel mb-4">Produces a ready-to-paste entry for assets/js/log-data.js so the public /log.html page picks it up too.</p>
+          <div class="space-y-3">
+            <input id="f-log-date" type="date" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" />
+            <input id="f-log-title" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Title, e.g. Shipped the landing page" />
+            <textarea id="f-log-summary" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="One or two sentences on what happened today"></textarea>
+            <input id="f-log-tags" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Tags, comma separated, e.g. Web Dev, Build in Public" />
+            <button id="log-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Snippet</button>
+            <textarea id="log-snippet-out" rows="7" readonly class="w-full bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+            <button id="log-snippet-copy" type="button" class="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Gallery column -->
+      <div>
+        <div class="flex items-center justify-between mb-4 sticky top-[61px] sm:top-[70px] bg-ink py-2 z-30">
+          <h2 class="font-display font-semibold text-lg">Generated Images</h2>
+          <div class="flex gap-3">
+            <button id="gallery-download-all" class="text-accent text-sm font-semibold hover:underline">Download All</button>
+            <button id="gallery-clear" class="text-paper/50 text-sm font-semibold hover:text-paper transition-colors">Clear</button>
+          </div>
+        </div>
+        <div id="gallery" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="assets/js/log-data.js"></script>
+  <script src="assets/js/series-data.js"></script>
+  <script src="assets/js/day-plans.js"></script>
+  <script src="assets/js/poster-render.js"></script>
+  <script src="assets/js/gallery.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+  <script src="assets/js/admin-daily.js"></script>
+</body>
+</html>

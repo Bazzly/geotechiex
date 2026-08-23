@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <!-- Admin panel -->
+  <!-- Content Studio hub -->
   <div id="admin-panel" class="hidden">
     <header class="border-b border-line px-4 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-3 sticky top-0 bg-ink z-40">
       <div class="flex items-center gap-2 font-display font-semibold text-sm sm:text-base shrink-0">
@@ -66,202 +66,48 @@
         <span>Content Studio</span>
       </div>
       <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-        <a href="admin-scripts.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Script Studio</a>
         <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
         <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10 grid lg:grid-cols-[420px_1fr] gap-8 sm:gap-10">
+    <main class="max-w-4xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
+      <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3">GeoTechieX</p>
+      <h1 class="font-display font-bold text-3xl sm:text-4xl uppercase tracking-tight mb-2">Content Studio</h1>
+      <p class="text-sm text-paper/60 mb-12 max-w-xl">Pick what you're working on.</p>
 
-      <!-- Form column -->
-      <div class="space-y-10">
+      <div class="grid sm:grid-cols-2 gap-px bg-line border border-line">
+        <a href="admin-daily.html" class="bg-ink p-8 flex flex-col group hover:bg-line/20 transition-colors">
+          <p class="text-xs uppercase tracking-wide text-accent mb-2">Every day</p>
+          <h2 class="font-display font-semibold text-xl mb-2">Daily Content</h2>
+          <p class="text-sm text-paper/65 leading-relaxed flex-1">Today's quote, poster, and quote slide. Build Log entry. Day plan import.</p>
+          <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Open <span aria-hidden="true">&rarr;</span></span>
+        </a>
 
-        <section>
-          <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-2">Community Series</p>
-          <h2 class="font-display font-semibold text-2xl mb-1">Put Yourself On The Map</h2>
-          <p class="text-xs text-steel mb-6">
-            A recurring challenge, posted on GeoTechieX's socials, prompting OTHER surveyors to share their
-            own stories. Not a build log entry: each episode is a directive for someone else to respond to,
-            relatable to surveyors and the public alike. Rename the series below any time.
-          </p>
+        <a href="admin-series.html" class="bg-ink p-8 flex flex-col group hover:bg-line/20 transition-colors">
+          <p class="text-xs uppercase tracking-wide text-accent mb-2">As needed</p>
+          <h2 class="font-display font-semibold text-xl mb-2">Community Series</h2>
+          <p class="text-sm text-paper/65 leading-relaxed flex-1">Put Yourself On The Map: future arcs roadmap, episode builder, AI arc generator, publish to the site.</p>
+          <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Open <span aria-hidden="true">&rarr;</span></span>
+        </a>
 
-          <div class="border border-line rounded-lg p-4 mb-8">
-            <p class="text-xs uppercase tracking-wide text-steel mb-1">Future Arcs Roadmap</p>
-            <p class="text-xs text-steel mb-4">
-              Admin-only, saved in this browser, never touches the public site. Load a draft arc into the
-              builder below to review or fill in its episode prompts (use "Generate the Next Arc with AI"
-              for help), then use "Publish to the Community Series Page" when it's ready to go live.
-            </p>
-            <div id="roadmap-list" class="space-y-2"></div>
-          </div>
+        <a href="admin-site.html" class="bg-ink p-8 flex flex-col group hover:bg-line/20 transition-colors">
+          <p class="text-xs uppercase tracking-wide text-accent mb-2">As needed</p>
+          <h2 class="font-display font-semibold text-xl mb-2">Site Content</h2>
+          <p class="text-sm text-paper/65 leading-relaxed flex-1">Live Tools ready toggles and Portfolio entries for the homepage.</p>
+          <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Open <span aria-hidden="true">&rarr;</span></span>
+        </a>
 
-          <div class="space-y-3">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs uppercase tracking-wide text-steel mb-2">Series name</label>
-                <input id="f-series-name" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" value="Put Yourself On The Map" />
-              </div>
-              <div>
-                <label class="block text-xs uppercase tracking-wide text-steel mb-2">Hashtag</label>
-                <input id="f-series-hashtag" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" value="#PutYourselfOnTheMap" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Arc / theme (this batch of episodes)</label>
-              <input id="f-arc-title" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" value="How We Get Each Point on a Survey Plan" />
-            </div>
-            <div>
-              <label class="block text-xs uppercase tracking-wide text-steel mb-2">Arc hook line</label>
-              <input id="f-arc-hook" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" value="The struggle to get your plan ready." />
-            </div>
-          </div>
-
-          <div class="mt-6">
-            <label class="block text-xs uppercase tracking-wide text-steel mb-2">Episodes</label>
-            <div id="episode-items" class="space-y-2"></div>
-            <button id="episode-add" type="button" class="text-accent text-sm font-semibold mt-2">+ Add episode</button>
-          </div>
-
-          <button id="gen-episodes" class="w-full mt-4 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Generate Episode Images</button>
-
-          <div class="mt-8 pt-6 border-t border-line">
-            <h3 class="font-display font-semibold text-base mb-1">Publish to the Community Series Page</h3>
-            <p class="text-xs text-steel mb-4">Turns the series/arc/episodes above into a new entry for the top of assets/js/series-data.js. Paste it in and redeploy to make it the "Current Challenge" on community-series.html — the arc it replaces automatically becomes past series.</p>
-            <button id="series-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Series Snippet</button>
-            <textarea id="series-snippet-out" rows="8" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
-            <button id="series-snippet-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
-          </div>
-
-          <div class="mt-8 pt-6 border-t border-line">
-            <h3 class="font-display font-semibold text-base mb-1">Generate the Next Arc with AI</h3>
-            <p class="text-xs text-steel mb-4">Builds a prompt for a brand-new batch of episodes on any survey-life topic, so the series never runs out of relatable content.</p>
-            <textarea id="episode-ai-topic" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Topic for the next arc, e.g. What happens when the site is disputed by two families"></textarea>
-            <button id="episode-ai-build" type="button" class="w-full mt-3 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Build Prompt</button>
-            <textarea id="episode-ai-out" rows="8" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper/80 focus:outline-none"></textarea>
-            <button id="episode-ai-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Prompt</button>
-          </div>
-
-          <div class="mt-8 pt-6 border-t border-line">
-            <h3 class="font-display font-semibold text-base mb-1">Import an Arc</h3>
-            <p class="text-xs text-steel mb-4">Paste the JSON the AI gave you. It replaces the arc title, hook, and episode list above.</p>
-            <textarea id="episode-import-input" rows="6" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Paste arc JSON here"></textarea>
-            <button id="episode-import-btn" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Import Arc</button>
-            <p id="episode-import-status" class="text-xs text-steel mt-2"></p>
-          </div>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h2 class="font-display font-semibold text-lg mb-1">Quote (Daily Motivation)</h2>
-          <p class="text-xs text-steel mb-4">Used by the Poster &amp; Quote slide. Keep it tied to the current arc above, not a generic quote, so it reads as one continuous series. Saved automatically per day.</p>
-          <div class="mb-3">
-            <label class="block text-xs uppercase tracking-wide text-steel mb-2">Day number</label>
-            <input id="f-day" type="number" min="1" max="180" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-paper focus:outline-none focus:border-accent" />
-            <p id="day-plan-status" class="text-xs text-steel mt-2"></p>
-          </div>
-          <div class="space-y-3">
-            <textarea id="f-quote" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="You don't have to be great to start, but you have to start to be great."></textarea>
-            <input id="f-highlight" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Word(s) to highlight in blue, e.g. START" />
-            <input id="f-tagline" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Signature line" />
-            <textarea id="f-focus" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Focus Today, one line each (up to 3)"></textarea>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-3 mt-4">
-            <button id="gen-poster" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Generate Poster</button>
-            <button id="gen-quote" class="flex-1 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Quote Slide</button>
-          </div>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h3 class="font-display font-semibold text-base mb-1">Generate Today's Quote with AI</h3>
-          <p class="text-xs text-steel mb-4">Builds a prompt for the day above, tied to the current arc, in GeoTechieX's voice. Paste the prompt into Claude/ChatGPT, then paste its JSON reply into "Import" below.</p>
-          <textarea id="quote-ai-notes" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Optional notes for the AI, e.g. anything specific about today"></textarea>
-          <button id="quote-ai-build" type="button" class="w-full mt-3 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Build Prompt</button>
-          <textarea id="quote-ai-out" rows="8" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper/80 focus:outline-none"></textarea>
-          <button id="quote-ai-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Prompt</button>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h2 class="font-display font-semibold text-lg mb-1">Import Day Plan(s)</h2>
-          <p class="text-xs text-steel mb-4">Paste the JSON the AI gave you, or upload a file. Accepts one day's plan, a whole file of them, or an array. Saved in this browser so it auto-fills whenever you change the Day number.</p>
-          <div class="space-y-3">
-            <textarea id="import-json-input" rows="6" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Paste day-plan JSON here"></textarea>
-            <div class="flex flex-col sm:flex-row gap-3">
-              <button id="import-json-btn" type="button" class="flex-1 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Import JSON</button>
-              <label class="flex-1 text-center border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors cursor-pointer">
-                Upload File
-                <input id="import-json-file" type="file" accept="application/json" class="hidden" />
-              </label>
-            </div>
-            <p id="import-status" class="text-xs text-steel"></p>
-            <button id="export-plans-btn" type="button" class="w-full text-paper/60 text-xs font-semibold hover:text-paper transition-colors">Export all saved plans as JSON (backup)</button>
-          </div>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h2 class="font-display font-semibold text-lg mb-1">Live Tools — Ready for Use</h2>
-          <p class="text-xs text-steel mb-4">
-            Toggle whether a tool shows a working "Try it" link on the homepage, or a "Coming soon" placeholder.
-            This only edits a draft in this browser: Generate Snippet, then paste the result over
-            assets/js/tools-data.js and redeploy for it to go live for visitors.
-          </p>
-          <div id="tools-ready-list" class="space-y-2"></div>
-          <button id="tools-snippet-generate" type="button" class="w-full mt-4 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Tools Snippet</button>
-          <textarea id="tools-snippet-out" rows="10" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
-          <button id="tools-snippet-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h2 class="font-display font-semibold text-lg mb-1">Add to Build Log</h2>
-          <p class="text-xs text-steel mb-4">Produces a ready-to-paste entry for assets/js/log-data.js so the public /log.html page picks it up too.</p>
-          <div class="space-y-3">
-            <input id="f-log-date" type="date" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper focus:outline-none focus:border-accent" />
-            <input id="f-log-title" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Title, e.g. Shipped the landing page" />
-            <textarea id="f-log-summary" rows="3" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="One or two sentences on what happened today"></textarea>
-            <input id="f-log-tags" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Tags, comma separated, e.g. Web Dev, Build in Public" />
-            <button id="log-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Snippet</button>
-            <textarea id="log-snippet-out" rows="7" readonly class="w-full bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
-            <button id="log-snippet-copy" type="button" class="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
-          </div>
-        </section>
-
-        <section class="border-t border-line pt-8">
-          <h2 class="font-display font-semibold text-lg mb-1">Add to Portfolio</h2>
-          <p class="text-xs text-steel mb-4">Produces a ready-to-paste entry for assets/js/portfolio-data.js so the new project shows up on the homepage Portfolio section and /portfolio.html.</p>
-          <div class="space-y-3">
-            <input id="f-portfolio-name" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Project name, e.g. TradeLab" />
-            <textarea id="f-portfolio-description" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="One-line description"></textarea>
-            <input id="f-portfolio-url" type="url" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="https://project-url.example.com" />
-            <button id="portfolio-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Snippet</button>
-            <textarea id="portfolio-snippet-out" rows="7" readonly class="w-full bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
-            <button id="portfolio-snippet-copy" type="button" class="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
-          </div>
-        </section>
-
+        <a href="admin-scripts.html" class="bg-ink p-8 flex flex-col group hover:bg-line/20 transition-colors">
+          <p class="text-xs uppercase tracking-wide text-accent mb-2">Every day</p>
+          <h2 class="font-display font-semibold text-xl mb-2">Script Studio</h2>
+          <p class="text-sm text-paper/65 leading-relaxed flex-1">Daily video scripts: hooks, scenes, CTA, tied to the current community challenge.</p>
+          <span class="mt-6 inline-flex items-center gap-1 text-accent text-sm font-semibold group-hover:gap-2 transition-all">Open <span aria-hidden="true">&rarr;</span></span>
+        </a>
       </div>
-
-      <!-- Gallery column -->
-      <div>
-        <div class="flex items-center justify-between mb-4 sticky top-[61px] sm:top-[70px] bg-ink py-2 z-30">
-          <h2 class="font-display font-semibold text-lg">Generated Images</h2>
-          <div class="flex gap-3">
-            <button id="gallery-download-all" class="text-accent text-sm font-semibold hover:underline">Download All</button>
-            <button id="gallery-clear" class="text-paper/50 text-sm font-semibold hover:text-paper transition-colors">Clear</button>
-          </div>
-        </div>
-        <div id="gallery" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-      </div>
-
     </main>
   </div>
 
-  <script src="assets/js/log-data.js"></script>
-  <script src="assets/js/tools-data.js"></script>
-  <script src="assets/js/series-data.js"></script>
-  <script src="assets/js/roadmap-seed.js"></script>
-  <script src="assets/js/portfolio-data.js"></script>
-  <script src="assets/js/day-plans.js"></script>
-  <script src="assets/js/poster-render.js"></script>
   <script src="assets/js/admin-auth.js"></script>
-  <script src="assets/js/admin.js"></script>
 </body>
 </html>

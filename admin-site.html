@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site Content | GeoTechieX</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            paper: '#f4f2ee',
+            steel: '#8a8a8a',
+            line: '#2a2a2a',
+            accent: '#3b6fed',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-ink text-paper font-body antialiased">
+
+  <!-- Password gate -->
+  <div id="admin-gate" class="min-h-screen flex items-center justify-center px-5">
+    <div class="w-full max-w-sm">
+      <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-3 text-center">GeoTechieX</p>
+      <h1 class="font-display font-bold text-2xl uppercase text-center mb-8">Site Content</h1>
+      <form id="gate-form" class="space-y-4">
+        <input
+          type="password"
+          id="gate-password"
+          autocomplete="current-password"
+          class="w-full bg-transparent border border-paper/25 rounded-md px-4 py-3 text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors"
+          placeholder="Passphrase"
+        />
+        <button type="submit" class="w-full bg-accent text-white font-semibold px-4 py-3 rounded-md hover:bg-accent/90 transition-colors">
+          Unlock
+        </button>
+        <p id="gate-error" class="text-sm text-red-400 text-center h-5"></p>
+      </form>
+      <p class="text-xs text-steel text-center mt-6">This is a soft client-side lock, not real security. See the source of assets/js/admin-auth.js.</p>
+    </div>
+  </div>
+
+  <!-- Site Content -->
+  <div id="admin-panel" class="hidden">
+    <header class="border-b border-line px-4 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-3 sticky top-0 bg-ink z-40">
+      <div class="flex items-center gap-2 font-display font-semibold text-sm sm:text-base shrink-0">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full border border-paper/30 shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.3"/></svg></span>
+        <span>Site Content</span>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <a href="admin.html" class="inline-flex items-center gap-1 text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap"><span aria-hidden="true">&larr;</span> Content Studio</a>
+        <a href="index.html" class="text-xs sm:text-sm text-paper/60 hover:text-paper transition-colors whitespace-nowrap">Back to site</a>
+        <button id="lock-btn" class="text-xs sm:text-sm border border-paper/25 rounded-md px-2.5 py-1 sm:px-3 sm:py-1.5 hover:border-paper/60 transition-colors shrink-0">Lock</button>
+      </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 sm:px-8 py-8 sm:py-10 space-y-10">
+
+      <section>
+        <p class="font-display uppercase tracking-[0.2em] text-xs text-accent mb-2">Homepage</p>
+        <h2 class="font-display font-semibold text-2xl mb-1">Live Tools — Ready for Use</h2>
+        <p class="text-xs text-steel mb-4">
+          Toggle whether a tool shows a working "Try it" link on the homepage, or a "Coming soon" placeholder.
+          This only edits a draft in this browser: Generate Snippet, then paste the result over
+          assets/js/tools-data.js and redeploy for it to go live for visitors.
+        </p>
+        <div id="tools-ready-list" class="space-y-2"></div>
+        <button id="tools-snippet-generate" type="button" class="w-full mt-4 border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Tools Snippet</button>
+        <textarea id="tools-snippet-out" rows="10" readonly class="w-full mt-3 bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+        <button id="tools-snippet-copy" type="button" class="w-full mt-3 bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
+      </section>
+
+      <section class="border-t border-line pt-8">
+        <h2 class="font-display font-semibold text-lg mb-1">Add to Portfolio</h2>
+        <p class="text-xs text-steel mb-4">Produces a ready-to-paste entry for assets/js/portfolio-data.js so the new project shows up on the homepage Portfolio section and /portfolio.html.</p>
+        <div class="space-y-3">
+          <input id="f-portfolio-name" type="text" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="Project name, e.g. TradeLab" />
+          <textarea id="f-portfolio-description" rows="2" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="One-line description"></textarea>
+          <input id="f-portfolio-url" type="url" class="w-full bg-transparent border border-paper/20 rounded-md px-3 py-2 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent" placeholder="https://project-url.example.com" />
+          <button id="portfolio-snippet-generate" type="button" class="w-full border border-paper/25 text-sm font-semibold px-4 py-2.5 rounded-md hover:border-paper/60 transition-colors">Generate Snippet</button>
+          <textarea id="portfolio-snippet-out" rows="7" readonly class="w-full bg-black/40 border border-paper/20 rounded-md px-3 py-2 text-xs font-mono text-accent focus:outline-none"></textarea>
+          <button id="portfolio-snippet-copy" type="button" class="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-md hover:bg-accent/90 transition-colors">Copy Snippet</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="assets/js/tools-data.js"></script>
+  <script src="assets/js/portfolio-data.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+  <script src="assets/js/admin-site.js"></script>
+</body>
+</html>
